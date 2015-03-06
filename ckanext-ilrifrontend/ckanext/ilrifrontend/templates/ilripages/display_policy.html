@@ -1,0 +1,29 @@
+{% extends "page.html" %}
+
+{% block subtitle %}{{ _("ILRI's Open Data Policy") }}{% endblock %}
+
+{% block breadcrumb_content %}
+  <li class="active">{% link_for _("ILRI's Open Data Policy"), controller='ckanext.ilrifrontend.controller:policyController', action='display_policy' %}</li>
+{% endblock %}
+
+{% block primary %}
+  <article class="module">
+    <div class="module-content">
+      {% block about %}
+        <h3>ILRI's Open Data Policy</h3>
+        <p>
+          ILRI regards the results of its research and development activities as international public goods and is committed to their widespread dissemination 
+          and use to achieve the maximum impact to advantage the poor, especially smallholder farmers in developing countries. 
+          ILRI considers open access as a practical application of this principle.
+        </p>
+        <p>
+          ILRI as a <a href="http://www.cgiar.org/" target="_blank">CGIAR</a> centre complies with the broad CGIAR 
+          <a href="http://library.cgiar.org/bitstream/handle/10947/2875/CGIAR%20OA%20Policy%20-%20October%202%202013%20-%20Approved%20by%20Consortium%20Board.pdf?sequence=1" target="_blank">Open Access Policy</a>.
+        </p>
+      {% endblock %}
+    </div>
+  </article>
+{% endblock %}
+
+{% block secondary %}
+{% endblock %}

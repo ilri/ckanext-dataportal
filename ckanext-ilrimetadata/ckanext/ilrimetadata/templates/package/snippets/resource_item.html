@@ -1,0 +1,102 @@
+{% set can_edit = h.check_access('package_update', {'id':pkg.id }) %}
+{% set url_action = 'resource_edit' if url_is_edit and can_edit else 'resource_read' %}
+{% set url = h.url_for(controller='package', action=url_action, id=pkg.name, resource_id=res.id) %}
+
+{% set resourceData = h.ILRIMetadata_stringToDict(res.description) %}
+
+<li class="resource-item" data-id="{{ res.id }}">
+  {% block resource_item_title %}
+  <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
+    {{ h.resource_display_name(res) | truncate(50) }}
+    {{ h.popular('views', res.tracking_summary.total, min=10) }}
+  </a>
+  {% endblock %}
+  <p class="description">
+    {% if resourceData['resource_description'] %}
+      {{ h.markdown_extract(resourceData['resource_description'], extract_length=255) }}
+    {% endif %}
+    <p class="heading">Available formats</p>
+    
+    <div id="{{ res.id }}">
+    {% if res.format.lower() != "getdata" %}      
+      <a href="{{ h.url_for(controller='ckanext.ilrimetadata.controller:ILRIMetadataRequestInfoController', action='requestInfo', id=pkg.name, resource_id=res.id) }}" class="label" data-format="{{ res.format.lower() or 'data' }}">{{ res.format }}</a>
+      <!--
+      <a href="{{ res.url }}" class="label" data-format="{{ res.format.lower() or 'data' }}">{{ res.format }}</a>
+      -->
+    {% else %}
+      {% for gtType in h.ILRIMetadata_listGetDataTypes() %}
+        <a href="{{ h.url_for(controller='ckanext.ilrimetadata.controller:ILRIMetadataRequestInfoController', action='requestInfo', id=pkg.name, resource_id=res.id, outputFormat=gtType.lower()) }}" class="label" data-format="{{ gtType.lower() }}">{{ gtType }}</a>        
+      {% endfor %}
+    {% endif %}
+    {% if res.format.lower() == "getdata" and resourceData['resource_access'] != "Private" %}
+      <input type="hidden" id="confaccess" value="0">
+      <img src="{{ h.url_for_static('/images/lock-gray.png')  }}" onclick="toggleAccess('{{ res.id }}','{{ h.url_for_static('/images/lock-gray.png') }}');"  id="confimage" alt="Toggle Public/Confidential Access" title="Public access - Click to change to Confidential access">
+      
+    {% endif %}
+    {% if resourceData['resource_access'] == "Private" %}
+      <img src="{{ h.url_for_static('/images/lock.png')  }}" alt="this resource is private" title="This resource is private">
+    {% else %}
+       {% if resourceData['resource_access'] == "Confidential" and res.format.lower() != "getdata"  %}
+         <img src="{{ h.url_for_static('/images/lock-red.png')  }}" alt="this resource is confidential" title="This resource is confidential">
+       {% endif %}      
+    {% endif %}
+    <spam title="Number of downloads">{{ h.ILRIMetadata_getResourceStats(res.id) }}</spam>
+    </div>
+    
+    
+     
+    
+                
+    <div style="clear:both;" ></div>
+  </p>
+  {% block resource_item_explore %}
+  {#
+  {% if not url_is_edit %}
+  <div class="dropdown btn-group">
+    <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
+      <i class="icon-share-alt"></i>
+      {{ _('Explore') }}
+      <span class="caret"></span>
+    </a>
+    <ul class="dropdown-menu">
+      {% block resource_item_explore_links %}
+      <li>
+        <a href="{{ url }}">
+          {% if res.can_be_previewed %}
+            <i class="icon-bar-chart"></i>
+            {{ _('Preview') }}
+          {% else %}
+            <i class="icon-info-sign"></i>
+            {{ _('More information') }}
+          {% endif %}
+        </a>
+      </li>
+      <li>
+        <a href="{{ res.url }}" class="resource-url-analytics" target="_blank">
+          {% if res.can_be_previewed %}
+            <i class="icon-download"></i>
+            {{ _('Download') }}
+          {% else %}
+            <i class="icon-external-link"></i>
+            {{ _('Go to resource') }}
+          {% endif %}
+        </a>
+      </li>
+      {% if can_edit %}
+      <li>
+        <a href="{{ h.url_for(controller='package', action='resource_edit', id=pkg.name, resource_id=res.id) }}">
+          <i class="icon-edit"></i>
+          {{ _('Edit') }}
+        </a>
+      </li>
+      {% endif %}
+      {% endblock %}
+    </ul>
+  </div>
+  {% endif %}
+  #}
+  {% endblock %}
+</li>
+  
+  
+  

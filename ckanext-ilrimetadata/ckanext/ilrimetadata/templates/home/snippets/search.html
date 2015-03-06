@@ -1,0 +1,49 @@
+{% set tags = h.get_facet_items_dict('tags', limit=3) %}
+{% set regions = h.get_facet_items_dict('vocab_ILRI_vocregions', limit=3) %}
+{% set countries = h.get_facet_items_dict('vocab_ILRI_voccountries', limit=3) %}
+{% set species = h.get_facet_items_dict('vocab_ILRI_vocspecies', limit=3) %}
+{% set subjects = h.get_facet_items_dict('vocab_ILRI_vocsubjects', limit=3) %}
+{% set placeholder = _('eg. Livestock health') %}
+
+<div class="module module-search module-narrow module-shallow box">
+  <form class="module-content search-form" method="get" action="{% url_for controller='package', action='search' %}">
+    <h3 class="heading">{{ _("Search Our Data") }}</h3>
+    <div class="search-input control-group search-giant">
+      <input type="text" class="search" name="q" value="" autocomplete="off" placeholder="{{ placeholder }}" />
+      <button type="submit">
+        <i class="icon-search"></i>
+        <span>{{ _('Search') }}</span>
+      </button>
+    </div>
+  </form>
+  <div class="tags">    
+    <h3>{{ _('Popular Regions') }}</h3>
+    {% for region in regions %}
+      <a class="tag" href="{% url_for controller='package', action='search', vocab_ILRI_vocregions=region.name %}" title="{{ region.name }}">{{ h.truncate(region.name, 22) }}</a>
+    {% endfor %}
+  </div>
+  <div class="tags">    
+    <h3>{{ _('Popular Countries') }}</h3>
+    {% for country in countries %}
+      <a class="tag" href="{% url_for controller='package', action='search', vocab_ILRI_voccountries=country.name %}" title="{{ country.name }}">{{ h.truncate(country.name, 22) }}</a>
+    {% endfor %}
+  </div>
+  <div class="tags">    
+    <h3>{{ _('Popular Commodities') }}</h3>
+    {% for item in species %}
+      <a class="tag" href="{% url_for controller='package', action='search', vocab_ILRI_vocspecies=item.name%}" title="{{ item.name }}">{{ h.truncate(item.name, 22) }}</a>
+    {% endfor %}
+  </div>
+  <div class="tags">    
+    <h3>{{ _('Popular Subjects') }}</h3>
+    {% for subject in subjects %}
+      <a class="tag" href="{% url_for controller='package', action='search', vocab_ILRI_vocsubjects=subject.name %}" title="{{ subject.name }}">{{ h.truncate(subject.name, 22) }}</a>
+    {% endfor %}
+  </div>
+  <div class="tags">
+    <h3>{{ _('Popular Agrovoc Tags') }}</h3>
+    {% for tag in tags %}
+      <a class="tag" href="{% url_for controller='package', action='search', tags=tag.name %}" title="{{ tag.display_name }}">{{ h.truncate(tag.display_name, 22) }}</a>
+    {% endfor %}
+  </div>
+</div>

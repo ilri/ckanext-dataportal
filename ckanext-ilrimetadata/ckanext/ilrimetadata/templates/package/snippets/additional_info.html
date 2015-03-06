@@ -1,0 +1,322 @@
+<section class="additional-info">
+   <a href="{{ h.url_for(controller='ckanext.ilrimetadata.controller:ILRIMetadataDDIController', action='getMetadataDDI', id=pkg_dict.name) }}" class="label" data-format="xml">Download as XML (DDI V2.5)</a>
+      
+  <div id="ILRIMetaAccordion">
+  
+  <h3>{{ _('Dataset metadata') }}</h3> 
+  <div>
+    <table class="table table-striped table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th scope="col">{{ _('Item') }}</th>
+        <th scope="col">{{ _('Value') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+        {% if pkg_dict.ILRI_actytitle %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Study title") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_actytitle }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_actyabstract %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Study abstract") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_actyabstract }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_actycontactperson %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Contact person") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_actycontactperson }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_actycontactemail %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Contact email") }}</th>
+            <td class="dataset-details">{{ h.mail_to(email_address=pkg_dict.ILRI_actycontactemail, name=pkg_dict.ILRI_actycontactperson) }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_actypi %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Main researcher") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_actypi }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_actystaff %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Other staff involved") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_actystaff }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_actypartners %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Partners") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_actypartners }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.groups %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Groups") }}</th>
+            {% set groups = pkg_dict.groups %}
+            <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=groups, vocab="groups" %} </td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_actyspecies %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Commodities") }}</th>
+            {% set species = pkg_dict.ILRI_actyspecies %}
+            <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=species, vocab="ILRI_vocspecies" %} </td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_prjsubjects %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Subjects") }}</th>
+            {% set subjects = pkg_dict.ILRI_prjsubjects %}
+            <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=subjects, vocab="ILRI_vocsubjects" %} </td>
+          </tr>
+        {% endif %}
+        
+         {% if pkg_dict.tags %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Others tags") }}</th>            
+            <td class="dataset-details"> {% snippet "package/snippets/tags.html", tags=pkg_dict.tags %} </td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_actyregions %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Regions") }}</th>
+            {% set regions = pkg_dict.ILRI_actyregions %}
+            <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=regions, vocab="ILRI_vocregions" %} </td>
+          </tr>
+        {% endif %}
+        
+        
+        {% if pkg_dict.ILRI_actycountries %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Countries") }}</th>
+            {% set countries = pkg_dict.ILRI_actycountries %}
+            <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=countries, vocab="ILRI_voccountries"  %} </td>
+          </tr>
+        {% endif %}
+               
+        
+        {% if pkg_dict.ILRI_actynatlevel %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Sub-National Level") }}</th>
+            {% set natlevel = h.ILRIMetadata_tagsToList(pkg_dict.ILRI_actynatlevel,",") %}
+            <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=natlevel, vocab="NONE" %} </td>
+          </tr>
+        {% endif %}
+                       
+        
+        {% if pkg_dict.ILRI_actydatecollected %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Date of collection") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_actydatecollected }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_actydatavailable %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Availability date") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_actydatavailable }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_actydataowner %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Data owner") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_actydataowner }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_actysharingagreement %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Sharing agreement") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_actysharingagreement }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_actyusageconditions %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Usage conditions") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_actyusageconditions }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_actycitation %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Citation") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_actycitation }}</td>
+          </tr>
+        {% endif %}
+        
+         {% if pkg_dict.ILRI_actycitationacknowledge %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Citation for acknowledgements") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_actycitationacknowledge }}</td>
+          </tr>
+        {% endif %}
+      </tbody>
+    </table>
+    
+    {% if pkg_dict.ILRI_actyboundbox and pkg_dict.ILRI_actyboundbox != "" %}
+      <input type="hidden" id="ILRI_actymapextent" name="ILRI_actymapextent" value="{{ pkg_dict.ILRI_actymapextent }}" >
+      <input type="hidden" id="ILRI_actymapzoom" name="ILRI_actymapzoom" value="{{ pkg_dict.ILRI_actymapzoom }}" >
+      <input type="hidden" id="ILRI_actyboundbox" name="ILRI_actyboundbox" value="{{ pkg_dict.ILRI_actyboundbox }}" >          	  
+
+      <b>Spatial area covered</b>
+      <div id="studyMap"></div>
+      
+    {% endif %}
+    
+    
+  </div>
+  
+  <h3>{{ _('Project metadata') }}</h3> 
+  <div>
+  <table class="table table-striped table-bordered table-condensed">
+    <thead>
+      <tr>
+        <th scope="col">{{ _('Item') }}</th>
+        <th scope="col">{{ _('Value') }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% block package_additional_info %}
+        
+        {% if pkg_dict.ILRI_prjtitle %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Project title") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_prjtitle }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_prjabstract %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Project abstract") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_prjabstract }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_crpandprogram %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("CRPs and Programs") }}</th>
+            {% set crps = h.ILRIMetadata_tagsToList(pkg_dict.ILRI_crpandprogram,"+") %}
+            <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=crps %} </td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_prjwebsite %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Project website") }}</th>
+            <td class="dataset-details">{{ h.link_to(pkg_dict.ILRI_prjwebsite, pkg_dict.ILRI_prjwebsite, rel='foaf:homepage', target='_blank') }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_prjgrant %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Grant code") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_prjgrant }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_prjdonor %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Donor") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_prjdonor }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_prjpartners %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Partners") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_prjpartners }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_prjsdate %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Start date") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_prjsdate }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_prjedate %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("End date") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_prjedate }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_prjpi %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Principal investigator") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_prjpi }}</td>
+          </tr>
+        {% endif %}
+        
+        {% if pkg_dict.ILRI_prjstaff %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Other staff involved") }}</th>
+            <td class="dataset-details">{{ pkg_dict.ILRI_prjstaff }}</td>
+          </tr>
+        {% endif %}
+        
+        
+        {% if pkg_dict.ILRI_prjregions %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Regions") }}</th>
+            {% set regions = h.ILRIMetadata_tagsToList(pkg_dict.ILRI_prjregions,",") %}
+            <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=regions, vocab="ILRI_vocregions" %} </td>
+          </tr>
+        {% endif %}
+        
+        
+        
+        {% if pkg_dict.ILRI_prjcountries %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Countries") }}</th>
+            {% set countries = h.ILRIMetadata_tagsToList(pkg_dict.ILRI_prjcountries,"+") %}
+            <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=countries, vocab="ILRI_voccountries" %} </td>
+          </tr>
+        {% endif %}
+        
+        
+        {% if pkg_dict.ILRI_prjspecies %}
+          <tr>
+            <th scope="row" class="dataset-label">{{ _("Species") }}</th>
+            {% set species = h.ILRIMetadata_tagsToList(pkg_dict.ILRI_prjspecies,",") %}
+            <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=species, vocab="ILRI_vocspecies" %} </td>
+          </tr>
+        {% endif %}
+                        
+
+        {% block extras scoped %}
+          {% for extra in h.sorted_extras(pkg_dict.extras) %}
+            {% set key, value = extra %}
+            <tr rel="dc:relation" resource="_:extra{{ i }}">
+            <th scope="row" class="dataset-label" property="rdfs:label">{{ _(key) }}</th>
+            <td class="dataset-details" property="rdf:value">{{ value }}</td>
+            </tr>
+          {% endfor %}
+        {% endblock %}
+
+      {% endblock %}
+    </tbody>
+  </table>
+  </div>
+  
+  </div>
+</section>

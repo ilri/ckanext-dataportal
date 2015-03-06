@@ -1,0 +1,141 @@
+{% extends "page.html" %}
+
+{% block subtitle %}{{ _("Non-Disclosure Agreement for primary data including GPS information") }}{% endblock %}
+
+{% block breadcrumb_content %}
+  <li>{% link_for _('Organizations'), controller='organization', action='index' %}</li>
+  <li>{% link_for package.organization.title|truncate(30), controller='organization', action='read', id=package.organization.name %}</li>
+  <li>{% link_for package.title|truncate(30), controller='package', action='read', id=package.name %}</li>
+  <li>{% link_for resource.name|truncate(30), controller='package', action='resource_read', id=package.name, resource_id=resource.id %}</li>
+  <li class="active">{% link_for _("Non-disclosure agreement"), controller='ckanext.ilrimetadata.controller:ILRIMetadataNDAController', action='displayAgreement', id=package.name, resource_id=resource.id %}</li>
+{% endblock %}
+
+{% block primary %}
+  <article class="module">
+    <div class="module-content">
+      {% block about %}
+        <h1>NONDISCLOSURE AND CONFIDENTIALITY AGREEMENT</h1>
+        <p>
+          THIS AGREEMENT is by and between International Livestock Research Institute ("ILRI"), an international research institute of P.O Box 30709-00100 Nairobi, 
+          Kenya with its headquarters in Kabete, Naivasha Road, Nairobi, Kenya (hereinafter referred to as "ILRI") and the user requesting "{{ resource.resource_description }}" 
+          (hereinafter referred to as "The Recipient").          
+        </p>
+        <p>
+	<h2>WHERERAS</h2>
+        </p>
+        <p>
+          <ul>
+            <li>
+            ILRI possesses certain Proprietary Information which ILRI is willing to disclose to the Recipient on the terms set out below
+            </li>
+            <li>
+              The Recipient is willing to accept the Proprietary Information on those terms and to use the Proprietary Information only for the purpose indicated in the request
+            </li>
+          </ul>
+          <ol>
+            <li><b><i>Definitions and Interpretation</i></b>
+              <p><b>In this Agreement except where the context otherwise requires:</p></b>
+              <p><b>"The Recipient"</b> means the party which is receiving information, including Confidential information from the other.</p>
+              <p><b>"Disclosing party"</b> means the party which may be disclosing confidential information to the other.</p>
+              <p><b>"Confidential Information"</b> Confidential Information shall mean any and all such information as  provided by the Disclosing Party to the Receiving Party but not limited to: 
+              the Disclosing Party's current and/or potential investments, technical information, designs, copyrights, patents, trademarks, trade secrets, intellectual property, financial statements, 
+              patents pending, business strategies, identification or characterization of biological or other materials, results and or designs of experiments, delivery formulation and devices, reports, 
+              studies consultants reports, profomas, budgets, and other financial, trade and commercial information, software, business procedures or routines, quality control procedures, 
+              research and/or development, tests results, specifications, data, ideas, know-how, plans or drawings, prototypes, and any other information or procedures that are treated as or 
+              designated secret or confidential by the Disclosing Party and other information of whatever description which the Disclosing Party claims is confidential to itself and includes 
+              all other such information that may be in the possession of the Disclosing  Party's employees or management</p>
+            </li>
+            <li><b>Use of Confidential Information</b>
+            <p>The Recipient must use the Confidential Information only for the Purpose set out in this agreement, and must not use the Confidential Information 
+            for any other purpose.</p>
+            </li>
+            <li><b>Confidentiality</b>
+              <p  class="tab">
+                3.1 Subject to Clause 3.2, The Recipient shall, relative to any and all Confidential Information disclosed or submitted to the Recipient:
+                <ul style="list-style-type: none;">
+                  <li>a) at all times keep such Confidential Information secret and not disclose or divulge any part of it to any third party;</li>
+                  <li>b) divulge such information only to those of its employees, agents, consultants or representatives who require to know it for the performance of their duties;</li>
+                  <li>c) Conspicuously label, where possible, such Confidential Information received by it as being Confidential Information and the property of the Disclosing Party (or such third party as may be appropriate);</li>
+                  <li>d) not use such Confidential Information for any purpose other than the purpose set out in Annex 1without prior written permission of the Disclosing Party; </li>
+                  <li>e) not copy or reproduce in any manner of form nor store in any electronic medium which would allow access to any person not authorised to have access under this Agreement such Confidential Information or any part thereof without prior written Approval of the Disclosing Party;</li>
+                  <li>f) return or destroy all such Confidential Information to the disclosing Party if so requested by the Disclosing Party within 30 days from the date of such request and not keep copies;</li>
+                  <li>g) return all Confidential Information to the Disclosing Party within six months of receipt of the same, unless returned pursuant  to sub-clause (f) above, or unless further Agreement in writing containing provisions for the protection of such Confidential Information is entered into between the parties hereto within the said six months period. </li>
+                  <li>h) Not to make any commercial use of the Confidential Information without the express prior written consent of the Disclosing Party.</li>
+                  <li>i) Not to copy at any time whether in whole or in part or adapt in any way the Confidential Information provided by the Disclosing Party in the development, manufacture of any product/services without prior written consent of the Disclosing party.</li>
+                </ul>
+              </p>
+              <p  class="tab">
+                3.2 Clause 3 shall not apply to Confidential Information which
+                <ul style="list-style-type: none;">
+                  <li>a) is already in the public domain;</li>
+                  <li>b) hereafter becomes part of the public domain otherwise than as a result of an unauthorised disclosure by the Recipient;</li>
+                  <li>c) is or becomes available to the Recipient from a third party lawfully in possession thereof and who has the lawful power to disclose such information to the Recipient on a non-confidential basis;</li>
+                  <li>d) is rightfully known by the Recipient (as shown by its written record) prior to the date of disclosure to it; or</li>
+                  <li>e) is independently developed by an employee of the Recipient who has no knowledge of the disclosure under this Agreement.</li>
+                </ul>
+              </p>
+              <p  class="tab">
+                3.3 The Recipient shall ensure that its employees and officers and all contractors, consultants, agents, representatives and other parties with whom it may have dealings relating to the Confidential Information shall be bound to maintain Confidentiality in terms no less restrictive than those of clause 3.1 above and shall ensure that written undertakings to that effect are executed before any disclosures to them takes place. 
+              </p>
+              <p  class="tab">
+                3.4 The Recipient shall be responsible to the Disclosing Party for disclosure of any Confidential Information by any such party referred to in clause 3.3 above.
+              </p>
+              <p  class="tab">
+                3.5 The Recipient shall not reverse engineer, de-compile or disassemble any Confidential Information, software, hardware or other intellectual property disclosed to the Recipient, and agrees to segregate all such Confidential Information from the Confidential Information of others in order to prevent commingling of the same.
+              </p>
+              <p  class="tab">
+                3.6 If the Recipient is requested or required by law or to disclose any Confidential Information, the Recipient shall promptly notify the Disclosing party of such request or requirement so that the Disclosing Party may seek an appropriate protective order or other relief. If a protective order or other  relief is not obtained by the Disclosing Party within fifteen days(15) days ( or such lesser time as may be required by law) following the Disclosing Party's receipt of such notice or if the Recipient's legal counsel advises in writing that the Recipient is required to disclose the Confidential Information prior 	to the expiration of such fifteen(15) day period, the Recipient may disclose the Confidential Information in accordance with such request or requirement provided that the Recipient:
+                <ul style="list-style-type: none;">
+                  <li>a) notifies the Disclosing Party, if practicable, prior to such disclosure of the Confidential Information;</li>
+                  <li>b) discloses only that portion of the Confidential Information which the Recipient's legal counsel advises in writing is required to be disclosed; and</li>
+                  <li>c) uses its reasonable efforts to assist the Disclosing Party in ensuring that the Confidential Information so disclosed is treated Confidentially.</li>
+                </ul>
+              </p>
+            </li>
+            <li><b>Breach of Contract</b>
+              <p  class="tab">
+                4.1 If a breach of any condition of this Agreement occurs or if the Disclosing Party has reasonable grounds for believing that such breach has occurred or will occur then;
+                <ul style="list-style-type: none;">
+                  <li>a) the Disclosing Party may require the immediate return of all Confidential Information in the hands of the Recipient and/or any third party and may immediately repossess such Confidential Information; and</li>
+                  <li>b) the Disclosing Party shall not be obliged to continue the supply of any Confidential Information to the Recipient in terms of any contract, agreement or arrangement between the parties hereto.</li>
+                </ul>
+              </p>
+              <p  class="tab">
+                4.2 The Recipient shall indemnify the Disclosing Party fully against all liabilities, costs and expenses which the Disclosing Party incurs as a result of a breach of this Agreement. 
+              </p>
+              <p  class="tab">
+                4.3 The Recipient acknowledges that the Confidential Information is important to the Disclosing Party's business, that an award in damages may be sufficient to protect such business in the event of any breach hereof, and that the Disclosing Party may seek an action for interdict or injunction or if specific implement or such other action as the Disclosing Party deems appropriate if it suspects breach
+              </p>
+            </li>
+            <li><b>Continuing Effect of Agreement</b>
+            <p>
+              This Agreement shall continue in force five years from the date of execution.
+            </p>
+            </li>
+            <li><b>Assignation</b>
+            <p>
+              This Agreement shall not be assignable by either Party.
+            </p>
+            </li>
+            <li><b>Nature of Agreement</b>
+            <p>
+              This Agreement supercedes any previous understanding, arrangement or agreement between the Parties relating to the subject matter hereof and may not be amended in any way unless this is done in writing and signed on behalf of both of the Parties hereto.
+            </p>
+            </li>
+            <li><b>Governing Law</b>
+            <p>
+              This Agreement shall be governed by and construed in all respects in accordance with the Laws of Kenya.
+            </p>
+            </li>
+          </ol>
+          <p>
+          This Agreement embodies the entire understanding and obligations of the parties with respect to the subject matter hereof.  No amendments or modifications to this Agreement shall be valid unless made in writing and signed by both parties.
+          </p>
+        </p>        
+      {% endblock %}
+    </div>
+  </article>
+{% endblock %}
+
+{% block secondary %}
+{% endblock %}

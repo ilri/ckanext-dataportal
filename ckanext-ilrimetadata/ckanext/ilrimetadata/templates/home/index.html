@@ -1,0 +1,19 @@
+{% ckan_extends %}
+
+{% block content %}
+
+    <!-- Create Species Vocabularies --!>
+    {% if h.ILRIMetadata_createSpeciesVocab() %}
+    {% endif %}
+    <!-- Create Subjects Vocabularies --!>
+    {% if h.ILRIMetadata_createSubjectsVocab() %}
+    {% endif %}
+    <!-- Create Regions Vocabularies --!>
+    {% if h.ILRIMetadata_createRegionsVocab() %}
+    {% endif %}
+    <!-- Create Countries Vocabularies --!>
+    {% if h.ILRIMetadata_createCountriesVocab() %}
+    {% endif %}
+
+    {{ super() }}
+{% endblock %}

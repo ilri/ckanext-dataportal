@@ -1,0 +1,7 @@
+{% set ilrigroups =  h.ILRIMetadata_getFeaturedGroups() %}
+<h4>Featured Groups</h4>
+{% for group in ilrigroups %}
+  <div class="box">
+    {% snippet 'snippets/group_item.html', group=group, truncate=50, truncate_title=35 %}
+  </div>
+{% endfor %}

@@ -1,0 +1,56 @@
+{% extends "page.html" %}
+
+{% block subtitle %}{{ _("Harvest our data") }}{% endblock %}
+
+{% block breadcrumb_content %}
+  <li class="active">{% link_for _("Harvest our data"), controller='ckanext.ilrifrontend.controller:harvestController', action='display_harvestInfo' %}</li>
+{% endblock %}
+
+{% block primary %}
+  <article class="module">
+    <div class="module-content">
+      {% block about %}
+       <h3>ILRI's Datasets Portal API</h3>
+       <p>ILRI's Datasets Portal can provide access to third party systems 
+       using <a href="http://en.wikipedia.org/wiki/Application_programming_interface" target="_blank">API</a>. 
+       The result of a API call is in <a href="http://en.wikipedia.org/wiki/JSON" target="_blank">JSON</a> format 
+       that can be easily read by computer programs. Below are examples of how to get different kinds of data. 
+       More information on the API can be found in <a href="http://docs.ckan.org/en/latest/api/index.html" target="_blank">CKAN's API documentation</a>.
+       </p>
+         <ul>
+           <li>
+             List of datasets.
+             <p>
+               <a href="{{host}}/portal/api/3/action/package_list" target="_blank">{{host}}/portal/api/3/action/package_list </a>.
+               The result of this call is a list dataset names that can be used in other API calls.
+             </p>           
+           </li>
+           <li>
+             Details about a dataset
+             <p>
+               <a href="{{host}}/portal/api/3/action/package_show?id=implite-nyando" target="_blank">{{host}}/portal/api/3/action/package_show?id=MyDatasetName</a>. Change the ID to any dataset name
+             </p>    
+           </li>
+           <li>
+             List of <a href="http://aims.fao.org/standards/agrovoc/about" target="_blank">Agrovoc</a> Tags
+             <p>
+               <a href="{{host}}/portal/api/3/action/tag_list" target="_blank">{{host}}/portal/api/3/action/tag_list</a>.           
+             </p>    
+           </li>
+           <li>
+             Dataset Metadata in DDI XML Format
+             <p>
+               <a href="{{host}}/portal/dataset/implite-nyando/metadataddi" target="_blank">{{host}}/portal/dataset/MyDatasetName/metadataddi</a>.
+             </p>
+           </li>
+         </ul>
+       <p>
+       
+       </p>
+      {% endblock %}
+    </div>
+  </article>
+{% endblock %}
+
+{% block secondary %}
+{% endblock %}

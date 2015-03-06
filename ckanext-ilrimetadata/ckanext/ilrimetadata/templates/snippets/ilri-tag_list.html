@@ -1,0 +1,32 @@
+{#
+render a list of tags linking to the dataset search page
+tags: list of tags
+#}
+{% set _class = _class or 'tag-list' %}
+<ul class="{{ _class }}">
+  {% for tag in tags %}
+    <li>
+      {% if vocab == "ILRI_vocspecies" %}
+        <a class="tag" title="{{ h.ILRIMetadata_underscoreToComa(tag) }}" href="{% url_for controller='package', action='search', vocab_ILRI_vocspecies=tag %}">{{ h.truncate(h.ILRIMetadata_underscoreToComa(tag), 22) }}</a>
+      {% endif %}
+      {% if vocab == "ILRI_vocregions" %}
+        <a class="tag" title="{{ h.ILRIMetadata_underscoreToComa(tag) }}" href="{% url_for controller='package', action='search', vocab_ILRI_vocregions=tag %}">{{ h.truncate(h.ILRIMetadata_underscoreToComa(tag), 22) }}</a>
+      {% endif %}
+      {% if vocab == "ILRI_voccountries" %}
+        <a class="tag" title="{{ h.ILRIMetadata_underscoreToComa(tag) }}" href="{% url_for controller='package', action='search', vocab_ILRI_voccountries=tag %}">{{ h.truncate(h.ILRIMetadata_underscoreToComa(tag), 22) }}</a>
+      {% endif %}      
+      {% if vocab == "ILRI_vocsubjects" %}
+        <a class="tag" title="{{ h.ILRIMetadata_underscoreToComa(tag) }}" href="{% url_for controller='package', action='search', vocab_ILRI_vocsubjects=tag %}">{{ h.truncate(h.ILRIMetadata_underscoreToComa(tag), 22) }}</a>
+      {% endif %}
+      
+      {% if vocab == "groups" %}
+        <a class="tag" title="{{ tag["description"] }}" href="{% url_for controller='package', action='search', groups=tag["name"] %}">{{ h.truncate(tag["description"], 22) }}</a>
+      {% endif %}
+      
+      {% if vocab == "NONE" %}
+        <div class="tag" title="{{ h.ILRIMetadata_underscoreToComa(tag) }}">{{ h.truncate(h.ILRIMetadata_underscoreToComa(tag), 22) }}</div>        
+      {% endif %}
+      
+    </li>
+  {% endfor %}
+</ul>

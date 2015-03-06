@@ -1,0 +1,24 @@
+{% extends "page.html" %}
+
+{% block subtitle %}{{ _("Request an account") }}{% endblock %}
+
+{% block breadcrumb_content %}
+  <li class="active">{% link_for _("Request an account"), controller='ckanext.ilrifrontend.controller:requestAccountController', action='display_requestAccount' %}</li>
+{% endblock %}
+
+{% block primary %}
+  <article class="module">
+    <div class="module-content">
+      {% block about %}
+        <h3>Request a publisher account</h3>
+        <p>
+          To publish datasets in ILRI's Datasets Portal you need to have a publisher account. 
+          Please contact {{ h.mail_to(email_address='A.M.ODANGA@CGIAR.ORG', name='Agnes Odanga') }}  at Research Methods Group to request a  publisher account.
+        </p>
+      {% endblock %}
+    </div>
+  </article>
+{% endblock %}
+
+{% block secondary %}
+{% endblock %}

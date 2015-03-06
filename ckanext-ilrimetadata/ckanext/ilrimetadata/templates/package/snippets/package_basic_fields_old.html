@@ -1,0 +1,199 @@
+{% ckan_extends %}
+
+{% block package_basic_fields_url %}
+  {% if h.ILRIMetadata_isDatasetNew(h.full_current_url()) == true %}
+    {% set prefix = h.url_for(controller='package', action='read', id='') %}
+    {% set domain = h.url_for(controller='package', action='read', id='', qualified=true) %}
+    {% set domain = domain|replace("http://", "")|replace("https://", "") %}
+    {% set attrs = {'data-module': 'slug-preview-slug', 'data-module-prefix': domain, 'data-module-placeholder': '<dataset>'} %}
+
+    {{ form.prepend('name', id='field-name', label=_('URL'), prepend=prefix, placeholder=_('eg. my-dataset'), value=data.name, error=errors.name, attrs=attrs, is_required=true) }}
+  {% endif %}
+{% endblock %}
+
+{% block package_basic_fields_description %}
+  {{ form.markdown('notes', id='field-notes', label=_('Abstract'), placeholder=_('eg. A short description of the dataset'), value=data.notes, error=errors.notes) }}
+  
+  <div class="control-group control-small">
+      <label class="control-label" for="tag_string">{{ _("Free Tags") }}</label>
+      <div class="controls">      
+        <div id="cnt-tag_string"></div>
+        <input type="hidden" id="field-tags" name="tag_string" placeholder="eg. livestock, health, environment" value="{{ data.tag_string }}" >       
+        <input type="text" id="field-tags2" name="tag_string2" placeholder="eg. livestock, health" class="tm-tag_string tm-input-success">
+        <span class="info-block info-inline">
+          <i class="icon-info-sign"></i>
+          <a href="http://aims.fao.org/standards/agrovoc" target="_blank">You can use Agrovoc terms here</a>
+        </span>
+     </div>
+    </div>
+    
+  {% set existing_org = data.owner_org or data.group_id %}
+  {% set organizations_available = h.organizations_available('create_dataset') %}
+  <div class="control-group">
+      <label for="field-organizations" class="control-label">{{ _('Organization') }}</label>
+      <div class="controls">
+        <select id="field-organizations" name="owner_org">
+          {% if h.check_config_permission('create_unowned_dataset') %}
+             <option value="" {% if not selected_org and data.id %} selected="selected" {% endif %}>{{ _('No organization') }}</option>
+          {% endif %}
+          {% for organization in organizations_available %}
+            {# get out first org from users list only if there is not an existing org #}
+            {% set selected_org = (existing_org and existing_org == organization.id) or (not existing_org and not data.id and organization.id == organizations_available[0].id) %}
+            <option value="{{ organization.id }}" {% if selected_org %} selected="selected" {% endif %}>{{ organization.name }}</option>
+          {% endfor %}
+        </select>
+      </div>
+    </div>
+  
+  <div class="control-group">
+        <label for="field-private" class="control-label">{{ _('Visibility') }}</label>
+        <div class="controls">
+          <select id="field-private" name="private">
+            {% for option in [('False', _('Public'))] %}
+            <option value="{{ option[0] }}" {% if option[0] == data.private|trim %}selected="selected"{% endif %}>{{ option[1] }}</option>
+            {% endfor %}
+          </select>
+        </div>
+      </div>
+      
+  <div class="control-group">
+  {% set error = errors.license_id %}
+  <label class="control-label" for="field-license">{{ _("License") }}</label>
+  <div class="controls">
+    <select id="field-license" name="license_id">
+      {% for license_desc, license_id in licenses|sort if license_desc  %}
+        <option value="{{ license_id }}" {% if data.get('license_id', 'notspecified') == license_id %}selected="selected"{% endif %}>{{ license_desc }}</option>
+      {% endfor %}
+    </select>
+    {% if error %}<span class="error-block">{{ error }}</span>{% endif %}
+    <span class="info-block info-inline">
+      <i class="icon-info-sign"></i>
+      {% trans %}
+        License definitions and additional information can be found
+        at <a href="http://opendefinition.org/licenses/" target="_blank">opendefinition.org</a>
+      {% endtrans %}
+    </span>
+  </div>
+</div>
+  
+{% endblock %}
+
+
+{% block organizations_selector  %}
+{% endblock %}
+
+{% block package_metadata_fields_visibility %}
+{% endblock %}
+
+{% block package_basic_fields_license %}
+{% endblock %}
+
+
+{% block package_basic_fields_tags %}
+
+<hr>
+<h2>{{ _("Project metadata") }}</h2> 
+  
+  {% if h.ILRIMetadata_isDatasetNew(h.full_current_url()) == true %}
+  <p>
+    <div style="float:left;">
+      {{ _("Get project information from dataset ") }}
+      <select id="sourceProject" name="sourceProject">
+      <option value="None"></option>
+      {% for key,value in h.ILRIMetadata_getPackageList().iteritems()  %}
+        <option value="{{ key }}">{{ value }}</option>
+      {% endfor %}
+      </select>
+      <button type="button" onclick="copyProjectData()" >Get</button>
+    </div>
+  </p>
+  <div style="clear:both;" ></div>
+  <p> </p>
+  <p> </p>
+  {% endif %}
+  {{ form.input('ILRI_prjtitle', label=_('Project Title'), id='ILRI_prjtitle', placeholder=_('Title of the project generating this dataset'), value=data.ILRI_prjtitle, error=errors.ILRI_prjtitle, classes=['control-full']) }}
+  
+  {{ form.markdown('ILRI_prjabstract', id='ILRI_prjabstract', label=_('Project Description'), placeholder=_('A short description of the project generating this dataset'), value=data.ILRI_prjabstract, error=errors.ILRI_prjabstract) }}
+
+{#
+<div class="control-group control-tinny">
+    <label class="control-label" for="ILRI_crpandprogram">{{ _("CRPs and Programs") }}</label>
+    <div class="controls">
+      <!--The hidden is used by CKAN to store and collect the data-->
+      <div id="cnt-ILRI_crpandprogram"></div>
+      <input type="hidden" id="ILRI_crpandprogram" name="ILRI_crpandprogram" placeholder="CRPs and Programs" value="{{ data.ILRI_crpandprogram }}" > 
+      <!--The text input is used by tagsManager to display the tags. tagsManager will pass the value between the hiden and text inputs using the paramenter output: '#id' in the javaScript. Check /resource/ilrimetadata.js.  -->
+      <input type="text" id="ILRI_crpandprogram2" name="ILRI_crpandprogram2" placeholder="CRPs and Programs" class="tm-ILRI_crpandprogram tm-input-success">
+    </div>
+</div>
+  
+#}  
+  
+  {{ form.input('ILRI_prjwebsite', label=_('Project Website'), id='ILRI_prjwebsite', placeholder=_('eg. http://www.my_project_website.com'), value=data.ILRI_prjwebsite, error=errors.ILRI_prjwebsite, classes=['control-full']) }}
+  
+  {{ form.input('ILRI_prjgrant', label=_('Project Grant Code'), id='ILRI_prjgrant', placeholder=_('eg. IS03 NBO CG1234'), value=data.ILRI_prjgrant, error=errors.ILRI_prjgrant, classes=['control-small']) }}
+  
+  {{ form.input('ILRI_prjdonor', label=_('Project Donor'), id='ILRI_prjdonor', placeholder=_('eg. Gates Foundation'), value=data.ILRI_prjdonor, error=errors.ILRI_prjdonor, classes=['control-full']) }}
+  
+  {{ form.input('ILRI_prjpartners', label=_('Project Partners'), id='ILRI_prjpartners', placeholder=_('Indicate each partner separated by coma'), value=data.ILRI_prjpartners, error=errors.ILRI_prjpartners, classes=['control-full']) }}
+  
+  {{ form.input('ILRI_prjsdate', label=_('Project start date'), id='ILRI_prjsdate', placeholder=_('eg. 28/07/2014'), value=data.ILRI_prjsdate, error=errors.ILRI_prjsdate, classes=['control-small']) }}
+  
+  {{ form.input('ILRI_prjedate', label=_('Project end date'), id='ILRI_prjedate', placeholder=_('eg. 28/07/2016'), value=data.ILRI_prjedate, error=errors.ILRI_prjedate, classes=['control-small']) }}
+  
+  <hr>
+  
+  {{ form.input('ILRI_prjpi', label=_('Principal investigator'), id='ILRI_prjpi', placeholder='', value=data.ILRI_prjpi, error=errors.ILRI_prjpi, classes=['control-full']) }}
+  
+  {{ form.input('ILRI_prjstaff', label=_('Other staff involved'), id='ILRI_prjstaff', placeholder=_('Indicate each name separated by coma'), value=data.ILRI_prjstaff, error=errors.ILRI_prjstaff, classes=['control-full']) }}
+  
+  <hr>
+
+{% if h.ILRIMetadata_createRegionsVocab() %}
+{% endif %}
+  
+<div class="control-group control-tinny">
+    <label class="control-label" for="ILRI_prjregions">{{ _("Regions") }}</label>
+    <div class="controls">
+      <!--The hidden is used by CKAN to store and collect the data-->
+      <div id="cnt-ILRI_prjregions"></div>
+      <input type="hidden" id="ILRI_prjregions" name="ILRI_prjregions" placeholder="Regions" value="{{ data.ILRI_prjregions }}" > 
+      <!--The text input is used by tagsManager to display the tags. tagsManager will pass the value between the hiden and text inputs using the paramenter output: '#id' in the javaScript. Check /resource/ilrimetadata.js.  -->
+      <input type="text" id="ILRI_prjregions2" name="ILRI_prjregions2" placeholder="Regions" class="tm-ILRI_prjregions tm-input-success">  
+    </div>
+</div>
+  
+{% if h.ILRIMetadata_createCountriesVocab() %}
+{% endif %}
+  
+<div class="control-group control-small">
+    <label class="control-label" for="ILRI_prjcountries">{{ _("Countries") }}</label>
+    <div class="controls">      
+      <div id="cnt-ILRI_prjcountries"></div>
+      <input type="hidden" id="ILRI_prjcountries" name="ILRI_prjcountries" placeholder="Countries" value="{{ data.ILRI_prjcountries }}" >       
+      <input type="text" id="ILRI_prjcountries2" name="ILRI_prjcountries2" placeholder="Countries" class="tm-ILRI_prjcountries tm-input-success">  
+    </div>
+</div>
+
+{% if h.ILRIMetadata_createSpeciesVocab() %}
+{% endif %}
+
+<div class="control-group control-small">
+    <label class="control-label" for="ILRI_prjspecies">{{ _("Commodities") }}</label>
+    <div class="controls">
+      <div id="cnt-ILRI_prjspecies"></div>
+      <input type="hidden" id="ILRI_prjspecies" name="ILRI_prjspecies" placeholder="Species" value="{{ data.ILRI_prjspecies }}" >       
+      <input type="text" id="ILRI_prjspecies2" name="ILRI_prjspecies2" placeholder="Species" class="tm-ILRI_prjspecies tm-input-success">  
+    </div>
+</div>
+
+{% if h.ILRIMetadata_createSubjectsVocab() %}
+{% endif %}
+
+
+
+
+  
+  <hr>
+{% endblock %}
+

@@ -1,0 +1,46 @@
+{% ckan_extends %}
+
+{%- block custom_styles %}
+{{ super() }}
+
+{% resource 'ILRIMetadataResDir/tagmanager.css' %}
+{% resource 'ILRIMetadataResDir/ilrimetadata.css' %}
+{% resource 'ILRIMetadataResDir/jquery-ui-1.10.4/themes/base/jquery.ui.core.css' %}
+{% resource 'ILRIMetadataResDir/jquery-ui-1.10.4/themes/base/jquery.ui.theme.css' %}
+{% resource 'ILRIMetadataResDir/jquery-ui-1.10.4/themes/base/jquery.ui.tabs.css' %}
+{% resource 'ILRIMetadataResDir/jquery-ui-1.10.4/themes/base/jquery.ui.datepicker.css' %}
+{% resource 'ILRIMetadataResDir/jquery-ui-1.10.4/themes/base/jquery.ui.accordion.css' %}
+{% resource 'ILRIMetadataResDir/leaflet.css' %}
+{% resource 'ILRIMetadataResDir/leaflet-plugins/leaflet.draw.css' %}
+{% resource 'ILRIMetadataResDir/chosen.css' %}
+{% resource 'ILRIMetadataResDir/vex.css' %}
+{% resource 'ILRIMetadataResDir/vex-theme-os.css' %}
+
+
+
+
+{%- endblock %} 
+
+{% block head_extras %}
+{{ super() }}
+
+{% resource 'ILRIMetadataResDir/tagmanager.js' %}
+{% resource 'ILRIMetadataResDir/typeahead.js' %}
+{% resource 'ILRIMetadataResDir/ilrimetadata.js' %}
+{% resource 'ILRIMetadataResDir/jquery-ui-1.10.4/external/globalize.js' %}
+{% resource 'ILRIMetadataResDir/jquery-ui-1.10.4/ui/jquery-ui.js' %}
+{% resource 'ILRIMetadataResDir/jquery-ui-1.10.4/ui/jquery.ui.core.js' %}
+{% resource 'ILRIMetadataResDir/jquery-ui-1.10.4/ui/jquery.ui.widget.js' %}
+{% resource 'ILRIMetadataResDir/jquery-ui-1.10.4/ui/jquery.ui.tabs.js' %}
+{% resource 'ILRIMetadataResDir/jquery-ui-1.10.4/ui/jquery.ui.datepicker.js' %}
+{% resource 'ILRIMetadataResDir/jquery-ui-1.10.4/ui/jquery.ui.accordion.js' %}
+{% resource 'ILRIMetadataResDir/leaflet.js' %}
+{% resource 'ILRIMetadataResDir/leaflet-plugins/leaflet.draw.js' %}
+{% resource 'ILRIMetadataResDir/jquery.json-2.4.js' %}
+{% resource 'ILRIMetadataResDir/chosen.jquery.js' %}
+{% resource 'ILRIMetadataResDir/vex.combined.js' %}
+
+
+{%- endblock %} 
+
+
