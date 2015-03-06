@@ -60,3 +60,6 @@ target/
 
 #Linux
 .directory
+
+#Idea
+.idea/
