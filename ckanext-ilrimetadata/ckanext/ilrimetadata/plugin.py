@@ -33,10 +33,11 @@ def addFesturedCount(downloadData,group,groupInfo):
 def getFeaturedGroups(max = 1):
 
     mySession = DBSession()
+    connection = mySession.connection()
     try:
         #Get the number of download per resource
 
-        connection = mySession.connection()
+
         rescount = connection.execute("select resource_id,count(resource_id) as total FROM resourcestats")
 
         #Move the data to an array
@@ -61,7 +62,7 @@ def getFeaturedGroups(max = 1):
         #Order the FeaturedGroups by total
         FeaturedGroups.sort(key=lambda x: x["total"],reverse=True)
 
-        print FeaturedGroups
+        #print FeaturedGroups
         #Move the data of the group to the result array.
         result = []
         count = 0
@@ -74,6 +75,7 @@ def getFeaturedGroups(max = 1):
 
         return result
     except:
+        connection.close()
         mySession.close()
         return []
 
@@ -82,9 +84,13 @@ def getFeaturedGroups(max = 1):
 #This helper function retrives the number of download for a resource
 def getResourceStats(resourceID):
     mySession = DBSession()
-    res = mySession.query(resourcestatsModel).filter_by(resource_id = resourceID).count()
-    mySession.close()
-    return res
+    try:
+        res = mySession.query(resourcestatsModel).filter_by(resource_id = resourceID).count()
+        mySession.close()
+        return res
+    except:
+        mySession.close()
+        return 0
 
 
 

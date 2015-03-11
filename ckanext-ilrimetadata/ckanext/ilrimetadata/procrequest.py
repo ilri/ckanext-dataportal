@@ -75,13 +75,16 @@ def processToken(requestID,ipAddress,datasetID,resourceID,token,format):
         mySession.close()
         return False
     else:
-
         #If the token is valid then we add the request to the Book
-        newGuestBookRecord = resourcestatsModel(requestID,datetime.datetime.now(),ipAddress,resourceID,format,token,None,"","","","","","","")
-        transaction.begin()
-        mySession.add(newGuestBookRecord)
-        transaction.commit()
-        mySession.close()
+        try:
+            newGuestBookRecord = resourcestatsModel(requestID,datetime.datetime.now(),ipAddress,resourceID,format,token,None,"","","","","","","")
+            transaction.begin()
+            mySession.add(newGuestBookRecord)
+            transaction.commit()
+            mySession.close()
+        except:
+            transaction.abort()
+            mySession.close()
         return True
 
 def processUser(requestID,ipAddress,datasetID,resourceID,user,password,format):
@@ -116,31 +119,46 @@ def processUser(requestID,ipAddress,datasetID,resourceID,user,password,format):
                         break
                 if groupAccess == True:
                     #If the user is valid then we add the request to the Book
+                    try:
+                        newGuestBookRecord = resourcestatsModel(requestID,datetime.datetime.now(),ipAddress,resourceID,format,None,user,"","","","","","","")
+                        transaction.begin()
+                        mySession.add(newGuestBookRecord)
+                        transaction.commit()
+                        mySession.close()
+                        return True
+                    except:
+                        transaction.abort()
+                        mySession.close()
+                        return False
+                else:
+                    mySession.close()
+                    return False
+            else:
+                #If the user is valid then we add the request to the Book
+                try:
                     newGuestBookRecord = resourcestatsModel(requestID,datetime.datetime.now(),ipAddress,resourceID,format,None,user,"","","","","","","")
                     transaction.begin()
                     mySession.add(newGuestBookRecord)
                     transaction.commit()
                     mySession.close()
                     return True
-                else:
+                except:
+                    transaction.abort()
                     mySession.close()
                     return False
-            else:
-                #If the user is valid then we add the request to the Book
+        else:
+            #If the user is valid then we add the request to the Book
+            try:
                 newGuestBookRecord = resourcestatsModel(requestID,datetime.datetime.now(),ipAddress,resourceID,format,None,user,"","","","","","","")
                 transaction.begin()
                 mySession.add(newGuestBookRecord)
                 transaction.commit()
                 mySession.close()
                 return True
-        else:
-            #If the user is valid then we add the request to the Book
-            newGuestBookRecord = resourcestatsModel(requestID,datetime.datetime.now(),ipAddress,resourceID,format,None,user,"","","","","","","")
-            transaction.begin()
-            mySession.add(newGuestBookRecord)
-            transaction.commit()
-            mySession.close()
-            return True
+            except:
+                transaction.abort()
+                mySession.close()
+                return False
 
 def processGuest(requestID,ipAddress,resourceID,data,format):
 
