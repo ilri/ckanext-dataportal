@@ -1,7 +1,7 @@
 {% ckan_extends %}
 
 {% block content %}
-
+    {#
     <!-- Create Species Vocabularies --!>
     {% if h.ILRIMetadata_createSpeciesVocab() %}
     {% endif %}
@@ -14,6 +14,6 @@
     <!-- Create Countries Vocabularies --!>
     {% if h.ILRIMetadata_createCountriesVocab() %}
     {% endif %}
-
+    #}
     {{ super() }}
 {% endblock %}

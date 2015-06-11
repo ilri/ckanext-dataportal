@@ -19,9 +19,7 @@ setup(
     namespace_packages=['ckanext', 'ckanext.ilrimetadata'],
     include_package_data=True,
     zip_safe=False,
-    install_requires=[
-        # -*- Extra requirements: -*-
-    ],
+    install_requires=['zope.sqlalchemy','MySQL-python','pycrypto'],
     entry_points='''
         [ckan.plugins]
         ILRIMetadata=ckanext.ilrimetadata.plugin:ILRIMetadataPlugin
