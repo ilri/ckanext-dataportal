@@ -5,52 +5,60 @@
 {% set resourceData = h.ILRIMetadata_stringToDict(res.description) %}
 
 <li class="resource-item" data-id="{{ res.id }}">
-  {% block resource_item_title %}
-  <a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
-    {{ h.resource_display_name(res) | truncate(50) }}
-    {{ h.popular('views', res.tracking_summary.total, min=10) }}
-  </a>
-  {% endblock %}
-  <p class="description">
-    {% if resourceData['resource_description'] %}
-      {{ h.markdown_extract(resourceData['resource_description'], extract_length=255) }}
-    {% endif %}
-    <p class="heading">Available formats</p>
-    
-    <div id="{{ res.id }}">
-    {% if res.format.lower() != "getdata" %}      
-      <a href="{{ h.url_for(controller='ckanext.ilrimetadata.controller:ILRIMetadataRequestInfoController', action='requestInfo', id=pkg.name, resource_id=res.id) }}" class="label" data-format="{{ res.format.lower() or 'data' }}">{{ res.format }}</a>
-      <!--
+    {% block resource_item_title %}
+		<a class="heading" href="{{ url }}" title="{{ res.name or res.description }}">
+            {{ h.resource_display_name(res) | truncate(50) }}
+            {{ h.popular('views', res.tracking_summary.total, min=10) }}
+		</a>
+    {% endblock %}
+	<p class="description">
+        {% if resourceData['resource_description'] %}
+            {{ h.markdown_extract(resourceData['resource_description'], extract_length=255) }}
+        {% endif %}
+	<p class="heading">Available formats</p>
+
+	<div id="{{ res.id }}">
+        {% if res.format.lower() != "getdata" %}
+            {% if res.format.lower() != "html" %}
+				<a href="{{ h.url_for(controller='ckanext.ilrimetadata.controller:ILRIMetadataRequestInfoController', action='requestInfo', id=pkg.name, resource_id=res.id) }}" class="label" data-format="{{ res.format.lower() or 'data' }}">{{ res.format }}</a>
+            {% else %}
+				<a href="{{ res.url }}" target="_blank" class="label" data-format="{{ res.format.lower() or 'data' }}">{{ res.format }}</a>
+            {% endif %}
+			<!--
       <a href="{{ res.url }}" class="label" data-format="{{ res.format.lower() or 'data' }}">{{ res.format }}</a>
       -->
-    {% else %}
-      {% for gtType in h.ILRIMetadata_listGetDataTypes() %}
-        <a href="{{ h.url_for(controller='ckanext.ilrimetadata.controller:ILRIMetadataRequestInfoController', action='requestInfo', id=pkg.name, resource_id=res.id, outputFormat=gtType.lower()) }}" class="label" data-format="{{ gtType.lower() }}">{{ gtType }}</a>        
-      {% endfor %}
-    {% endif %}
-    {% if res.format.lower() == "getdata" and resourceData['resource_access'] != "Private" %}
-      <input type="hidden" id="confaccess" value="0">
-      <img src="{{ h.url_for_static('/images/lock-gray.png')  }}" onclick="toggleAccess('{{ res.id }}','{{ h.url_for_static('/images/lock-gray.png') }}');"  id="confimage" alt="Toggle Public/Confidential Access" title="Public access - Click to change to Confidential access">
-      
-    {% endif %}
-    {% if resourceData['resource_access'] == "Private" %}
-      <img src="{{ h.url_for_static('/images/lock.png')  }}" alt="this resource is private" title="This resource is private">
-    {% else %}
-       {% if resourceData['resource_access'] == "Confidential" and res.format.lower() != "getdata"  %}
-         <img src="{{ h.url_for_static('/images/lock-red.png')  }}" alt="this resource is confidential" title="This resource is confidential">
-       {% endif %}      
-    {% endif %}
-    <spam title="Number of downloads">{{ h.ILRIMetadata_getResourceStats(res.id) }}</spam>
-    </div>
-    
-    
-     
-    
-                
-    <div style="clear:both;" ></div>
-  </p>
-  {% block resource_item_explore %}
-  {#
+        {% else %}
+            {% for gtType in h.ILRIMetadata_listGetDataTypes() %}
+				<a href="{{ h.url_for(controller='ckanext.ilrimetadata.controller:ILRIMetadataRequestInfoController', action='requestInfo', id=pkg.name, resource_id=res.id, outputFormat=gtType.lower()) }}" class="label" data-format="{{ gtType.lower() }}">{{ gtType }}</a>
+            {% endfor %}
+        {% endif %}
+        {% if res.format.lower() != "html" %}
+            {% if res.format.lower() == "getdata" and resourceData['resource_access'] != "Private" %}
+				<input type="hidden" id="confaccess" value="0">
+				<img src="{{ h.url_for_static('/images/lock-gray.png')  }}" onclick="toggleAccess('{{ res.id }}','{{ h.url_for_static('/images/lock-gray.png') }}');"  id="confimage" alt="Toggle Public/Confidential Access" title="Public access - Click to change to Confidential access">
+
+            {% endif %}
+            {% if resourceData['resource_access'] == "Private" %}
+				<img src="{{ h.url_for_static('/images/lock.png')  }}" alt="this resource is private" title="This resource is private">
+            {% else %}
+                {% if resourceData['resource_access'] == "Confidential" and res.format.lower() != "getdata"  %}
+					<img src="{{ h.url_for_static('/images/lock-red.png')  }}" alt="this resource is confidential" title="This resource is confidential">
+                {% endif %}
+            {% endif %}
+			<spam title="Number of downloads">{{ h.ILRIMetadata_getResourceStats(res.id) }}</spam>
+		{% else %}
+			<spam ><b>Note: </b>This link will take you to a different web address in a new tab/window.</spam>
+        {% endif %}
+	</div>
+
+
+
+
+
+	<div style="clear:both;" ></div>
+	</p>
+    {% block resource_item_explore %}
+        {#
   {% if not url_is_edit %}
   <div class="dropdown btn-group">
     <a href="#" class="btn btn-primary dropdown-toggle" data-toggle="dropdown">
@@ -95,7 +103,7 @@
   </div>
   {% endif %}
   #}
-  {% endblock %}
+    {% endblock %}
 </li>
   
   

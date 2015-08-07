@@ -3,81 +3,91 @@
 
 
 {% block resource_actions_inner %}
-  {% if h.check_access('package_update', {'id':pkg.id }) %}
-    <li>{% link_for _('Manage'), controller='package', action='resource_edit', id=pkg.name, resource_id=res.id, class_='btn', icon='wrench' %}</li>
-  {% endif %}
+    {% if h.check_access('package_update', {'id':pkg.id }) %}
+		<li>{% link_for _('Manage'), controller='package', action='resource_edit', id=pkg.name, resource_id=res.id, class_='btn', icon='wrench' %}</li>
+    {% endif %}
 {% endblock %}
 
 {% block resource_content %}
-  {% set resourceData = h.ILRIMetadata_stringToDict(res.description) %}
-  {% block resource_read_title %}<h1 class="page-heading">{{ h.resource_display_name(res) | truncate(50) }}</h1>{% endblock %}
-  {% block resource_read_url %}
     {% set resourceData = h.ILRIMetadata_stringToDict(res.description) %}
-    {% if res.url %}    
-      <div id="{{ res.id }}">
-      <h4>Available formats</h4>
-      
-      {% if res.format.lower() != "getdata" %}
-        <a href="{{ h.url_for(controller='ckanext.ilrimetadata.controller:ILRIMetadataRequestInfoController', action='requestInfo', id=pkg.name, resource_id=res.id) }}" class="label" data-format="{{ res.format.lower() or 'data' }}">{{ res.format }}</a> 
-      {% else %}
-        {% for gtType in h.ILRIMetadata_listGetDataTypes() %}
-          <a href="{{ h.url_for(controller='ckanext.ilrimetadata.controller:ILRIMetadataRequestInfoController', action='requestInfo', id=pkg.name, resource_id=res.id, outputFormat=gtType.lower()) }}" class="label" data-format="{{ gtType.lower() }}">{{ gtType }}</a> 
-        {% endfor %}
-        {% if res.format.lower() == "getdata" and resourceData['resource_access'] != "Private" %}
-          <input type="hidden" id="confaccess" value="0">
-          <img src="{{ h.url_for_static('/images/lock-gray.png')  }}" onclick="toggleAccess('{{ res.id }}','{{ h.url_for_static('/images/lock-gray.png') }}');"  id="confimage" alt="Toggle Public/Confidential Access" title="Public access - Click to change to Confidential access">
-          
-        {% endif %}        
-      {% endif %}
-      {% if resourceData['resource_access'] == "Private" %}
-        <img src="{{ h.url_for_static('/images/lock.png')  }}" alt="this resource is private" title="This resource is private">
-      {% else %}
-        {% if resourceData['resource_access'] == "Confidential" and res.format.lower() != "getdata"  %}
-          <img src="{{ h.url_for_static('/images/lock-red.png')  }}" alt="this resource is confidential" title="This resource is confidential">
+    {% block resource_read_title %}<h1 class="page-heading">{{ h.resource_display_name(res) | truncate(50) }}</h1>{% endblock %}
+    {% block resource_read_url %}
+        {% set resourceData = h.ILRIMetadata_stringToDict(res.description) %}
+        {% if res.url %}
+			<div id="{{ res.id }}">
+				<h4>Available formats</h4>
+
+
+                {% if res.format.lower() != "getdata" %}
+                    {% if res.format.lower() != "html" %}
+						<a href="{{ h.url_for(controller='ckanext.ilrimetadata.controller:ILRIMetadataRequestInfoController', action='requestInfo', id=pkg.name, resource_id=res.id) }}" class="label" data-format="{{ res.format.lower() or 'data' }}">{{ res.format }}</a>
+                    {% else %}
+						<a href="{{ res.url }}" target="_blank" class="label" data-format="{{ res.format.lower() or 'data' }}">{{ res.format }}</a>
+                    {% endif %}
+                {% else %}
+                    {% for gtType in h.ILRIMetadata_listGetDataTypes() %}
+						<a href="{{ h.url_for(controller='ckanext.ilrimetadata.controller:ILRIMetadataRequestInfoController', action='requestInfo', id=pkg.name, resource_id=res.id, outputFormat=gtType.lower()) }}" class="label" data-format="{{ gtType.lower() }}">{{ gtType }}</a>
+                    {% endfor %}
+                    {% if res.format.lower() == "getdata" and resourceData['resource_access'] != "Private" %}
+						<input type="hidden" id="confaccess" value="0">
+						<img src="{{ h.url_for_static('/images/lock-gray.png')  }}" onclick="toggleAccess('{{ res.id }}','{{ h.url_for_static('/images/lock-gray.png') }}');"  id="confimage" alt="Toggle Public/Confidential Access" title="Public access - Click to change to Confidential access">
+
+                    {% endif %}
+                {% endif %}
+                {% if res.format.lower() != "html" %}
+                    {% if resourceData['resource_access'] == "Private" %}
+						<img src="{{ h.url_for_static('/images/lock.png')  }}" alt="this resource is private" title="This resource is private">
+                    {% else %}
+                        {% if resourceData['resource_access'] == "Confidential" and res.format.lower() != "getdata"  %}
+							<img src="{{ h.url_for_static('/images/lock-red.png')  }}" alt="this resource is confidential" title="This resource is confidential">
+                        {% endif %}
+                    {% endif %}
+                {% else %}
+					<spam ><b>Note: </b>This link will take you to a different web address in a new tab/window.</spam>
+					<p></p>
+                {% endif %}
+			</div>
         {% endif %}
-      {% endif %}
-      </div>
-    {% endif %}
-  {% endblock %}
-  <div class="prose notes" property="rdfs:label">
-    {% if resourceData['resource_description'] %}
-      {{ h.render_markdown(resourceData['resource_description']) }}
-    {% endif %}
-    {% if not resourceData['resource_description'] and c.package.notes %}
-      <h3>{{ _('From the dataset abstract') }}</h3>
-      <blockquote>{{ h.markdown_extract(c.package.get('notes')) }}</blockquote>
-      <p>{% trans dataset=c.package.title, url=h.url_for(controller='package', action='read', id=c.package['name']) %}Source: <a href="{{ url }}">{{ dataset }}</a>{% endtrans %}
-    {% endif %}
-   </div>
+    {% endblock %}
+	<div class="prose notes" property="rdfs:label">
+        {% if resourceData['resource_description'] %}
+            {{ h.render_markdown(resourceData['resource_description']) }}
+        {% endif %}
+        {% if not resourceData['resource_description'] and c.package.notes %}
+			<h3>{{ _('From the dataset abstract') }}</h3>
+			<blockquote>{{ h.markdown_extract(c.package.get('notes')) }}</blockquote>
+			<p>{% trans dataset=c.package.title, url=h.url_for(controller='package', action='read', id=c.package['name']) %}Source: <a href="{{ url }}">{{ dataset }}</a>{% endtrans %}
+        {% endif %}
+	</div>
 {% endblock %}
 
 {% block data_preview %}
 
- 
-  <div id="analysistab">
-    <ul>
-      <li><a href="#analysis">Analysis</a></li>
-      <li><a href="#audit">Audit</a></li>
-    </ul>
-    <div id="analysis">
-      <p>No analysis available</p>
-    </div>
-    <div id="audit">
-      <p>No audit information available</p>
-    </div>
-  </div>
+
+	<div id="analysistab">
+		<ul>
+			<li><a href="#analysis">Analysis</a></li>
+			<li><a href="#audit">Audit</a></li>
+		</ul>
+		<div id="analysis">
+			<p>No analysis available</p>
+		</div>
+		<div id="audit">
+			<p>No audit information available</p>
+		</div>
+	</div>
 
 {% endblock %}
 
- {% block resource_additional_information %}
+{% block resource_additional_information %}
     {% if res %}
-      <section class="module">
-        <div class="module-content">
-          <h2>{{ _('Resource Metadata Information') }}</h2>
-          <p>No detail metadata at the moment. To download the data click on one of the formats above. </p>
-        </div>
-      </section>
+		<section class="module">
+			<div class="module-content">
+				<h2>{{ _('Resource Metadata Information') }}</h2>
+				<p>No detail metadata at the moment. To download the data click on one of the formats above. </p>
+			</div>
+		</section>
     {% endif %}
-  {% endblock %}
+{% endblock %}
    
 
