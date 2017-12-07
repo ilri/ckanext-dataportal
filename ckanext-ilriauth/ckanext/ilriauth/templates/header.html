@@ -1,0 +1,17 @@
+{% ckan_extends %}
+{% block header_account_settings_link %}
+    <li>
+        <a href="{{ h.url_for(controller='user', action='edit', id=c.userobj.name) }}" title="{{ _('Edit settings') }}">
+            <i class="icon-cog"></i>
+        </a>
+    </li>
+    {% if h.ILRIAuth_userCanAddUsers(c.userobj.name) %}
+        <li>{% link_for _('Register a new CKAN user'), controller='ckanext.ilriauth.controller:addNewUserController', action='display_addNewUser' %}</li>
+    {% endif %}
+    {% if h.ILRIAuth_userCanManageResources(c.userobj.name) %}
+        <li>{% link_for _('Edit resource authorization'), controller='ckanext.ilriauth.controller:resourceAuthController', action='manageUsers' %}</li>
+    {% endif %}
+    {#  {% if h.ILRIAuth_isResourceAdmin(c.userobj.name) %}
+        <li>{% link_for _('Edit resource authorization users'), controller='ckanext.ilriauth.controller:addNewUserController', action='display_addNewUser' %}</li>
+    {% endif %} #}
+{% endblock %}

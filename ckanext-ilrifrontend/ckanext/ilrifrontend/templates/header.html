@@ -1,20 +1,82 @@
 {% ckan_extends %}
 
 {% block header_account_notlogged %}
-<li>{% link_for _('Log in'), controller='user', action='login' %}</li>
-<li>{% link_for _('Request a publisher account'), controller='ckanext.ilrifrontend.controller:requestAccountController', action='display_requestAccount' %}</li>
+    <li>{% link_for _('Log in'), controller='user', action='login' %}</li>
+    <li>{% link_for _('Request a publisher account'), controller='ckanext.ilrifrontend.controller:requestAccountController', action='display_requestAccount' %}</li>
 
 {% endblock %}
 
-{% block header_site_navigation_tabs %}
+{% block nav_and_logo %}
+    <div class="row">
+        <div class="span6">
+            <button data-target=".nav-collapse" data-toggle="collapse" class="btn btn-navbar" type="button">
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+                <span class="icon-bar"></span>
+            </button>
+            {# The .header-image class hides the main text and uses image replacement for the title #}
+            <hgroup class="{{ g.header_class }} pull-left">
 
-{{ h.build_nav_main(
-              ('search', _('Datasets')),
-              ('organizations_index', _('Organizations')),
-              ('group_index', _('Groups')),
-              ('ILRIPolicy', _("Open Data Policy")),
-              ('about', _('About'))
-            ) }}
+                {% block header_logo %}
+                    {% if g.site_logo %}
+                        <a class="logo" href="{{ h.url('home') }}"><img src="{{ h.url_for_static_or_external(g.site_logo) }}" alt="{{ g.site_title }}" title="{{ g.site_title }}" /></a>
+                    {% else %}
+                        <h1>
+                            <a href="{{ h.url('home') }}">{{ g.site_title }}</a>
+                        </h1>
+                        {% if g.site_description %}<h2>{{ g.site_description }}</h2>{% endif %}
+                    {% endif %}
+                {% endblock %}
 
+            </hgroup>
+        </div>
+        <div class="span6">
+            <form class="section-right section-search-centered simple-input" action="{% url_for controller='package', action='search' %}" method="get">
+                <div class="field">
+                    <label for="field-sitewide-search">{% block header_site_search_label %}{{ _('Search Datasets') }}{% endblock %}</label>
+                    <input id="field-sitewide-search" type="text" name="q" placeholder="{{ _('Search') }}" />
+                    <button class="btn-search" type="submit"><i class="icon-search"></i></button>
+                </div>
+            </form>
+        </div>
+    </div>
+{% endblock %}
 
+{% block navigation_and_search %}
+    <div class="row">
+        <div class="span12">
+            <div class="nav-collapse-left nav-collapse collapse">
+
+                {% block header_site_navigation %}
+                    <nav class="section navigation">
+                        <ul class="nav nav-pills">
+                            {% block header_site_navigation_tabs %}
+                                {% if c.controller == 'package' %}
+                                    {% if h.ILRIMetadata_stringContains(c.search_url_params,'organization=ilri') == True %}
+                                        <li class="active"><a href="{{ h.url_for(controller='package', action='search', organization='ilri') }}">ILRI Datasets</a></li>
+                                        <li><a href="{{ h.url_for(controller='package', action='search') }}">All Datasets</a></li>
+                                    {% else %}
+                                        <li><a href="{{ h.url_for(controller='package', action='search', organization='ilri') }}">ILRI Datasets</a></li>
+                                        <li class="active"><a href="{{ h.url_for(controller='package', action='search') }}">All Datasets</a></li>
+                                    {% endif %}
+                                {% else %}
+                                    {{ h.build_nav('search',_('ILRI Datasets'),organization='ilri') }}
+                                    {{ h.build_nav('search',_('All Datasets')) }}
+                                {% endif %}
+                                {{ h.build_nav('organizations_index',_('Organizations')) }}
+                                {{ h.build_nav('group_index',_('Groups')) }}
+                                {{ h.build_nav('ILRIPolicy',_('Open Data Policy')) }}
+                                {{ h.build_nav('about',_('About')) }}
+                            {% endblock %}
+                        </ul>
+                    </nav>
+                {% endblock %}
+
+                {% block header_site_search %}
+
+                {% endblock %}
+
+            </div>
+        </div>
+    </div>
 {% endblock %}

@@ -21,7 +21,8 @@ from .responsefile import getDataFile
 from .enddecdata import encodeData,decodeData
 
 import ast
-from .config import loadConfigVar
+#from .config import loadConfigVar
+from pylons import config
 
 tuplize_dict = logic.tuplize_dict
 clean_dict = logic.clean_dict
@@ -47,7 +48,7 @@ def getDataRequest(request,database,table,format):
         try:
             jdata = ast.literal_eval(data)
 
-            if jdata["key"] == loadConfigVar("getdatakey"):
+            if jdata["key"] == config['ilriextensions.getdata.key']:
 
                 requestID = jdata["requestID"]
                 confidential = jdata["confidential"]
@@ -116,6 +117,19 @@ class ILRIMetadataNDAController(toolkit.BaseController):
         vars = {'package': package_dict,  'resource': resource_dict}
         return toolkit.render('ilripages/nda.html',extra_vars=vars)
 
+    def displayLicense(self, id, resource_id):
+        try:
+            package_dict = toolkit.get_action('package_show')({}, {'id': id})
+        except NotFound:
+            abort(404, 'Dataset not found')
+        try:
+            resource_dict = toolkit.get_action('resource_show')({}, {'id': resource_id})
+        except NotFound:
+            abort(404, 'Resource not found')
+
+        vars = {'package': package_dict,  'resource': resource_dict}
+        return toolkit.render('ilripages/public.html',extra_vars=vars)
+
 #Controllet that handles the request of resources
 class ILRIMetadataRequestInfoController(toolkit.BaseController):
     def requestInfo(self, id, resource_id, data = None):
@@ -129,7 +143,7 @@ class ILRIMetadataRequestInfoController(toolkit.BaseController):
         #Request data is passed encrypted to the GetDataService as HTTP request variable
         requestData = {}
         #Key is to authenticate that the request of GetData comes from this plugin only
-        requestData["key"] = loadConfigVar("getdatakey")
+        requestData["key"] = config['ilriextensions.getdata.key']
         #DateTime of the request to GeData
         requestData["datetime"] = str(datetime.datetime.now())
 
@@ -222,6 +236,10 @@ class ILRIMetadataRequestInfoController(toolkit.BaseController):
                 data["field_country"] = formdata["field_country"]
                 data["field_notes"] = formdata["field_notes"]
                 data["field_hearfrom"] = formdata["field_hearfrom"]
+                if "field_aggrement" in formdata.keys():
+                    data["field_aggrement"] = 'yes'
+                else:
+                    data["field_aggrement"] = 'no'
 
                 requestID = uuid.uuid4()
                 result, error_summary = processGuest(requestID,toolkit.request.remote_addr,resource_id,data,formdata["field_resourceFormat"])

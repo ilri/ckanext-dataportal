@@ -1,0 +1,155 @@
+{% extends "ilriuser/resource_base.html" %}
+
+{% block breadcrumb_content %}
+    {% if action_group == 'users' %}
+        {% if action_type != 'manageOneUser' %}
+            <li class="active"><a href="{{ h.url_for(controller='ckanext.ilriauth.controller:resourceAuthController', action='manageUsers') }}">{{ _('Resource administration') }}</a></li>
+        {% else %}
+            <li><a href="{{ h.url_for(controller='ckanext.ilriauth.controller:resourceAuthController', action='manageUsers') }}">{{ _('Manage users') }}</a></li>
+            <li class="active"><a href="{{ h.url_for(controller='ckanext.ilriauth.controller:resourceAuthController', action='manageOneUser', userID=userData.id) }}">{{ userData.name }}</a></li>
+        {% endif %}
+    {% endif %}
+    {% if action_group == 'groups' %}
+        {% if action_type == 'manageGroups' %}
+            <li class="active"><a href="{{ h.url_for(controller='ckanext.ilriauth.controller:resourceAuthController', action='manageGroups') }}">{{ _('Resource administration') }}</a></li>
+        {% endif %}
+        {% if action_type == 'manageGroupMembers' %}
+            <li><a href="{{ h.url_for(controller='ckanext.ilriauth.controller:resourceAuthController', action='manageGroups') }}">{{ _('Manage groups') }}</a></li>
+            <li class="active"><a href="{{ h.url_for(controller='ckanext.ilriauth.controller:resourceAuthController', action='manageGroupMembers', groupID=groupData.id) }}">{{ groupData.name }}</a></li>
+        {% endif %}
+        {% if action_type == 'manageOneGroup' %}
+            <li><a href="{{ h.url_for(controller='ckanext.ilriauth.controller:resourceAuthController', action='manageGroups') }}">{{ _('Manage groups') }}</a></li>
+            <li class="active"><a href="{{ h.url_for(controller='ckanext.ilriauth.controller:resourceAuthController', action='manageOneGroup', groupID=groupData.id) }}">{{ groupData.name }}</a></li>
+        {% endif %}
+    {% endif %}
+    {% if action_group == 'tokens' %}
+        {% if action_type == 'manageRequests' %}
+            <li class="active"><a href="{{ h.url_for(controller='ckanext.ilriauth.controller:resourceAuthController', action='manageTokens') }}">{{ _('Manage tokens') }}</a></li>
+        {% endif %}
+        {% if action_type == 'manageOneToken' %}
+            <li><a href="{{ h.url_for(controller='ckanext.ilriauth.controller:resourceAuthController', action='manageTokens') }}">{{ _('Manage tokens') }}</a></li>
+            <li class="active"><a href="{{ h.url_for(controller='ckanext.ilriauth.controller:resourceAuthController', action='manageOneToken', tokenID = tokenData.id) }}">{{ _('Token dataset access') }}</a></li>
+        {% endif %}
+        {% if action_type == 'showRequestDetails' %}
+            <li><a href="{{ h.url_for(controller='ckanext.ilriauth.controller:resourceAuthController', action='manageTokens') }}">{{ _('Manage tokens') }}</a></li>
+            <li class="active"><a href="{{ h.url_for(controller='ckanext.ilriauth.controller:resourceAuthController', action='showRequestDetails', requestID = requestData.request_id) }}">{{ _('Request details') }}</a></li>
+        {% endif %}
+    {% endif %}
+{% endblock %}
+
+{% block secondary %}{% endblock %}
+
+{% block primary %}
+	<article class="module">
+        {% block page_header %}
+			<header class="module-content page-header hug">
+				<ul class="nav nav-tabs">
+                    {% if h.ILRIAuth_userResourceAccess(c.userobj.name,1) %}
+                        {% if action_type == 'manageOneUser' %}
+                            {{ h.build_nav_icon('manageOneUser', _('User access'),icon='user',userID=userData.id) }}
+                        {% else %}
+                            {{ h.build_nav_icon('manageUsers', _('Manage users'),icon='user') }}
+                        {% endif %}
+                    {% endif %}
+                    {% if h.ILRIAuth_userResourceAccess(c.userobj.name,2) %}
+                        {% if action_group == 'groups' %}
+                            {% if action_type == 'manageGroups' %}
+                                {{ h.build_nav_icon('manageGroups', _('Manage Groups'),icon='group') }}
+                            {% else %}
+                                {% if action_type == 'manageGroupMembers' %}
+                                    {{ h.build_nav_icon('manageGroupMembers', _('Group members'),icon='group',groupID=groupData.id) }}
+                                {% else %}
+                                    {{ h.build_nav_icon('manageOneGroup', _('Group access'),icon='group',groupID=groupData.id) }}
+                                {% endif %}
+                            {% endif %}
+                        {% else %}
+                            {{ h.build_nav_icon('manageGroups', _('Manage Groups'),icon='group') }}
+                        {% endif %}
+                    {% endif %}
+                    {% if h.ILRIAuth_userResourceAccess(c.userobj.name,3) %}
+                        {% if action_group == 'tokens' %}
+                            {% if action_type == 'manageRequests' %}
+                                {{ h.build_nav_icon('manageTokens', _('Manage tokens'),icon='unlock') }}
+                            {% endif %}
+                            {% if action_type == 'manageOneToken' %}
+                                {{ h.build_nav_icon('manageOneToken', _('Token access'),icon='unlock',tokenID=tokenData.id) }}
+                            {% endif %}
+                            {% if action_type == 'showRequestDetails' %}
+                                {{ h.build_nav_icon('showRequestDetails', _('Request details'),icon='unlock',requestID=requestData.request_id) }}
+                            {% endif %}
+                        {% else %}
+                            {{ h.build_nav_icon('manageTokens', _('Manage tokens'),icon='unlock') }}
+                        {% endif %}
+
+                    {% endif %}
+				</ul>
+			</header>
+        {% endblock %}
+		<div class="module-content">
+            {% if self.page_primary_action() | trim %}
+				<div class="page_primary_action">
+                    {% block page_primary_action %}{% endblock %}
+				</div>
+            {% endif %}
+            {% block primary_content_inner %}
+				<div data-module="dashboard">
+					<h2 class="page-heading">
+                        {% block page_heading %}
+                            {% if action_type == 'manageUsers' %}
+                                {{ _('Manage users') }}
+                            {% endif %}
+                            {% if action_type == 'manageGroups' %}
+                                {{ _('Manage groups') }}
+                            {% endif %}
+                            {% if action_type == 'manageTokens' %}
+                                {{ _('Manage tokens') }}
+                            {% endif %}
+                            {% if action_type == 'manageOneUser' %}
+                                {{ _('Dataset / resource authorizations for user ') }} {{ userData.name }}
+                            {% endif %}
+                            {% if action_type == 'manageGroupMembers' %}
+                                {{ _('Group members for ') }} {{ groupData.name }}
+                            {% endif %}
+                            {% if action_type == 'manageOneGroup' %}
+                                {{ _('Dataset / resource authorizations for group') }} {{ groupData.name }}
+                            {% endif %}
+                            {% if action_type == 'manageRequests' %}
+                                {{ _('Token requests') }}
+                            {% endif %}
+                            {% if action_type == 'showRequestDetails' %}
+                                {{ _('Request Details') }}
+                                <hr>
+                            {% endif %}
+                        {% endblock %}
+					</h2>
+                    {% block activity_stream %}
+						{% if action_type == 'manageUsers' %}
+							{% snippet "ilriuser/snippets/manage_users.html", data=data, error_summary=error_summary, users=users, return_action=return_action %}
+						{% endif %}
+                        {% if action_type == 'manageOneUser' %}
+                            {% snippet "ilriuser/snippets/manage_user.html", userDatasets=userDatasets, error_summary=error_summary, userData=userData, datasetArray=datasetArray, resourceArray=resourceArray, userResources=userResources %}
+                        {% endif %}
+                        {% if action_type == 'manageGroups' %}
+                            {% snippet "ilriuser/snippets/manage_groups.html", data=data, error_summary=error_summary, groups=groups, return_action=return_action %}
+                        {% endif %}
+                        {% if action_type == 'manageGroupMembers' %}
+                            {% snippet "ilriuser/snippets/manage_group_members.html", members=members, users=users %}
+                        {% endif %}
+                        {% if action_type == 'manageOneGroup' %}
+                            {% snippet "ilriuser/snippets/manage_group_auth.html", groupDatasets=groupDatasets, error_summary=error_summary, groupData=groupData, datasetArray=datasetArray, resourceArray=resourceArray, groupResources=groupResources %}
+                        {% endif %}
+                        {% if action_type == 'manageRequests' %}
+                            {% snippet "ilriuser/snippets/manage_requests.html", requests=requests, error_summary=error_summary %}
+                        {% endif %}
+                        {% if action_type == 'manageOneToken' %}
+                            {% snippet "ilriuser/snippets/manage_token_auth.html", tokenDatasets=tokenDatasets, error_summary=error_summary, tokenData=tokenData, datasetArray=datasetArray, resourceArray=resourceArray, tokenResources=tokenResources %}
+                        {% endif %}
+                        {% if action_type == 'showRequestDetails' %}
+                            {% snippet "ilriuser/snippets/request_details.html", requestData=requestData %}
+                        {% endif %}
+                    {% endblock %}
+				</div>
+            {% endblock %}
+		</div>
+	</article>
+{% endblock %}

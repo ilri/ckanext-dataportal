@@ -1,17 +1,17 @@
-import routes.mapper as r
 import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
+import routes.mapper as r
+
 import logging
-import json
+import json,os
 
 import ckan.model as model
 import ckan.logic.validators as validators
 import ckan.lib.navl.dictization_functions as df
 from ckan.common import _
 
-from .dbmodels import DBSession
+from .connection import getSession,closeSession
 from .dbmodels import resourcestatsModel
-import transaction
 
 FeaturedGroups = []
 
@@ -30,15 +30,21 @@ def addFesturedCount(downloadData,group,groupInfo):
     groupData["total"] = total
     FeaturedGroups.append(groupData)
 
+def string_contains(variable,value):
+    try:
+        variable.index(value)
+        return True
+    except:
+        return False
+
 def getFeaturedGroups(max = 1):
 
-    mySession = DBSession()
-    connection = mySession.connection()
+    dbSession = getSession()
     try:
         #Get the number of download per resource
 
 
-        rescount = connection.execute("select resource_id,count(resource_id) as total FROM resourcestats")
+        rescount = dbSession.execute("select resource_id,count(resource_id) as total FROM resourcestats")
 
         #Move the data to an array
         resources = []
@@ -48,8 +54,7 @@ def getFeaturedGroups(max = 1):
             data["total"] = row.total
             resources.append(data)
 
-        connection.close()
-        mySession.close()
+        closeSession(dbSession)
 
         #Get the list of groups
         group_list = toolkit.get_action('group_list')({}, {})
@@ -75,21 +80,20 @@ def getFeaturedGroups(max = 1):
 
         return result
     except:
-        connection.close()
-        mySession.close()
+        closeSession(dbSession)
         return []
 
 
 
 #This helper function retrives the number of download for a resource
 def getResourceStats(resourceID):
-    mySession = DBSession()
+    dbSession = getSession()
     try:
-        res = mySession.query(resourcestatsModel).filter_by(resource_id = resourceID).count()
-        mySession.close()
+        res = dbSession.query(resourcestatsModel).filter_by(resource_id = resourceID).count()
+        closeSession(dbSession)
         return res
     except:
-        mySession.close()
+        closeSession(dbSession)
         return 0
 
 
@@ -191,30 +195,31 @@ def createVocabulary(vocID,sourceFile):
 
     return True
 
+PATH = os.path.dirname(os.path.abspath(__file__))
 
 # This Helper function creates the region vocabulary from a text file
 def createRegionsVocab():
-    return createVocabulary("ILRI_vocregions","/opt/ckan/lib/default/src/ckanext-ilriapi/ckanext/sourcetxt/ilri-regions.txt")
+    return createVocabulary("ILRI_vocregions",os.path.join(PATH, "sourcetxt/ilri-regions.txt"))
 
 
 # This Helper function creates the countries vocabulary from a text file
 def createCountriesVocab():
-    return createVocabulary("ILRI_voccountries","/opt/ckan/lib/default/src/ckanext-ilriapi/ckanext/sourcetxt/ilri-countries.txt")
+    return createVocabulary("ILRI_voccountries",os.path.join(PATH, "sourcetxt/ilri-countries.txt"))
 
 
 # This Helper function creates the species vocabulary from a text file
 def createSpeciesVocab():
-    return createVocabulary("ILRI_vocspecies","/opt/ckan/lib/default/src/ckanext-ilriapi/ckanext/sourcetxt/ilri-commodities.txt")
+    return createVocabulary("ILRI_vocspecies",os.path.join(PATH, "sourcetxt/ilri-commodities.txt"))
 
 
 # This Helper function creates the subjects vocabulary from a text file
 def createSubjectsVocab():
-    return createVocabulary("ILRI_vocsubjects","/opt/ckan/lib/default/src/ckanext-ilriapi/ckanext/sourcetxt/ilri-subjects.txt")
+    return createVocabulary("ILRI_vocsubjects",os.path.join(PATH, "sourcetxt/ilri-subjects.txt"))
 
 
 #A helper fuction that returs the countries. Used in the request_info.html
 def getCountries():
-    return getArrayFromFile("/opt/ckan/lib/default/src/ckanext-ilriapi/ckanext/sourcetxt/ilri-countries.txt")
+    return getArrayFromFile(os.path.join(PATH, "sourcetxt/ilri-countries.txt"))
 
 #This helper function returs the current list of datasets.
 #Used to populate the combo of source datasets
@@ -340,14 +345,12 @@ def tagsToString(tags,separator):
     return tag_string
 
 
-class ILRIMetadataPlugin(plugins.SingletonPlugin, toolkit.DefaultDatasetForm):
+class IlrimetadataPlugin(plugins.SingletonPlugin, toolkit.DefaultDatasetForm):
     plugins.implements(plugins.IConfigurer)
     plugins.implements(plugins.IDatasetForm)
     plugins.implements(plugins.ITemplateHelpers)
     plugins.implements(plugins.IRoutes)
     plugins.implements(plugins.IFacets)
-
-    #IFacets
 
     def dataset_facets(self,facets_dict, package_type):
         facets_dict['vocab_ILRI_vocregions'] = 'Regions' #We use vocab_ because ILRI_prjregions is a vocabulary
@@ -368,7 +371,7 @@ class ILRIMetadataPlugin(plugins.SingletonPlugin, toolkit.DefaultDatasetForm):
         facets_dict['vocab_ILRI_voccountries'] = 'Countries'
         facets_dict['vocab_ILRI_vocspecies'] = 'Commodities'
         facets_dict['vocab_ILRI_vocsubjects'] = 'Subjects'
-        return facets_dict;
+        return facets_dict
 
 
 
@@ -419,6 +422,9 @@ class ILRIMetadataPlugin(plugins.SingletonPlugin, toolkit.DefaultDatasetForm):
         with r.SubMapper(map,  controller='ckanext.ilrimetadata.controller:ILRIMetadataNDAController') as confAggrement:
             confAggrement.connect('displayAgreement','/dataset/{id}/resource/{resource_id}/nda',action='displayAgreement')
 
+        with r.SubMapper(map,  controller='ckanext.ilrimetadata.controller:ILRIMetadataNDAController') as downloadLicense:
+            downloadLicense.connect('downloadLicense','/dataset/{id}/resource/{resource_id}/license',action='displayLicense')
+
         with r.SubMapper(map,  controller='ckanext.ilrimetadata.controller:ILRIMetadataGetDatabaseController') as GetDatabase:
             GetDatabase.connect('GetDatabase','/getdata/{database}.{format}',action='GetDatabase')
 
@@ -439,13 +445,14 @@ class ILRIMetadataPlugin(plugins.SingletonPlugin, toolkit.DefaultDatasetForm):
         return map
 
 
-    #Implement update_config of IConfigurer
-    def update_config(self, config):
-        toolkit.add_template_directory(config, 'templates')
-        toolkit.add_public_directory(config, 'public')
-        toolkit.add_resource('resource', 'ILRIMetadataResDir')
+    # IConfigurer
 
-    #Implement  get_helpers of ITemplateHelpers
+    def update_config(self, config_):
+        toolkit.add_template_directory(config_, 'templates')
+        toolkit.add_public_directory(config_, 'public')
+        toolkit.add_resource('fanstatic', 'ILRIMetadataResDir')
+
+    # Implement  get_helpers of ITemplateHelpers
     def get_helpers(self):
         return {'ILRIMetadata_getResourceCount': getResourceCount,
                 'ILRIMetadata_tagsToList': splitTagsToList,
@@ -463,92 +470,131 @@ class ILRIMetadataPlugin(plugins.SingletonPlugin, toolkit.DefaultDatasetForm):
                 'ILRIMetadata_getCountries': getCountries,
                 'ILRIMetadata_isListDatasets': isListDatasets,
                 'ILRIMetadata_getResourceStats': getResourceStats,
-                'ILRIMetadata_getFeaturedGroups': getFeaturedGroups}
+                'ILRIMetadata_getFeaturedGroups': getFeaturedGroups,
+                'ILRIMetadata_stringContains': string_contains}
 
-
-    #Implement the neccesary fuctions of IDatasetForm
-    def is_fallback(self):
-        # Return True to register this plugin as the default handler for
-        # package types not handled by any other IDatasetForm plugin.
-        return True
-
-    def package_types(self):
-        # This plugin doesn't handle any special package types, it just
-        # registers itself as the default (above).
-        return []
 
     def _add_custom_metadata_to_schema(self, schema):
-
         # Add our custom_test metadata field to the schema, this one will use
         # convert_to_extras instead of convert_to_tags.
         # Basically it recived the data from the screen the pass it to a series of fuctions. For example
         # ignore_missing then to convert_to_extras
 
-        #Project Level metadata
-        schema.update({'ILRI_prjtitle': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_prjabstract': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_crpandprogram': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_prjwebsite': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_prjgrant': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_prjdonor': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_prjpi': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_prjstaff': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_prjpartners': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_prjsdate': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_prjedate': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
+        # Project Level metadata
+        schema.update({'ILRI_prjtitle': [toolkit.get_validator('ignore_missing'),
+                                         toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_prjabstract': [toolkit.get_validator('ignore_missing'),
+                                            toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_crpandprogram': [toolkit.get_validator('ignore_missing'),
+                                              toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_prjwebsite': [toolkit.get_validator('ignore_missing'),
+                                           toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_prjgrant': [toolkit.get_validator('ignore_missing'),
+                                         toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_prjdonor': [toolkit.get_validator('ignore_missing'),
+                                         toolkit.get_converter('convert_to_extras')]})
+        schema.update(
+            {'ILRI_prjpi': [toolkit.get_validator('ignore_missing'), toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_prjpiemail': [toolkit.get_validator('ignore_missing'),
+                                           toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_prjstaff': [toolkit.get_validator('ignore_missing'),
+                                         toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_prjpartners': [toolkit.get_validator('ignore_missing'),
+                                            toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_prjsdate': [toolkit.get_validator('ignore_missing'),
+                                         toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_prjedate': [toolkit.get_validator('ignore_missing'),
+                                         toolkit.get_converter('convert_to_extras')]})
 
-        schema.update({'ILRI_prjregions': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_prjcountries': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_prjspecies': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_prjregions': [toolkit.get_validator('ignore_missing'),
+                                           toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_prjcountries': [toolkit.get_validator('ignore_missing'),
+                                             toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_prjspecies': [toolkit.get_validator('ignore_missing'),
+                                           toolkit.get_converter('convert_to_extras')]})
 
-        #Project Vocabularies
-        schema.update({'ILRI_prjsubjects': [toolkit.get_validator('ignore_missing'),stringToTags]})
+        # Project Vocabularies
+        schema.update({'ILRI_prjsubjects': [toolkit.get_validator('ignore_missing'), stringToTags]})
 
-        #Study Level metadata
-        schema.update({'ILRI_actytitle': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_actyabstract': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_actycontactperson': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_actycontactemail': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_actypi': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_actystaff': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_actypartners': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
+        # Study Level metadata
+        schema.update({'ILRI_actytitle': [toolkit.get_validator('ignore_missing'),
+                                          toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actyabstract': [toolkit.get_validator('ignore_missing'),
+                                             toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actyotheruse': [toolkit.get_validator('ignore_missing'),
+                                             toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actycontactperson': [toolkit.get_validator('ignore_missing'),
+                                                  toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actycontactemail': [toolkit.get_validator('ignore_missing'),
+                                                 toolkit.get_converter('convert_to_extras')]})
 
-        #Study Vocabularies
-        schema.update({'ILRI_actyregions': [toolkit.get_validator('ignore_missing'),stringToTags]})
-        schema.update({'ILRI_actycountries': [toolkit.get_validator('ignore_missing'),stringToTags]})
-        schema.update({'ILRI_actyspecies': [toolkit.get_validator('ignore_missing'),stringToTags]})
+        schema.update({'ILRI_actycustodian': [toolkit.get_validator('ignore_missing'),
+                                              toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actycustodianemail': [toolkit.get_validator('ignore_missing'),
+                                                   toolkit.get_converter('convert_to_extras')]})
 
-        schema.update({'ILRI_actynatlevel': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_actymapextent': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_actymapzoom': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_actyboundbox': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_actyboundboxcenter': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
+        schema.update(
+            {'ILRI_actypi': [toolkit.get_validator('ignore_missing'), toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actypiemail': [toolkit.get_validator('ignore_missing'),
+                                            toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actystaff': [toolkit.get_validator('ignore_missing'),
+                                          toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actypartners': [toolkit.get_validator('ignore_missing'),
+                                             toolkit.get_converter('convert_to_extras')]})
 
-        schema.update({'ILRI_actydatecollected': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_actydatavailable': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_actydataowner': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_actysharingagreement': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_actyconfideclaration': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_actyusageconditions': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_actycitation': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
-        schema.update({'ILRI_actycitationacknowledge': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
+        # Study Vocabularies
+        schema.update({'ILRI_actyregions': [toolkit.get_validator('ignore_missing'), stringToTags]})
+        schema.update({'ILRI_actycountries': [toolkit.get_validator('ignore_missing'), stringToTags]})
+        schema.update({'ILRI_actyspecies': [toolkit.get_validator('ignore_missing'), stringToTags]})
 
+        schema.update({'ILRI_actynatlevel': [toolkit.get_validator('ignore_missing'),
+                                             toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actymapextent': [toolkit.get_validator('ignore_missing'),
+                                              toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actymapzoom': [toolkit.get_validator('ignore_missing'),
+                                            toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actyboundbox': [toolkit.get_validator('ignore_missing'),
+                                             toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actyboundboxcenter': [toolkit.get_validator('ignore_missing'),
+                                                   toolkit.get_converter('convert_to_extras')]})
 
+        schema.update({'ILRI_actydatecollected': [toolkit.get_validator('ignore_missing'),
+                                                  toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actydatecollectedend': [toolkit.get_validator('ignore_missing'),
+                                                     toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actydatavailable': [toolkit.get_validator('ignore_missing'),
+                                                 toolkit.get_converter('convert_to_extras')]})
+
+        schema.update({'ILRI_actyrelconfdata': [toolkit.get_validator('ignore_missing'),
+                                                toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actyfarmconsent': [toolkit.get_validator('ignore_missing'),
+                                                toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actyipownership': [toolkit.get_validator('ignore_missing'),
+                                                toolkit.get_converter('convert_to_extras')]})
+
+        # schema.update({'ILRI_actydataowner': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
+        # schema.update({'ILRI_actysharingagreement': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
+        # schema.update({'ILRI_actyconfideclaration': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
+        # schema.update({'ILRI_actyusageconditions': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actycitation': [toolkit.get_validator('ignore_missing'),
+                                             toolkit.get_converter('convert_to_extras')]})
+        schema.update({'ILRI_actycitationacknowledge': [toolkit.get_validator('ignore_missing'),
+                                                        toolkit.get_converter('convert_to_extras')]})
 
         return schema
 
     def create_package_schema(self):
-        schema = super(ILRIMetadataPlugin, self).create_package_schema()
+        schema = super(IlrimetadataPlugin, self).create_package_schema()
         schema = self._add_custom_metadata_to_schema(schema)
         return schema
 
     def update_package_schema(self):
-        schema = super(ILRIMetadataPlugin, self).update_package_schema()
+        schema = super(IlrimetadataPlugin, self).update_package_schema()
         schema = self._add_custom_metadata_to_schema(schema)
         return schema
 
     def show_package_schema(self):
-        schema = super(ILRIMetadataPlugin, self).show_package_schema()
+        schema = super(IlrimetadataPlugin, self).show_package_schema()
 
         # Don't show vocab tags mixed in with normal 'free' tags
         # (e.g. on dataset pages, or on the search page)
@@ -559,93 +605,151 @@ class ILRIMetadataPlugin(plugins.SingletonPlugin, toolkit.DefaultDatasetForm):
         # Basically the value is passes to a series of functions like convert_from_extras then ignore_missing. You can add
         # custom functions to it
 
-        #Project Level metadata
-        schema.update({'ILRI_prjtitle': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_prjabstract': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_crpandprogram': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_prjwebsite': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_prjgrant': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_prjdonor': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_prjpi': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_prjstaff': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_prjpartners': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_prjsdate': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_prjedate': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
+        # Project Level metadata
+        schema.update({'ILRI_prjtitle': [toolkit.get_converter('convert_from_extras'),
+                                         toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_prjabstract': [toolkit.get_converter('convert_from_extras'),
+                                            toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_crpandprogram': [toolkit.get_converter('convert_from_extras'),
+                                              toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_prjwebsite': [toolkit.get_converter('convert_from_extras'),
+                                           toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_prjgrant': [toolkit.get_converter('convert_from_extras'),
+                                         toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_prjdonor': [toolkit.get_converter('convert_from_extras'),
+                                         toolkit.get_validator('ignore_missing')]})
+        schema.update(
+            {'ILRI_prjpi': [toolkit.get_converter('convert_from_extras'), toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_prjpiemail': [toolkit.get_converter('convert_from_extras'),
+                                           toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_prjstaff': [toolkit.get_converter('convert_from_extras'),
+                                         toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_prjpartners': [toolkit.get_converter('convert_from_extras'),
+                                            toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_prjsdate': [toolkit.get_converter('convert_from_extras'),
+                                         toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_prjedate': [toolkit.get_converter('convert_from_extras'),
+                                         toolkit.get_validator('ignore_missing')]})
 
+        schema.update({'ILRI_prjregions': [toolkit.get_converter('convert_from_extras'),
+                                           toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_prjcountries': [toolkit.get_converter('convert_from_extras'),
+                                             toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_prjspecies': [toolkit.get_converter('convert_from_extras'),
+                                           toolkit.get_validator('ignore_missing')]})
 
-        schema.update({'ILRI_prjregions': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_prjcountries': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_prjspecies': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
+        # Project vocabularies
+        schema.update({'ILRI_prjsubjects': [toolkit.get_converter('convert_from_tags')("ILRI_vocsubjects"),
+                                            toolkit.get_validator('ignore_missing')]})
 
-        #Project vocabularies
-        schema.update({'ILRI_prjsubjects': [toolkit.get_converter('convert_from_tags')("ILRI_vocsubjects"),toolkit.get_validator('ignore_missing')]})
+        # Study Level metadata
+        schema.update({'ILRI_actytitle': [toolkit.get_converter('convert_from_extras'),
+                                          toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actyabstract': [toolkit.get_converter('convert_from_extras'),
+                                             toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actyotheruse': [toolkit.get_converter('convert_from_extras'),
+                                             toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actycontactperson': [toolkit.get_converter('convert_from_extras'),
+                                                  toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actycontactemail': [toolkit.get_converter('convert_from_extras'),
+                                                 toolkit.get_validator('ignore_missing')]})
 
-        #Study Level metadata
-        schema.update({'ILRI_actytitle': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actyabstract': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actycontactperson': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actycontactemail': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actypi': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actystaff': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actypartners': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actycustodian': [toolkit.get_converter('convert_from_extras'),
+                                              toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actycustodianemail': [toolkit.get_converter('convert_from_extras'),
+                                                   toolkit.get_validator('ignore_missing')]})
 
-        #Study Vocabularies
-        schema.update({'ILRI_actyregions': [toolkit.get_converter('convert_from_tags')("ILRI_vocregions"),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actycountries': [toolkit.get_converter('convert_from_tags')("ILRI_voccountries"),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actyspecies': [toolkit.get_converter('convert_from_tags')("ILRI_vocspecies"),toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actypi': [toolkit.get_converter('convert_from_extras'),
+                                       toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actypiemail': [toolkit.get_converter('convert_from_extras'),
+                                            toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actystaff': [toolkit.get_converter('convert_from_extras'),
+                                          toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actypartners': [toolkit.get_converter('convert_from_extras'),
+                                             toolkit.get_validator('ignore_missing')]})
 
+        # Study Vocabularies
+        schema.update({'ILRI_actyregions': [toolkit.get_converter('convert_from_tags')("ILRI_vocregions"),
+                                            toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actycountries': [toolkit.get_converter('convert_from_tags')("ILRI_voccountries"),
+                                              toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actyspecies': [toolkit.get_converter('convert_from_tags')("ILRI_vocspecies"),
+                                            toolkit.get_validator('ignore_missing')]})
 
-        schema.update({'ILRI_actynatlevel': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actymapextent': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actymapzoom': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actyboundbox': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actyboundboxcenter': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actynatlevel': [toolkit.get_converter('convert_from_extras'),
+                                             toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actymapextent': [toolkit.get_converter('convert_from_extras'),
+                                              toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actymapzoom': [toolkit.get_converter('convert_from_extras'),
+                                            toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actyboundbox': [toolkit.get_converter('convert_from_extras'),
+                                             toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actyboundboxcenter': [toolkit.get_converter('convert_from_extras'),
+                                                   toolkit.get_validator('ignore_missing')]})
 
-        schema.update({'ILRI_actydatecollected': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actydatavailable': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actydataowner': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actysharingagreement': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actyconfideclaration': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actyusageconditions': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actycitation': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
-        schema.update({'ILRI_actycitationacknowledge': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actydatecollected': [toolkit.get_converter('convert_from_extras'),
+                                                  toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actydatecollectedend': [toolkit.get_converter('convert_from_extras'),
+                                                     toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actydatavailable': [toolkit.get_converter('convert_from_extras'),
+                                                 toolkit.get_validator('ignore_missing')]})
 
+        schema.update({'ILRI_actyrelconfdata': [toolkit.get_converter('convert_from_extras'),
+                                                toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actyfarmconsent': [toolkit.get_converter('convert_from_extras'),
+                                                toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actyipownership': [toolkit.get_converter('convert_from_extras'),
+                                                toolkit.get_validator('ignore_missing')]})
 
+        # schema.update({'ILRI_actydataowner': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
+        # schema.update({'ILRI_actysharingagreement': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
+        # schema.update({'ILRI_actyconfideclaration': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
+        # schema.update({'ILRI_actyusageconditions': [toolkit.get_converter('convert_from_extras'),toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actycitation': [toolkit.get_converter('convert_from_extras'),
+                                             toolkit.get_validator('ignore_missing')]})
+        schema.update({'ILRI_actycitationacknowledge': [toolkit.get_converter('convert_from_extras'),
+                                                        toolkit.get_validator('ignore_missing')]})
 
         return schema
 
-    # --- The following are recording functions but that must be implemented
 
-    def setup_template_variables(self, context, data_dict):
-        ILRIMetadataPlugin.num_times_setup_template_variables_called += 1
-        return super(ILRIMetadataPlugin, self).setup_template_variables(
-                context, data_dict)
 
+    # The following functions are implemented to satistfy the odkinterface but they don't need changes
     def new_template(self):
-        ILRIMetadataPlugin.num_times_new_template_called += 1
-        return super(ILRIMetadataPlugin, self).new_template()
+        IlrimetadataPlugin.num_times_new_template_called += 1
+        return super(IlrimetadataPlugin, self).new_template()
 
     def read_template(self):
-        ILRIMetadataPlugin.num_times_read_template_called += 1
-        return super(ILRIMetadataPlugin, self).read_template()
+        IlrimetadataPlugin.num_times_read_template_called += 1
+        return super(IlrimetadataPlugin, self).read_template()
 
     def edit_template(self):
-        ILRIMetadataPlugin.num_times_edit_template_called += 1
-        return super(ILRIMetadataPlugin, self).edit_template()
+        IlrimetadataPlugin.num_times_edit_template_called += 1
+        return super(IlrimetadataPlugin, self).edit_template()
 
     def search_template(self):
-        ILRIMetadataPlugin.num_times_search_template_called += 1
-        return super(ILRIMetadataPlugin, self).search_template()
+        IlrimetadataPlugin.num_times_search_template_called += 1
+        return super(IlrimetadataPlugin, self).search_template()
 
     def history_template(self):
-        ILRIMetadataPlugin.num_times_history_template_called += 1
-        return super(ILRIMetadataPlugin, self).history_template()
+        IlrimetadataPlugin.num_times_history_template_called += 1
+        return super(IlrimetadataPlugin, self).history_template()
 
     def package_form(self):
-        ILRIMetadataPlugin.num_times_package_form_called += 1
-        return super(ILRIMetadataPlugin, self).package_form()
+        IlrimetadataPlugin.num_times_package_form_called += 1
+        return super(IlrimetadataPlugin, self).package_form()
 
     # check_data_dict() is deprecated, this method is only here to test that
     # legacy support for the deprecated method works.
     def check_data_dict(self, data_dict, schema=None):
-        ILRIMetadataPlugin.num_times_check_data_dict_called += 1
+        IlrimetadataPlugin.num_times_check_data_dict_called += 1
+
+    def is_fallback(self):
+        # Return True to register this plugin as the default handler for
+        # package types not handled by any other IDatasetForm plugin.
+        return True
+
+    def package_types(self):
+        # This plugin doesn't handle any special package types, it just
+        # registers itself as the default (above).
+        return []

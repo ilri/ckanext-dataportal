@@ -1,0 +1,46 @@
+{% import 'macros/form.html' as form %}
+
+
+<div class="row-fluid">
+    <div class="span4">
+        <b>Request ID:</b> {{ requestData.request_id }}
+    </div>
+    <div class="span4">
+        <b>Date:</b> {{ requestData.request_date }}
+    </div>
+    <div class="span4">
+        <b>IP Address:</b> {{ requestData.request_ip }}
+    </div>
+</div>
+<div class="row-fluid">
+    <div class="span4">
+        <b>Dataset:</b> {{ requestData.datasetName }}
+    </div>
+    <div class="span4">
+        <b>Resource:</b> {{ requestData.resourceName }}
+    </div>
+    <div class="span4">
+        <b>Requested by :</b> {{ requestData.user_name }}
+    </div>
+</div>
+<div class="row-fluid">
+    <div class="span4">
+        <b>Country:</b> {{ requestData.user_country }}
+    </div>
+    <div class="span4">
+        <b>Hear from:</b> {{ requestData.user_hearfrom }}
+    </div>
+    <div class="span4">
+
+    </div>
+</div>
+<div class="row-fluid">
+    <div class="span4">
+        <b>Data usage:</b> {{ requestData.user_datausage }}
+    </div>
+    <div class="span4">
+        <b>Other datasets requested:</b> {{ requestData.user_otherdata }}
+    </div>
+</div>
+
+

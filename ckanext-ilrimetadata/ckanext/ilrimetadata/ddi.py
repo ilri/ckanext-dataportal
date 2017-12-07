@@ -198,7 +198,10 @@ def createDDIXML(pkginfo,url):
 
     node3 = Element("distrbtr")
     node2.append(node3)
-    node3.text = pkginfo['ILRI_actydataowner']
+    try:
+        node3.text = pkginfo['ILRI_actyipownership']
+    except:
+        node3.text = ""
 
 
 
@@ -330,13 +333,16 @@ def createDDIXML(pkginfo,url):
     node2 = Element("useStmt")
     node.append(node2)
 
-    node3 = Element("conditions")
-    node2.append(node3)
-    node3.text = pkginfo['ILRI_actyusageconditions']
 
     node3 = Element("specPerm")
     node2.append(node3)
-    node3.text = pkginfo['ILRI_actysharingagreement']
+    try:
+        if pkginfo['ILRI_actyrelconfdata'] == "on":
+            node3.text = "Usage onf confidential data could be granted with a signed NDA"
+        else:
+            node3.text = "Confidential data is not accessible"
+    except:
+        node3.text = "Confidential data is not accessible"
 
     node3 = Element("contact")
     node2.append(node3)

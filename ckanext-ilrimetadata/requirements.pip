@@ -1,3 +1,0 @@
-easy_install mysql-python
-pip install pycrypto
-pip install zope.sqlalchemy

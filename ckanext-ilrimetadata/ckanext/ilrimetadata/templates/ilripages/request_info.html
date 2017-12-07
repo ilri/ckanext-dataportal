@@ -7,11 +7,11 @@
 {% block subtitle %}{{ _("Request resource") }}{% endblock %}
 
 {% block breadcrumb_content %}
-  <li>{% link_for _('Organizations'), controller='organization', action='index' %}</li>
-  <li>{% link_for package.organization.title|truncate(30), controller='organization', action='read', id=package.organization.name %}</li>
-  <li>{% link_for package.title|truncate(30), controller='package', action='read', id=package.name %}</li>
-  <li>{% link_for resource.name|truncate(30), controller='package', action='resource_read', id=package.name, resource_id=resource.id %}</li>
-  <li>{% link_for _("Request resource"), controller='ckanext.ilrimetadata.controller:ILRIMetadataRequestInfoController', action='requestInfo', id=package.name, resource_id=resource.id  %}</li>  
+    <li>{% link_for _('Organizations'), controller='organization', action='index' %}</li>
+    <li>{% link_for package.organization.title|truncate(30), controller='organization', action='read', id=package.organization.name %}</li>
+    <li>{% link_for package.title|truncate(30), controller='package', action='read', id=package.name %}</li>
+    <li>{% link_for resource.name|truncate(30), controller='package', action='resource_read', id=package.name, resource_id=resource.id %}</li>
+    <li>{% link_for _("Request resource"), controller='ckanext.ilrimetadata.controller:ILRIMetadataRequestInfoController', action='requestInfo', id=package.name, resource_id=resource.id  %}</li>
 {% endblock %}
 
 {% set resourceData = h.ILRIMetadata_stringToDict(resource.description) %}
@@ -19,175 +19,202 @@
 {% set accessType = resourceData['resource_access'] %}
 
 {% if accessType != "Private" %}
-  {% if resource.format.lower() == "getdata"  %}
-    {% if confidential == "true" %}
-      {% set accessType = "Confidential" %}
+    {% if resource.format.lower() == "getdata"  %}
+        {% if confidential == "true" %}
+            {% set accessType = "Confidential" %}
+        {% endif %}
     {% endif %}
-  {% endif %}
 {% endif %}
 
 
 {% block primary %}
-  <article class="module">
-    <div class="module-content">
-      {% block about %}
-        <h1>{{resource.name}} </h1>
-        
-        {% if contentType == "tokenrequestsent" %}
-        <p> Your information has been submitted. ILRI will check your application and send you the "NONDISCLOSURE AND CONFIDENTIALITY AGREEMENT" for you to sign. On receipt of the signed agreement ILRI will send you the access token.</p>
-        {% endif %}
-        
-        {% if contentType == "downloadstart" %}
-          <p> Thank you. We are processing your request. Your download will start shortly. Please note that depending on the size of the database this might take few minutes.</p>
-        
-          <input type="hidden" id="resource_url" name="resource_url" value="{{ resource.url + "." + format }}">
-          <input type="hidden" id="request_data" name="request_data" value="{{ requestData }}">
-          
-	  <div id="GetData">
-	   
-	  </div>
-        
-        {% endif %}
-        
-        {% if contentType == "request" %}
-          {% if accessType == "Private" %}
-            <h2>Private access</h2>
-          {% endif %}
-          {% if accessType == "Confidential" %}
-            <h2>Confidential access and request form</h2>
-          {% endif %}
-          {% if accessType == "Public" %}
-            <h2>Guest book</h2>
-            <p>Please tell us some information about yourself</p>
-          {% endif %}
-          
-          <form class="dataset-form form-horizontal fileDownloadForm" method="post" action="{{ action }}" data-module="basic-form resource-form" enctype="multipart/form-data">
-                              
-          <input type="hidden" id="field_resourceFormat" name="field_resourceFormat" value="{{ format }}">
-          
-          {{ form.errors(error_summary) }}
-        
-          {% if accessType == "Confidential" %} 
-            <p>If you have a confidential access token enter it here</p>
-            
-            {{ form.input('field_token', id='field_token', label=_('Access token'), value='', classes=['control-medium'], is_required=true)  }}
-            
-            <button class="btn btn-primary" name="submittoken" type="submit">{{ _('Submit') }}</button>
-           
-            <hr>
-                        
-          {% endif %}
-        
-          {% if accessType == "Private" %}
-            <p>Please enter your user name and password to download this resource.</p>
-            
-            {{ form.input('field_user', id='field_user', label=_('User name'), value=data.field_user, classes=['control-small'])  }}
-            
-            <div class="control-group">
-              <label class="control-label" for="field-format">{{ _("Password") }}</label>              
-              <div class="controls">      
-                <input type="password" id="field_password" name="field_password" value="">     
-              </div>
-            </div>
-          
-          {% endif %}
-          
-          {% if accessType == "Public" or accessType == "Confidential" %}
-            
-            {% if accessType == "Confidential" %}
-              <p>If you don't have an access token you can request one by filling up the following information. <b>Please note that ILRI will email you the token if your application is accepted.</b></p>
-            {% endif %}
-          
-            {{ form.input('field_name', id='field_name', label=_('Name'), value=data.field_name, classes=['control-medium'], is_required=true)  }}
-          
-            {{ form.input('field_email', id='field_email', label=_('Email address'), value=data.field_email, classes=['control-medium'], is_required=true) }}
-          
-            {{ form.input('field_organization', id='field_organization', label=_('Organization'), placeholder=_('eg. World Bank'), value=data.field_organization, error='', classes=['control-medium'], is_required=true) }}
-        
-            <div class="control-group">
-              <label class="control-label" for="field-format">{{ _("Organization type") }}</label>
-              <span title="{{ _("This field is required") }}" class="control-required">*</span>
-              <div class="controls">      
-                <select id="field_organizationType" name="field_organizationType">        
-                {% for orgtype in ["NGO","Private sector","Public sector","University","Association", "Foundation", "Other"]  %}
-                  <option value="{{ orgtype }}" {% if orgtype == data.field_organizationType %}selected="selected"{% endif %} >{{ orgtype }}</option>
-                {% endfor %}
-                </select>      
-              </div>
-            </div>
-          
-            <div class="control-group">
-              <label class="control-label" for="field-format">{{ _("Country") }}</label>
-              <span title="{{ _("This field is required") }}" class="control-required">*</span>
-              <div class="controls">      
-                <select id="field_country" name="field_country">        
-                {% for country in h.ILRIMetadata_getCountries()  %}
-                  <option value="{{ country }}" {% if country == data.field_country %}selected="selected"{% endif %} >{{ country }}</option>
-                {% endfor %}
-                </select>      
-              </div>
-            </div>
-                                    
-            {% if accessType == "Confidential" %}              
-              {{ form.markdown('field_otherdatasets', id='field_otherdatasets', label=_('Which other datasets/resources should be included in this aggrement'), placeholder=_('Supply dataset and resource names'), value=data.field_otherdatasets, is_required=true) }}
-            {% endif %}
-            
-            {{ form.markdown('field_notes', id='field_notes', label=_('How would you use this dataset/resource'), placeholder=_('Supply as many details as possible'), value=data.field_notes, is_required=true) }}
-            
-            <div class="control-group">
-              <label class="control-label" for="field-format">{{ _("How did you hear about this dataset/resource") }}</label>
-              <span title="{{ _("This field is required") }}" class="control-required">*</span>
-              <div class="controls">      
-                <select id="field_hearfrom" name="field_hearfrom">        
-                {% for heartype in ["Publication","Word of mouth","ILRI website","CGIAR website","Internet search","Other"]  %}
-                  <option value="{{ heartype }}" {% if heartype == data.field_hearfrom %}selected="selected"{% endif %} >{{ heartype }}</option>
-                {% endfor %}
-                </select>      
-              </div>
-            </div>
-            
-            {% if accessType == "Confidential" %}
-              <div class="control-group">
-              <label class="control-label" for="field-format"> 
-              I have read and accepted ILRI's {% link_for _("Non-disclosure agreement"), controller='ckanext.ilrimetadata.controller:ILRIMetadataNDAController', action='displayAgreement', id=package.name, resource_id=resource.id %}
-              </label>
-                <div class="controls">
-                  
-                    <input id="field_aggrement" type="checkbox" name="field_aggrement" value="" {{ "checked " if data.field_aggrement == "yes" }} />
-                    
-                    <span title="{{ _("This field is required") }}" class="control-required">*</span>
-                  
-                </div>
-            </div>
-            {% endif %}
-        
-          {% endif %}
-        
-          <div class="form-actions">
-        
-          {% if accessType == "Public" %}
-            <button class="btn btn-primary" name="requestdownload" type="submit">{{ _('Download') }}</button>
-          {% endif %}
-          
-          {% if accessType == "Confidential" %}
-            <button class="btn btn-primary" name="requesttoken" type="submit">{{ _('Request confidential access') }}</button>
-          {% endif %}
-          
-          {% if accessType == "Private" %}
-            <button class="btn btn-primary" name="privatelogin" type="submit">{{ _('Log in to download') }}</button>
-          {% endif %}
-          {% if accessType == "Public" or accessType == "Confidential" %}
-            {{ form.required_message() }}
-          {% endif %}
-        
-          </div>
-        
-        </form>
-        {% endif %}
-        
-      {% endblock %}
-    </div>
-  </article>
+    <article class="module">
+        <div class="module-content">
+            {% block about %}
+                <h1>{{resource.name}} </h1>
+
+                {% if contentType == "tokenrequestsent" %}
+                    <p> Your information has been submitted. ILRI will check your application and send you the "NONDISCLOSURE AND CONFIDENTIALITY AGREEMENT" for you to sign. On receipt of the signed agreement ILRI will send you the access token.</p>
+                {% endif %}
+
+                {% if contentType == "downloadstart" %}
+                    <p> Thank you. We are processing your request. Your download will start shortly. Please note that depending on the size of the database this might take few minutes.</p>
+
+                    <input type="hidden" id="resource_url" name="resource_url" value="{{ resource.url + "." + format }}">
+                    <input type="hidden" id="request_data" name="request_data" value="{{ requestData }}">
+
+                    <div id="GetData">
+
+                    </div>
+
+                {% endif %}
+
+                {% if contentType == "request" %}
+                    {% if accessType == "Private" %}
+                        <h2>Private access</h2>
+                    {% endif %}
+                    {% if accessType == "Confidential" %}
+                        <h2>Confidential Data – Access and Request Form</h2>
+                        {{ h.render_markdown(resourceData['resource_description']) }}
+                        <hr>
+                    {% endif %}
+                    {% if accessType == "Public" %}
+                        <h2>Guest book (Optional)</h2>
+                        <p>Please tell us some information about yourself</p>
+                    {% endif %}
+
+                    <form class="dataset-form form-horizontal fileDownloadForm" method="post" action="{{ action }}" data-module="basic-form resource-form" enctype="multipart/form-data">
+
+                        <input type="hidden" id="field_resourceFormat" name="field_resourceFormat" value="{{ format }}">
+
+                        {{ form.errors(error_summary) }}
+
+                        {% if accessType == "Confidential" %}
+                            <p>If you have a confidential access token enter it here</p>
+
+                            {{ form.input('field_token', id='field_token', label=_('Access token'), value='', classes=['control-medium'], is_required=true)  }}
+
+                            <button class="btn btn-primary" name="submittoken" type="submit">{{ _('Submit') }}</button>
+
+                            <hr>
+
+                        {% endif %}
+
+                        {% if accessType == "Private" %}
+                            <p>Please enter your user name and password to download this resource.</p>
+
+                            {{ form.input('field_user', id='field_user', label=_('User name'), value=data.field_user, classes=['control-small'])  }}
+
+                            <div class="control-group">
+                                <label class="control-label" for="field-format">{{ _("Password") }}</label>
+                                <div class="controls">
+                                    <input type="password" id="field_password" name="field_password" value="">
+                                </div>
+                            </div>
+
+                        {% endif %}
+
+                        {% if accessType == "Public" or accessType == "Confidential" %}
+                            {% set field_required = false %}
+                            {% if accessType == "Confidential" %}
+                                {% set field_required = true %}
+                                <p>If you don't have an access token you can request one by filling up the following information. <b>Please note that ILRI will email you the token if your application is accepted.</b></p>
+                            {% endif %}
+
+                            {{ form.input('field_name', id='field_name', label=_('Name'), value=data.field_name, classes=['control-medium'], is_required=field_required)  }}
+
+                            {{ form.input('field_email', id='field_email', label=_('Email address'), value=data.field_email, classes=['control-medium'], is_required=field_required) }}
+
+                            {{ form.input('field_organization', id='field_organization', label=_('Organization'), placeholder=_('eg. World Bank'), value=data.field_organization, error='', classes=['control-medium'], is_required=field_required) }}
+
+                            <div class="control-group">
+                                <label class="control-label" for="field-format">{{ _("Organization type") }}</label>
+                                {% if accessType == "Confidential" %}
+                                    <span title="{{ _("This field is required") }}" class="control-required">*</span>
+                                {% endif %}
+                                <div class="controls">
+                                    <select id="field_organizationType" name="field_organizationType">
+                                        {% for orgtype in ["Select one","NGO","Private sector","Public sector","University","Association", "Foundation", "Other"]  %}
+                                            <option value="{{ orgtype }}" {% if orgtype == data.field_organizationType %}selected="selected"{% endif %} >{{ orgtype }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="control-group">
+                                <label class="control-label" for="field-format">{{ _("Country") }}</label>
+                                {% if accessType == "Confidential" %}
+                                    <span title="{{ _("This field is required") }}" class="control-required">*</span>
+                                {% endif %}
+                                <div class="controls">
+                                    <select id="field_country" name="field_country">
+                                        <option value="NA">Select one</option>
+                                        {% for country in h.ILRIMetadata_getCountries()  %}
+                                            <option value="{{ country }}" {% if country == data.field_country %}selected="selected"{% endif %} >{{ country }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            {% if accessType == "Confidential" %}
+                                {{ form.markdown('field_otherdatasets', id='field_otherdatasets', label=_('Which other datasets/resources should be included in this aggrement'), placeholder=_('Supply dataset and resource names'), value=data.field_otherdatasets, is_required=true) }}
+                            {% endif %}
+
+                            {{ form.markdown('field_notes', id='field_notes', label=_('How would you use this dataset/resource'), placeholder=_('Supply as many details as possible'), value=data.field_notes, is_required=field_required) }}
+
+                            <div class="control-group">
+                                <label class="control-label" for="field-format">{{ _("How did you hear about this dataset/resource") }}</label>
+                                {% if accessType == "Confidential" %}
+                                    <span title="{{ _("This field is required") }}" class="control-required">*</span>
+                                {% endif %}
+                                <div class="controls">
+                                    <select id="field_hearfrom" name="field_hearfrom">
+                                        {% for heartype in ["Select one","Publication","Word of mouth","ILRI website","CGIAR website","Internet search","Other"]  %}
+                                            <option value="{{ heartype }}" {% if heartype == data.field_hearfrom %}selected="selected"{% endif %} >{{ heartype }}</option>
+                                        {% endfor %}
+                                    </select>
+                                </div>
+                            </div>
+
+                            {% if accessType == "Confidential" %}
+                                <div class="control-group">
+                                    <label class="control-label" for="field-format">
+                                        I have read and accepted ILRI's {% link_for _("Non-disclosure agreement"), controller='ckanext.ilrimetadata.controller:ILRIMetadataNDAController', action='displayAgreement', id=package.name, resource_id=resource.id %}
+                                    </label>
+                                    <div class="controls">
+
+                                        <input id="field_aggrement" type="checkbox" name="field_aggrement" value="" {{ "checked " if data.field_aggrement == "yes" }} />
+
+                                        <span title="{{ _("This field is required") }}" class="control-required">*</span>
+
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                            {% if accessType == "Public" %}
+                                <hr>
+                                <h2>License (Required)</h2>
+                                <div class="control-group">
+                                    <label class="control-label" for="field-format">
+                                        I have read and accepted ILRI's <a target="_blank" href="{{ h.url_for(controller='ckanext.ilrimetadata.controller:ILRIMetadataNDAController', action='displayLicense', id=package.name, resource_id=resource.id) }}">Public access license</a>
+                                    </label>
+                                    <div class="controls">
+
+                                        <input id="field_aggrement" type="checkbox" name="field_aggrement" value="" {{ "checked " if data.field_aggrement == "yes" }} />
+
+                                        <span title="{{ _("This field is required") }}" class="control-required">*</span>
+
+                                    </div>
+                                </div>
+                            {% endif %}
+
+                        {% endif %}
+
+                        <div class="form-actions">
+
+                            {% if accessType == "Public" %}
+                                <button class="btn btn-primary" name="requestdownload" type="submit">{{ _('Download') }}</button>
+                            {% endif %}
+
+                            {% if accessType == "Confidential" %}
+                                <button class="btn btn-primary" name="requesttoken" type="submit">{{ _('Request confidential access') }}</button>
+                            {% endif %}
+
+                            {% if accessType == "Private" %}
+                                <button class="btn btn-primary" name="privatelogin" type="submit">{{ _('Log in to download') }}</button>
+                            {% endif %}
+
+                            {{ form.required_message() }}
+
+
+                        </div>
+
+                    </form>
+                {% endif %}
+
+            {% endblock %}
+        </div>
+    </article>
 {% endblock %}
 
 {% block secondary %}

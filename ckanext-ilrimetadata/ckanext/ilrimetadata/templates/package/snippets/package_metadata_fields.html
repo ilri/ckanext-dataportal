@@ -2,31 +2,31 @@
 
 {% block package_metadata_fields %}
 
-<hr>
-<h2>{{ _("Project metadata") }}</h2> 
-  
-  {% if h.ILRIMetadata_isDatasetNew(h.full_current_url()) == true %}
-  <p>
-    <div style="float:left;">
-      {{ _("Get project information from dataset ") }}
-      <select id="sourceProject" name="sourceProject">
-      <option value="None"></option>
-      {% for key,value in h.ILRIMetadata_getPackageList().iteritems()  %}
-        <option value="{{ key }}">{{ value }}</option>
-      {% endfor %}
-      </select>
-      <button type="button" onclick="copyProjectData()" >Get</button>
-    </div>
-  </p>
-  <div style="clear:both;" ></div>
-  <p> </p>
-  <p> </p>
-  {% endif %}
-  {{ form.input('ILRI_prjtitle', label=_('Project Title'), id='ILRI_prjtitle', placeholder=_('Title of the project generating this dataset'), value=data.ILRI_prjtitle, error=errors.ILRI_prjtitle, classes=['control-full']) }}
-  
-  {{ form.markdown('ILRI_prjabstract', id='ILRI_prjabstract', label=_('Project Description'), placeholder=_('A short description of the project generating this dataset'), value=data.ILRI_prjabstract, error=errors.ILRI_prjabstract) }}
+    <hr>
+    <h2>{{ _("Project metadata") }}</h2>
 
-{#
+    {% if h.ILRIMetadata_isDatasetNew(h.full_current_url()) == true %}
+        <p>
+        <div style="float:left;">
+            {{ _("Get project information from dataset ") }}
+            <select id="sourceProject" name="sourceProject">
+                <option value="None"></option>
+                {% for key,value in h.ILRIMetadata_getPackageList().iteritems()  %}
+                    <option value="{{ key }}">{{ value }}</option>
+                {% endfor %}
+            </select>
+            <button type="button" onclick="copyProjectData()" >Get</button>
+        </div>
+        </p>
+        <div style="clear:both;" ></div>
+        <p> </p>
+        <p> </p>
+    {% endif %}
+    {{ form.input('ILRI_prjtitle', label=_('Project Title'), id='ILRI_prjtitle', placeholder=_('Title of the project generating this dataset'), value=data.ILRI_prjtitle, error=errors.ILRI_prjtitle, classes=['control-full']) }}
+
+    {{ form.markdown('ILRI_prjabstract', id='ILRI_prjabstract', label=_('Project Description'), placeholder=_('A short description of the project generating this dataset'), value=data.ILRI_prjabstract, error=errors.ILRI_prjabstract) }}
+
+    {#
 <div class="control-group control-tinny">
     <label class="control-label" for="ILRI_crpandprogram">{{ _("CRPs and Programs") }}</label>
     <div class="controls">
@@ -38,65 +38,66 @@
     </div>
 </div>
   
-#}  
-  
-  {{ form.input('ILRI_prjwebsite', label=_('Project Website'), id='ILRI_prjwebsite', placeholder=_('eg. http://www.my_project_website.com'), value=data.ILRI_prjwebsite, error=errors.ILRI_prjwebsite, classes=['control-full']) }}
-  
-  {{ form.input('ILRI_prjgrant', label=_('Project Grant Code'), id='ILRI_prjgrant', placeholder=_('eg. IS03 NBO CG1234'), value=data.ILRI_prjgrant, error=errors.ILRI_prjgrant, classes=['control-small']) }}
-  
-  {{ form.input('ILRI_prjdonor', label=_('Project Donor'), id='ILRI_prjdonor', placeholder=_('eg. Gates Foundation'), value=data.ILRI_prjdonor, error=errors.ILRI_prjdonor, classes=['control-full']) }}
-  
-  {{ form.input('ILRI_prjpartners', label=_('Project Partners'), id='ILRI_prjpartners', placeholder=_('Indicate each partner separated by coma'), value=data.ILRI_prjpartners, error=errors.ILRI_prjpartners, classes=['control-full']) }}
-  
-  {{ form.input('ILRI_prjsdate', label=_('Project start date'), id='ILRI_prjsdate', placeholder=_('eg. 28/07/2014'), value=data.ILRI_prjsdate, error=errors.ILRI_prjsdate, classes=['control-small']) }}
-  
-  {{ form.input('ILRI_prjedate', label=_('Project end date'), id='ILRI_prjedate', placeholder=_('eg. 28/07/2016'), value=data.ILRI_prjedate, error=errors.ILRI_prjedate, classes=['control-small']) }}
-  
-  <hr>
-  
-  {{ form.input('ILRI_prjpi', label=_('Principal investigator'), id='ILRI_prjpi', placeholder='', value=data.ILRI_prjpi, error=errors.ILRI_prjpi, classes=['control-full']) }}
-  
-  {{ form.input('ILRI_prjstaff', label=_('Other staff involved'), id='ILRI_prjstaff', placeholder=_('Indicate each name separated by coma'), value=data.ILRI_prjstaff, error=errors.ILRI_prjstaff, classes=['control-full']) }}
-  
-  <hr>
+#}
+
+    {{ form.input('ILRI_prjwebsite', label=_('Project Website'), id='ILRI_prjwebsite', placeholder=_('eg. http://www.my_project_website.com'), value=data.ILRI_prjwebsite, error=errors.ILRI_prjwebsite, classes=['control-full']) }}
+
+    {{ form.input('ILRI_prjgrant', label=_('Project Grant Code'), id='ILRI_prjgrant', placeholder=_('eg. IS03 NBO CG1234'), value=data.ILRI_prjgrant, error=errors.ILRI_prjgrant, classes=['control-small']) }}
+
+    {{ form.input('ILRI_prjdonor', label=_('Project Donor'), id='ILRI_prjdonor', placeholder=_('eg. Gates Foundation'), value=data.ILRI_prjdonor, error=errors.ILRI_prjdonor, classes=['control-full']) }}
+
+    {{ form.input('ILRI_prjpartners', label=_('Project Partners'), id='ILRI_prjpartners', placeholder=_('Indicate each partner separated by coma'), value=data.ILRI_prjpartners, error=errors.ILRI_prjpartners, classes=['control-full']) }}
+
+    {{ form.input('ILRI_prjsdate', label=_('Project start date'), id='ILRI_prjsdate', placeholder=_('eg. 28/07/2014'), value=data.ILRI_prjsdate, error=errors.ILRI_prjsdate, classes=['control-small']) }}
+
+    {{ form.input('ILRI_prjedate', label=_('Project end date'), id='ILRI_prjedate', placeholder=_('eg. 28/07/2016'), value=data.ILRI_prjedate, error=errors.ILRI_prjedate, classes=['control-small']) }}
+
+    <hr>
+
+    {{ form.input('ILRI_prjpi', label=_('Principal investigator'), id='ILRI_prjpi', placeholder='', value=data.ILRI_prjpi, error=errors.ILRI_prjpi, classes=['control-full']) }}
+    {{ form.input('ILRI_prjpiemail', label=_('Principal investigator email'), id='ILRI_prjpiemail', placeholder='', value=data.ILRI_prjpiemail, error=errors.ILRI_prjpiemail, classes=['control-full']) }}
+
+    {{ form.input('ILRI_prjstaff', label=_('Other staff involved'), id='ILRI_prjstaff', placeholder=_('Indicate each name separated by coma'), value=data.ILRI_prjstaff, error=errors.ILRI_prjstaff, classes=['control-full']) }}
+
+    <hr>
 
 
-  
-<div class="control-group control-tinny">
-    <label class="control-label" for="ILRI_prjregions">{{ _("Regions") }}</label>
-    <div class="controls">
-      <!--The hidden is used by CKAN to store and collect the data-->
-      <div id="cnt-ILRI_prjregions"></div>
-      <input type="hidden" id="ILRI_prjregions" name="ILRI_prjregions" placeholder="Regions" value="{{ data.ILRI_prjregions }}" > 
-      <!--The text input is used by tagsManager to display the tags. tagsManager will pass the value between the hiden and text inputs using the paramenter output: '#id' in the javaScript. Check /resource/ilrimetadata.js.  -->
-      <input type="text" id="ILRI_prjregions2" name="ILRI_prjregions2" placeholder="Regions" class="tm-ILRI_prjregions tm-input-success">  
+
+    <div class="control-group control-tinny">
+        <label class="control-label" for="ILRI_prjregions">{{ _("Regions") }}</label>
+        <div class="controls">
+            <!--The hidden is used by CKAN to store and collect the data-->
+            <div id="cnt-ILRI_prjregions"></div>
+            <input type="hidden" id="ILRI_prjregions" name="ILRI_prjregions" placeholder="Regions" value="{{ data.ILRI_prjregions }}" >
+            <!--The text input is used by tagsManager to display the tags. tagsManager will pass the value between the hiden and text inputs using the paramenter output: '#id' in the javaScript. Check /resource/ilrimetadata.js.  -->
+            <input type="text" id="ILRI_prjregions2" name="ILRI_prjregions2" placeholder="Regions" class="tm-ILRI_prjregions tm-input-success">
+        </div>
     </div>
-</div>
-  
 
-  
-<div class="control-group control-small">
-    <label class="control-label" for="ILRI_prjcountries">{{ _("Countries") }}</label>
-    <div class="controls">      
-      <div id="cnt-ILRI_prjcountries"></div>
-      <input type="hidden" id="ILRI_prjcountries" name="ILRI_prjcountries" placeholder="Countries" value="{{ data.ILRI_prjcountries }}" >       
-      <input type="text" id="ILRI_prjcountries2" name="ILRI_prjcountries2" placeholder="Countries" class="tm-ILRI_prjcountries tm-input-success">  
+
+
+    <div class="control-group control-small">
+        <label class="control-label" for="ILRI_prjcountries">{{ _("Countries") }}</label>
+        <div class="controls">
+            <div id="cnt-ILRI_prjcountries"></div>
+            <input type="hidden" id="ILRI_prjcountries" name="ILRI_prjcountries" placeholder="Countries" value="{{ data.ILRI_prjcountries }}" >
+            <input type="text" id="ILRI_prjcountries2" name="ILRI_prjcountries2" placeholder="Countries" class="tm-ILRI_prjcountries tm-input-success">
+        </div>
     </div>
-</div>
 
 
 
-<div class="control-group control-small">
-    <label class="control-label" for="ILRI_prjspecies">{{ _("Commodities") }}</label>
-    <div class="controls">
-      <div id="cnt-ILRI_prjspecies"></div>
-      <input type="hidden" id="ILRI_prjspecies" name="ILRI_prjspecies" placeholder="Species" value="{{ data.ILRI_prjspecies }}" >       
-      <input type="text" id="ILRI_prjspecies2" name="ILRI_prjspecies2" placeholder="Species" class="tm-ILRI_prjspecies tm-input-success">  
+    <div class="control-group control-small">
+        <label class="control-label" for="ILRI_prjspecies">{{ _("Commodities") }}</label>
+        <div class="controls">
+            <div id="cnt-ILRI_prjspecies"></div>
+            <input type="hidden" id="ILRI_prjspecies" name="ILRI_prjspecies" placeholder="Species" value="{{ data.ILRI_prjspecies }}" >
+            <input type="text" id="ILRI_prjspecies2" name="ILRI_prjspecies2" placeholder="Species" class="tm-ILRI_prjspecies tm-input-success">
+        </div>
     </div>
-</div>
 
 
 
-  
+
 
 {% endblock %}

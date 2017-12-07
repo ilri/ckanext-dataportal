@@ -3,7 +3,7 @@
 
 from Crypto.Cipher import AES
 import base64
-from .config import loadConfigVar
+from pylons import config
 
 # the block size for the cipher object; must be 16, 24, or 32 for AES
 BLOCK_SIZE = 16
@@ -22,11 +22,11 @@ EncodeAES = lambda c, s: base64.b64encode(c.encrypt(pad(s)))
 DecodeAES = lambda c, e: c.decrypt(base64.b64decode(e)).rstrip(PADDING)
 
 def encodeData(data):
-    secret = loadConfigVar("secretkey")
+    secret = config["ilriextensions.getdata.secretkey"]
     cipher = AES.new(secret)
     return EncodeAES(cipher, data)
 
 def decodeData(data):
-    secret = loadConfigVar("secretkey")
+    secret = config["ilriextensions.getdata.secretkey"]
     cipher = AES.new(secret)
     return DecodeAES(cipher, data)

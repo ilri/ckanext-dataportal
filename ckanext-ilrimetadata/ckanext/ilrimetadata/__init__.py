@@ -1,28 +1,11 @@
-# this is a namespace package
+from sqlalchemy.orm import configure_mappers
 
-import json
+# import or define all models here to ensure they are attached to the
+# Base.metadata prior to any initialization routines
+from .dbmodels import userModel,tokenModel,resourcestatsModel,tokenrequestModel,datasetokenModel,\
+    resourcetokenModel,authgroupModel,usergroupModel,userdatasetModel,useresourceModel,\
+    groupdatasetModel,groupresourceModel,adminUsersModel  # flake8: noqa
 
-from sqlalchemy import create_engine
-
-from .config import loadConfigVar
-
-from .dbmodels import (
-     DBSession,
-    Base,
-)
-
-try:
-
-    #Creates an SQLAlchemy engine with the confguration parameters
-    engine = create_engine("mysql://" + loadConfigVar("user") + ":" + loadConfigVar("password") + "@" + loadConfigVar("host") + "/" + loadConfigVar("schema"),
-                           pool_size=20, max_overflow=0, pool_recycle=3600)
-
-    #Sets the engine to the session and the Base model class
-    DBSession.configure(bind=engine)
-    Base.metadata.bind = engine
-
-    import pkg_resources
-    pkg_resources.declare_namespace(__name__)
-except ImportError:
-    import pkgutil
-    __path__ = pkgutil.extend_path(__path__, __name__)
+# run configure_mappers after defining all of the models to ensure
+# all relationships can be setup
+configure_mappers()

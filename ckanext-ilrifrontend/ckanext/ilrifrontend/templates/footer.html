@@ -1,54 +1,47 @@
-<footer class="site-footer">
+{% ckan_extends %}
 
-    <div class="container container-center-text">
-        <a class="logo logos-left-padding" href="{{ h.url_for('organization_read', action='read', id='ilri') }}"><img src="{{ h.url_for_static('ILRI.png') }}" alt="ILRI" title="ILRI"  /></a>
-         <a class="logo logos-left-padding" href="{{ h.url_for('organization_read', action='read', id='ifpri') }}"><img src="{{ h.url_for_static('ifpri.png') }}" alt="International Food Policy Research Institute" title="International Food Policy Research Institute" target="_blank" /></a>
+{% block footer_content %}
+    <div class="row">
+        <div class="span12 container text-center">
+            <a class="logo logos-left-padding" href="{{ h.url_for('organization_read', action='read', id='ilri') }}"><img src="{{ h.url_for_static('ILRI.png') }}" alt="ILRI" title="ILRI"  /></a>
+            <a class="logo logos-left-padding" href="{{ h.url_for('organization_read', action='read', id='ifpri') }}"><img src="{{ h.url_for_static('ifpri.png') }}" alt="International Food Policy Research Institute" title="International Food Policy Research Institute" target="_blank" /></a>
+        </div>
     </div>
     <p></p>
-    <div class="container container-center-text">
-        <a class="logo logos-left-padding" href="{{ h.url_for('group_read', action='read', id='crp37') }}"><img src="{{ h.url_for_static('CRP37.png') }}" alt="Livestock and Fish" title="Livestock and Fish" target="_blank" /></a>
-        <a class="logo logos-left-padding" href="{{ h.url_for('group_read', action='read', id='ccafs') }}"><img src="{{ h.url_for_static('ccafs.png') }}" alt="Climate Change, Agriculture and Food Security" title="Climate Change, Agriculture and Food Security" target="_blank" /></a>
-        <a class="logo logos-left-padding" href="{{ h.url_for('group_read', action='read', id='africarising') }}"><img src="{{ h.url_for_static('africarising.png') }}" alt="Africa RISING" title="Africa RISING" target="_blank" /></a>
+    <div class="row">
+        <div class="span12 container text-center ">
+            <a class="logo logos-left-padding" href="{{ h.url_for('group_read', action='read', id='crp37') }}"><img src="{{ h.url_for_static('CRP37.png') }}" alt="Livestock and Fish" title="Livestock and Fish" target="_blank" /></a>
+            <a class="logo logos-left-padding" href="{{ h.url_for('group_read', action='read', id='ccafs') }}"><img src="{{ h.url_for_static('ccafs.png') }}" alt="Climate Change, Agriculture and Food Security" title="Climate Change, Agriculture and Food Security" target="_blank" /></a>
+            <a class="logo logos-left-padding" href="{{ h.url_for('group_read', action='read', id='africarising') }}"><img src="{{ h.url_for_static('africarising.png') }}" alt="Africa RISING" title="Africa RISING" target="_blank" /></a>
+        </div>
     </div>
-
-    <div class="container">
-        {% block footer_content %}
-        <nav class="footer-links">
+    <div class="row">
+        <div class="span12">
+            <hr>
+        </div>
+    </div>
+    <div class="row">
+        <div class="span8 footer-links">
             {% block footer_nav %}
-            <ul class="unstyled">
-                {% block footer_links %}
-                <li><a href="{{ h.url_for(controller='home', action='about') }}">{{ _('About {0}').format(g.site_title) }}</a></li>
-                {% endblock %}
-            </ul>
-            <ul class="unstyled">
-                {% block footer_links_ckan %}
-
-                {% endblock %}
-            </ul>
+                <ul class="unstyled">
+                    {% block footer_links %}
+                        <li><a href="{{ h.url_for(controller='home', action='about') }}">{{ _('About {0}').format(g.site_title) }}</a></li>
+                    {% endblock %}
+                </ul>
+                <ul class="unstyled">
+                    {% block footer_links_ckan %}
+                        <li><a href="{{ h.url_for(controller='ckanext.ilrifrontend.controller:harvestController', action='display_harvestInfo') }}">{{ _('Harvest ILRI datasets using API') }}</a></li>
+                    {% endblock %}
+                </ul>
             {% endblock %}
-        </nav>
-
-        {% block footer_attribution %}
-        <div class="attribution container-right-text">
-            <p>{% trans %}<strong>Powered by</strong></p><a class="hide-text new-ckan-footer-logo " href="http://ckan.org">CKAN</a>{% endtrans %}
         </div>
-        {% endblock %}
-        {% block footer_lang %}
-        <div class="attribution container-right-text">
-            <p></p>
-            <p>{% link_for _('Harvest ILRI datasets using API'), controller='ckanext.ilrifrontend.controller:harvestController', action='display_harvestInfo' %}</p>
+        <div class="span4 attribution">
+            {% block footer_attribution %}
+                    <p class="pull-right">{% trans %}<strong>Powered by</strong><br/>
+                    <a class="hide-text ckan-footer-logo pull-right" href="http://ckan.org">CKAN</a></p>{% endtrans %}
+            {% endblock %}
+            {% block footer_lang %}
+            {% endblock %}
         </div>
-        {% endblock %}
-        {% endblock %}
     </div>
-
-
-
-
-
-    {% block footer_debug %}
-    {% if g.debug %}
-    {% include 'snippets/debug.html' %}
-    {% endif %}
-    {% endblock %}
-</footer>
+{% endblock %}

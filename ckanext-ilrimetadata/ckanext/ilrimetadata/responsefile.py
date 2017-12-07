@@ -1,16 +1,14 @@
 import ckan.lib.uploader as uploader
 import ckan.lib.base as base
 from ckan.common import _
-
+import ckan.lib.helpers as h
 import mimetypes
 import os
-from .config import loadConfigVar
 from subprocess import call
-
-
+from pylons import config
 
 abort = base.abort
-redirect = base.redirect
+
 
 #Creates an file download iterator of 4096 bytes. So a massive file is not loaded into memory
 class FileIterator(object):
@@ -59,19 +57,19 @@ def getCKANFile(response,resourceInfo):
         return response
     else:
         print "CKAN link"
-        redirect(resourceInfo['url'])
+        h.redirect_to(resourceInfo['url'])
 
 #Process a GetData Request
 def getDataFile(requestID,response,database,table,format,confidential):
 
 
     #Load configuration variables
-    getDataDir = loadConfigVar("getdatadir")
-    getDataHost = loadConfigVar("getdatahost")
-    getDataPort = loadConfigVar("getdataport")
-    getDataUser = loadConfigVar("getdatauser")
-    getDataPassword = loadConfigVar("getdatapassword")
-    mySQLToFileBin = loadConfigVar("mysqltofilebin")
+    getDataDir = config["ilriextensions.tempdir"]
+    getDataHost = config["ilriextensions.getdata.host"]
+    getDataPort = config["ilriextensions.getdata.port"]
+    getDataUser = config["ilriextensions.getdata.user"]
+    getDataPassword = config["ilriextensions.getdata.password"]
+    mySQLToFileBin = config["ilriextensions.getdata.mysqltofilebin"]
 
     #Check first if the file exists. Meaning was requested and is less than 5 minute old
     if os.path.isfile(getDataDir + "/" + requestID + ".zip"):
@@ -98,8 +96,8 @@ def getDataFile(requestID,response,database,table,format,confidential):
     args.append("-u " + getDataUser)
     args.append("-p " + getDataPassword)
     args.append("-o " + format.upper())
-    if format.upper() == "STATA" or format.upper() == "SPSS":
-        args.append('-n " "')
+    #if format.upper() == "STATA" or format.upper() == "SPSS":
+    #    args.append('-n " "')
     args.append("-d " + getDataDir + "/" + requestID + "/")
     args.append("-s " + database)
     if table is not None:
@@ -108,6 +106,7 @@ def getDataFile(requestID,response,database,table,format,confidential):
     if confidential == "true":
         args.append("-T")
     result = call(args)
+    print args
 
     #If MySQLToFile returned 0 = OK
     if result == 0:

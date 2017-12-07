@@ -13,7 +13,7 @@
     {% endblock %}
 	<p class="description">
         {% if resourceData['resource_description'] %}
-            {{ h.markdown_extract(resourceData['resource_description'], extract_length=255) }}
+            {{ h.render_markdown(resourceData['resource_description']) }}
         {% endif %}
 	<p class="heading">Available formats</p>
 

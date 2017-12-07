@@ -12,4 +12,3 @@ class harvestController(toolkit.BaseController):
     def display_harvestInfo(self):
         vars = {'host': toolkit.request.host_url}
         return toolkit.render('ilripages/harvest_info.html',extra_vars=vars)
-

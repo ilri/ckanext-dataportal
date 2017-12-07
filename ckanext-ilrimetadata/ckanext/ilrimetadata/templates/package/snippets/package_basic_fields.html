@@ -2,227 +2,253 @@
 
 {% block package_basic_fields_title %}
 
-{{ form.input('title', id='field-title', label=_('Title'), placeholder=_('eg. A descriptive title'), value=data.title, error=errors.title, classes=['control-full', 'control-large'], attrs={'data-module': 'slug-preview-target'}) }}
+    {{ form.input('title', id='field-title', label=_('Title'), placeholder=_('eg. A descriptive title'), value=data.title, error=errors.title, classes=['control-full', 'control-large'], attrs={'data-module': 'slug-preview-target'}) }}
 
 {% endblock %}
 
 {% block package_basic_fields_url %}
-  {% if h.ILRIMetadata_isDatasetNew(h.full_current_url()) == true %}
-    {% set prefix = h.url_for(controller='package', action='read', id='') %}
-    {% set domain = h.url_for(controller='package', action='read', id='', qualified=true) %}
-    {% set domain = domain|replace("http://", "")|replace("https://", "") %}
-    {% set attrs = {'data-module': 'slug-preview-slug', 'data-module-prefix': domain, 'data-module-placeholder': '<dataset>'} %}
+    {% if h.ILRIMetadata_isDatasetNew(h.full_current_url()) == true %}
+        {% set prefix = h.url_for(controller='package', action='read', id='') %}
+        {% set domain = h.url_for(controller='package', action='read', id='', qualified=true) %}
+        {% set domain = domain|replace("http://", "")|replace("https://", "") %}
+        {% set attrs = {'data-module': 'slug-preview-slug', 'data-module-prefix': domain, 'data-module-placeholder': '<dataset>'} %}
 
-    {{ form.prepend('name', id='field-name', label=_('URL'), prepend=prefix, placeholder=_('eg. my-dataset'), value=data.name, error=errors.name, attrs=attrs, is_required=true) }}
-  {% endif %}
-  
-  {% if h.ILRIMetadata_isDatasetNew(h.full_current_url()) == true %}
-  <p>
-    <hr>
-    <div style="float:left;">
-      {{ _("Get information from dataset ") }}
-      <select id="sourceStudy" name="sourceStudy">
-        <option value="None"></option>
-        {% for key,value in h.ILRIMetadata_getPackageList().iteritems()  %}
-          <option value="{{ key }}">{{ value }}</option>
-        {% endfor %}
-      </select>
-      <button type="button" onclick="copyStudyData()" >Get</button>
-    </div>
-  </p>
-    <div style="clear:both;" ></div>
-  <p></p>
-  {% endif %}
-  
+        {{ form.prepend('name', id='field-name', label=_('URL'), prepend=prefix, placeholder=_('eg. my-dataset'), value=data.name, error=errors.name, attrs=attrs, is_required=true) }}
+        {% set nameAvailable = True %}
+    {% else %}
+        {% set nameAvailable = False %}
+    {% endif %}
+
+    {% if h.ILRIMetadata_isDatasetNew(h.full_current_url()) == true %}
+        <p>
+        <hr>
+        <div style="float:left;">
+            {{ _("Get information from dataset ") }}
+            <select id="sourceStudy" name="sourceStudy">
+                <option value="None"></option>
+                {% for key,value in h.ILRIMetadata_getPackageList().iteritems()  %}
+                    <option value="{{ key }}">{{ value }}</option>
+                {% endfor %}
+            </select>
+            <button type="button" onclick="copyStudyData()" >Get</button>
+        </div>
+        </p>
+        <div style="clear:both;" ></div>
+        <p></p>
+    {% endif %}
+
 {% endblock %}
 
 
 
 {% block package_basic_fields_custom %}
+    <input type="hidden" id="dataset-name" name="dataset-name" value="{{ data.name }}" >
+    <div id="metadatatabs">
+        <ul>
+            <li><a href="#metadatatab1">General information</a></li>
+            <li><a href="#metadatatab2">Location</a></li>
+            <li><a href="#metadatatab3">Dates</a></li>
+            <li><a href="#metadatatab4">Ownership and Intelectual Property </a></li>
+        </ul>
 
-<div id="metadatatabs">
-    <ul>
-        <li><a href="#metadatatab1">General information</a></li>
-        <li><a href="#metadatatab2">Location</a></li>
-        <li><a href="#metadatatab3">Dates</a></li>
-        <li><a href="#metadatatab4">Ownership and Intelectual Property </a></li>
-    </ul>
-  
-  <div id="metadatatab1">
-  
-  {{ form.markdown('notes', id='field-notes', label=_('Abstract'), placeholder=_('eg. A short description of the dataset'), value=data.notes, error=errors.notes) }}
-  
-  
-  {{ form.input('ILRI_actycontactperson', label=_('Contact person'), id='ILRI_actycontactperson', placeholder=_('Person to be contacted for this dataset'), value=data.ILRI_actycontactperson, error=errors.ILRI_actycontactperson, classes=['control-full']) }}
-  
-  {{ form.input('ILRI_actycontactemail', label=_('Contact email'), id='ILRI_actycontactemail', placeholder=_('Email for information about this dataset'), value=data.ILRI_actycontactemail, error=errors.ILRI_actycontactemail, classes=['control-full']) }}
-  
-  {{ form.input('ILRI_actypi', label=_('Main researcher'), id='ILRI_actypi', placeholder=_(''), value=data.ILRI_actypi, error=errors.ILRI_actypi, classes=['control-full']) }}
-  
-  {{ form.input('ILRI_actystaff', label=_('Other staff involved'), id='ILRI_actystaff', placeholder=_('Separate each person with coma'), value=data.ILRI_actystaff, error=errors.ILRI_actystaff, classes=['control-full']) }}
-  
-  {{ form.input('ILRI_actypartners', label=_('Partners'), id='ILRI_actypartners', placeholder=_('Separate each name with coma'), value=data.ILRI_actypartners, error=errors.ILRI_actypartners, classes=['control-full']) }}
-  
+        <div id="metadatatab1">
 
-  
-    <div class="control-group control-tinny">
-      <label class="control-label" for="ILRI_actyspecies">{{ _("Commodities") }}</label>
-        <div class="controls">
-          <!--The hidden is used by CKAN to store and collect the data-->
-          <div id="cnt-ILRI_actyspecies"></div>
-          <input type="hidden" id="ILRI_actyspecies" name="ILRI_actyspecies" placeholder="Commodities" value="{{ h.ILRIMetadata_tagsToString(data.ILRI_actyspecies,",") }}" >
-          <!--The text input is used by tagsManager to display the tags. tagsManager will pass the value between the hiden and text inputs using the paramenter output: '#id' in the javaScript. Check /resource/ilrimetadata.js.  -->
-          <input type="text" id="ILRI_actyspecies2" name="ILRI_actyspecies2" placeholder="Commodities" class="tm-ILRI_actyspecies tm-input-success">
+            {% set existing_org = data.owner_org or data.group_id %}
+            {% set organizations_available = h.organizations_available('create_dataset') %}
+            <div class="control-group">
+                <label for="field-organizations" class="control-label">{{ _('Organization') }}</label>
+                <div class="controls">
+                    <select id="field-organizations" name="owner_org">
+                        {% if h.check_config_permission('create_unowned_dataset') %}
+                            <option value="" {% if not selected_org and data.id %} selected="selected" {% endif %}>{{ _('No organization') }}</option>
+                        {% endif %}
+                        {% for organization in organizations_available %}
+                            {# get out first org from users list only if there is not an existing org #}
+                            {% set selected_org = (existing_org and existing_org == organization.id) or (not existing_org and not data.id and organization.id == organizations_available[0].id) %}
+                            <option value="{{ organization.id }}" {% if selected_org %} selected="selected" {% endif %}>{{ organization.name }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
+            {{ form.markdown('notes', id='field-notes', label=_('Abstract'), placeholder=_('eg. A short description of the dataset'), value=data.notes, error=errors.notes) }}
+            {{ form.markdown('ILRI_actyotheruse', id='ILRI_actyotheruse', label=_('How this dataset could be used by others'), placeholder=_('Describe how others outside this organization could use this dataset both for research and development'), value=data.ILRI_actyotheruse, error=errors.ILRI_actyotheruse) }}
+            {{ form.input('ILRI_actypi', label=_('Principal investigator'), id='ILRI_actypi', placeholder=_('Surname, Initials (e.g. Poole, E.J.)'), value=data.ILRI_actypi, error=errors.ILRI_actypi, classes=['control-full']) }}
+            {{ form.input('ILRI_actypiemail', label=_('Principal investigator email'), id='ILRI_actypiemail', placeholder=_(''), value=data.ILRI_actypiemail, error=errors.ILRI_actypiemail, classes=['control-full']) }}
+            {{ form.markdown('ILRI_actypartners', label=_('Partners'), id='ILRI_actypartners', placeholder=_('Each name in full separated with coma'), value=data.ILRI_actypartners, error=errors.ILRI_actypartners, classes=['control-full']) }}
+            {{ form.markdown('ILRI_actystaff', label=_('Other researchers involved'), id='ILRI_actystaff', placeholder=_('Surname, Initials; Surname, Initials (e.g. Poole, E.J. ; Quiros, C.F)'), value=data.ILRI_actystaff, error=errors.ILRI_actystaff, classes=['control-full']) }}
+            {{ form.input('ILRI_actycontactperson', label=_('Contact person'), id='ILRI_actycontactperson', placeholder=_('Contact person for general data enquiries'), value=data.ILRI_actycontactperson, error=errors.ILRI_actycontactperson, classes=['control-full']) }}
+            {{ form.input('ILRI_actycontactemail', label=_('Contact person email'), id='ILRI_actycontactemail', placeholder='', value=data.ILRI_actycontactemail, error=errors.ILRI_actycontactemail, classes=['control-full']) }}
+            {{ form.input('ILRI_actycustodian', label=_('Custodian'), id='ILRI_actycustodian', placeholder=_('Current staff member who can make decision to approve NDA'), value=data.ILRI_actycustodian, error=errors.ILRI_actycustodian, classes=['control-full']) }}
+            {{ form.input('ILRI_actycustodianemail', label=_('Custodian email'), id='ILRI_actycustodianemail', placeholder='', value=data.ILRI_actycustodianemail, error=errors.ILRI_actycustodianemail, classes=['control-full']) }}
+
+            <div class="control-group control-tinny">
+                <label class="control-label" for="ILRI_actyspecies">{{ _("Commodities") }}</label>
+                <div class="controls">
+                    <!--The hidden is used by CKAN to store and collect the data-->
+                    <div id="cnt-ILRI_actyspecies"></div>
+                    <input type="hidden" id="ILRI_actyspecies" name="ILRI_actyspecies" placeholder="Commodities" value="{{ h.ILRIMetadata_tagsToString(data.ILRI_actyspecies,",") }}" >
+                    <!--The text input is used by tagsManager to display the tags. tagsManager will pass the value between the hiden and text inputs using the paramenter output: '#id' in the javaScript. Check /resource/ilrimetadata.js.  -->
+                    <input type="text" id="ILRI_actyspecies2" name="ILRI_actyspecies2" placeholder="Commodities" class="tm-ILRI_actyspecies tm-input-success">
+                </div>
+            </div>
+
+            <div class="control-group control-small">
+                <label class="control-label" for="ILRI_prjsubjects">{{ _("Subjects") }}</label>
+                <div class="controls">
+                    <div id="cnt-ILRI_prjsubjects"></div>
+                    <input type="hidden" id="ILRI_prjsubjects" name="ILRI_prjsubjects" placeholder="Subjects" value="{{ h.ILRIMetadata_tagsToString(data.ILRI_prjsubjects,",") }}" >
+                    <input type="text" id="ILRI_prjsubjects2" name="ILRI_prjsubjects2" placeholder="Subjects" class="tm-ILRI_prjsubjects tm-input-success">
+                </div>
+            </div>
+
+            <div class="control-group control-small">
+                <label class="control-label" for="tag_string">{{ _("Agrovoc Tags") }}</label>
+                <div class="controls">
+                    <div id="cnt-tag_string"></div>
+                    <input type="hidden" id="field-tags" name="tag_string" placeholder="eg. livestock, health, environment" value="{{ data.tag_string }}" >
+                    <input type="text" id="field-tags2" name="tag_string2" placeholder="eg. livestock, health" class="tm-tag_string tm-input-success">
+                    <span class="info-block info-inline">
+                        <i class="icon-info-sign"></i>
+                        <a href="http://aims.fao.org/standards/agrovoc/functionalities/search" target="_blank">You search an Agrovoc term here</a>
+                    </span>
+                </div>
+            </div>
+
+
+            <input type="hidden" id="field-private" name="private" value="False" >
+            {#  <div class="control-group">
+                <label for="field-private" class="control-label">{{ _('Visibility') }}</label>
+                <div class="controls">
+                    <select id="field-private" name="private">
+                        {% for option in [('False', _('Public'))] %}
+                            <option value="{{ option[0] }}" {% if option[0] == data.private|trim %}selected="selected"{% endif %}>{{ option[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            #}
+
+        </div>
+
+        <div id="metadatatab2">
+            <div class="control-group control-tinny">
+                <label class="control-label" for="ILRI_actyregions">{{ _("Regions") }}</label>
+                <div class="controls">
+                    <!--The hidden is used by CKAN to store and collect the data-->
+                    <div id="cnt-ILRI_actyregions"></div>
+                    <input type="hidden" id="ILRI_actyregions" name="ILRI_actyregions" placeholder="Regions" value="{{ h.ILRIMetadata_tagsToString(data.ILRI_actyregions,",") }}" >
+                    <!--The text input is used by tagsManager to display the tags. tagsManager will pass the value between the hiden and text inputs using the paramenter output: '#id' in the javaScript. Check /resource/ilrimetadata.js.  -->
+                    <input type="text" id="ILRI_actyregions2" name="ILRI_actyregions2" placeholder="Regions" class="tm-ILRI_actyregions tm-input-success">
+                </div>
+            </div>
+
+
+
+            <div class="control-group control-tinny">
+                <label class="control-label" for="ILRI_actycountries">{{ _("Countries") }}</label>
+                <div class="controls">
+                    <div id="cnt-ILRI_actycountries"></div>
+                    <input type="hidden" id="ILRI_actycountries" name="ILRI_actycountries" placeholder="Countries" value="{{ h.ILRIMetadata_tagsToString(data.ILRI_actycountries,"+") }}" >
+                    <input type="text" id="ILRI_actycountries2" name="ILRI_actycountries2" placeholder="Countries" class="tm-ILRI_actycountries tm-input-success">
+                </div>
+            </div>
+
+            <div class="control-group control-tinny">
+                <label class="control-label" for="ILRI_actynatlevel">{{ _("Sub-national level coverage") }}</label>
+                <div class="controls">
+                    <div id="cnt-ILRI_actynatlevel"></div>
+                    <input type="hidden" id="ILRI_actynatlevel" name="ILRI_actynatlevel" placeholder="eg. Kenya-Nairobi" value="{{ data.ILRI_actynatlevel }}" >
+                    <input type="text" id="ILRI_actynatlevel2" name="ILRI_actynatlevel2" placeholder="eg. Kenya-Nairobi" class="tm-ILRI_actynatlevel tm-input-success">
+                </div>
+            </div>
+
+            <input type="hidden" id="ILRI_actymapextent" name="ILRI_actymapextent" value="{{ data.ILRI_actymapextent }}" >
+            <input type="hidden" id="ILRI_actymapzoom" name="ILRI_actymapzoom" value="{{ data.ILRI_actymapzoom }}" >
+            <input type="hidden" id="ILRI_actyboundbox" name="ILRI_actyboundbox" value="{{ data.ILRI_actyboundbox }}" >
+            <input type="hidden" id="ILRI_actyboundboxcenter" name="ILRI_actyboundboxcenter" value="{{ data.ILRI_actyboundboxcenter }}" >
+
+            <b>Spatial area covered</b>
+            <button type="button" onclick="getCoordinates();" >Set coordinates manually</button>
+            <button type="button" onclick="cleaMapArea();" >Clear current area</button>
+            <div id="studyMap"></div>
+
+        </div>
+
+        <div id="metadatatab3">
+
+            {{ form.input('ILRI_actydatecollected', label=_('Data collected from'), id='ILRI_actydatecollected', placeholder=_('eg. 28/07/2014'), value=data.ILRI_actydatecollected, error=errors.ILRI_actydatecollected, classes=['control-small']) }}
+            {{ form.input('ILRI_actydatecollectedend', label=_('Data collected to'), id='ILRI_actydatecollectedend', placeholder=_('eg. 28/07/2014'), value=data.ILRI_actydatecollectedend, error=errors.ILRI_actydatecollectedend, classes=['control-small']) }}
+            {{ form.input('ILRI_actydatavailable', label=_('Availability date'), id='ILRI_actydatavailable', placeholder=_('eg. 28/07/2014'), value=data.ILRI_actydatavailable, error=errors.ILRI_actydatavailable, classes=['control-small']) }}
+
+        </div>
+
+        <div id="metadatatab4">
+            <div class="control-group">
+                {% set error = errors.license_id %}
+                <label class="control-label" for="field-license">{{ _("License") }}</label>
+                <div class="controls">
+                    <select id="field-license" name="license_id">
+                        {% set curr_license = data.get('license_id', 'notspecified') %}
+                        {% if curr_license != 'cc-by-sa' and curr_license != 'cc-by-nc-sa'  %}
+                            {% set curr_license = 'cc-by-sa' %}
+                        {% endif %}
+                        {% for license_desc, license_id in licenses|sort if license_desc  %}
+                            {% if license_id == 'cc-by' or license_id == 'cc-by-nc' %}
+                                <option value="{{ license_id }}" {% if curr_license == license_id %}selected="selected"{% endif %}>{{  license_desc }}</option>
+                            {% endif %}
+                        {% endfor %}
+                    </select>
+                    {% if error %}<span class="error-block">{{ error }}</span>{% endif %}
+                </div>
+            </div>
+
+            {% resource 'ILRIMetadataResDir/bootstrap-switch/css/bootstrap2/bootstrap-switch.css' %}
+            {% resource 'ILRIMetadataResDir/bootstrap-switch/js/bootstrap-switch.js' %}
+
+
+
+            {% if data.ILRI_actyrelconfdata == 'on' %}
+                {% set actyrelconfdata = "on" %}
+            {% else %}
+                {% set actyrelconfdata = 'off'  %}
+            {% endif %}
+            <div class="control-group">
+                <label class="control-label" for="ILRI_actyrelconfdata">{{ _("Release of confidential data?") }}</label>
+                <div class="controls">
+                    <input type="checkbox" name="ILRI_actyrelconfdata" id="ILRI_actyrelconfdata" {{ "checked " if actyrelconfdata == "on" }} data-on-text="Yes" data-off-text="No">
+                </div>
+            </div>
+
+
+
+            {% if data.ILRI_actyfarmconsent == 'on' %}
+                {% set actyconsent = "on" %}
+            {% else %}
+                {% set actyconsent = 'off'  %}
+            {% endif %}
+
+            <div class="control-group">
+                <label class="control-label" for="ILRI_actyfarmconsent">{{ _("Consent obtained?") }}</label>
+                <div class="controls">
+                    <input type="checkbox" name="ILRI_actyfarmconsent" id="ILRI_actyfarmconsent" {{ "checked " if actyconsent == "on" }} data-on-text="Yes" data-off-text="No">
+                </div>
+            </div>
+
+
+            {{ form.markdown('ILRI_actyipownership', label=_('Intellectual Property Ownership'), id='ILRI_actyipownership', placeholder=_('Enter institutions in alphabetical order and separated with coma'), value=data.ILRI_actyipownership, error=errors.ILRI_actyipownership, classes=['control-full']) }}
+            <div class="form-actions form-actions2">
+                {% if nameAvailable == True %}
+                    <button class="btn btn-info btn-xs" onclick="generateCitation(); return false;">Generate citation <i class="icon-book"></i></button>
+                {% else %}
+                    <button class="btn btn-info btn-xs" onclick="generateCitation(); return false;">Generate citation <i class="icon-book"></i></button>
+                {% endif %}
+            </div>
+            {{ form.markdown('ILRI_actycitation', id='ILRI_actycitation', label=_('Citation'), placeholder=_('Click autogenerate to create the citation. You can edit it afterwards'), value=data.ILRI_actycitation, error=errors.ILRI_actycitation) }}
+            {{ form.markdown('ILRI_actycitationacknowledge', id='ILRI_actycitationacknowledge', label=_('Acknowledgements'), placeholder=_('Other acknowledgements'), value=data.ILRI_actycitationacknowledge, error=errors.ILRI_actycitationacknowledge) }}
+
         </div>
     </div>
-  
-
-  
-    <div class="control-group control-small">
-    <label class="control-label" for="ILRI_prjsubjects">{{ _("Subjects") }}</label>
-    <div class="controls">
-      <div id="cnt-ILRI_prjsubjects"></div>
-      <input type="hidden" id="ILRI_prjsubjects" name="ILRI_prjsubjects" placeholder="Subjects" value="{{ h.ILRIMetadata_tagsToString(data.ILRI_prjsubjects,",") }}" >
-      <input type="text" id="ILRI_prjsubjects2" name="ILRI_prjsubjects2" placeholder="Subjects" class="tm-ILRI_prjsubjects tm-input-success">
-    </div>
-    </div>
-    
-    <div class="control-group control-small">
-      <label class="control-label" for="tag_string">{{ _("Agrovoc Tags") }}</label>
-      <div class="controls">      
-        <div id="cnt-tag_string"></div>
-        <input type="hidden" id="field-tags" name="tag_string" placeholder="eg. livestock, health, environment" value="{{ data.tag_string }}" >       
-        <input type="text" id="field-tags2" name="tag_string2" placeholder="eg. livestock, health" class="tm-tag_string tm-input-success">
-        <span class="info-block info-inline">
-          <i class="icon-info-sign"></i>
-          <a href="http://aims.fao.org/standards/agrovoc/functionalities/search" target="_blank">You search an Agrovoc term here</a>
-        </span>
-     </div>
-    </div>
-    
-    {% set existing_org = data.owner_org or data.group_id %}
-  {% set organizations_available = h.organizations_available('create_dataset') %}
-  <div class="control-group">
-      <label for="field-organizations" class="control-label">{{ _('Organization') }}</label>
-      <div class="controls">
-        <select id="field-organizations" name="owner_org">
-          {% if h.check_config_permission('create_unowned_dataset') %}
-             <option value="" {% if not selected_org and data.id %} selected="selected" {% endif %}>{{ _('No organization') }}</option>
-          {% endif %}
-          {% for organization in organizations_available %}
-            {# get out first org from users list only if there is not an existing org #}
-            {% set selected_org = (existing_org and existing_org == organization.id) or (not existing_org and not data.id and organization.id == organizations_available[0].id) %}
-            <option value="{{ organization.id }}" {% if selected_org %} selected="selected" {% endif %}>{{ organization.name }}</option>
-          {% endfor %}
-        </select>
-      </div>
-    </div>
-    
-    <div class="control-group">
-        <label for="field-private" class="control-label">{{ _('Visibility') }}</label>
-        <div class="controls">
-          <select id="field-private" name="private">
-            {% for option in [('False', _('Public'))] %}
-            <option value="{{ option[0] }}" {% if option[0] == data.private|trim %}selected="selected"{% endif %}>{{ option[1] }}</option>
-            {% endfor %}
-          </select>
-        </div>
-     </div>
-    
-        
-  </div>
-  
-  <div id="metadatatab2">
-  
-
-  
-    <div class="control-group control-tinny">
-      <label class="control-label" for="ILRI_actyregions">{{ _("Regions") }}</label>
-        <div class="controls">
-          <!--The hidden is used by CKAN to store and collect the data-->
-          <div id="cnt-ILRI_actyregions"></div>
-          <input type="hidden" id="ILRI_actyregions" name="ILRI_actyregions" placeholder="Regions" value="{{ h.ILRIMetadata_tagsToString(data.ILRI_actyregions,",") }}" > 
-          <!--The text input is used by tagsManager to display the tags. tagsManager will pass the value between the hiden and text inputs using the paramenter output: '#id' in the javaScript. Check /resource/ilrimetadata.js.  -->
-          <input type="text" id="ILRI_actyregions2" name="ILRI_actyregions2" placeholder="Regions" class="tm-ILRI_actyregions tm-input-success">  
-        </div>
-    </div>
-    
-
-    
-    <div class="control-group control-tinny">
-      <label class="control-label" for="ILRI_actycountries">{{ _("Countries") }}</label>
-        <div class="controls">
-          <div id="cnt-ILRI_actycountries"></div>
-          <input type="hidden" id="ILRI_actycountries" name="ILRI_actycountries" placeholder="Countries" value="{{ h.ILRIMetadata_tagsToString(data.ILRI_actycountries,"+") }}" > 
-          <input type="text" id="ILRI_actycountries2" name="ILRI_actycountries2" placeholder="Countries" class="tm-ILRI_actycountries tm-input-success">  
-        </div>
-    </div>
-    
-    <div class="control-group control-tinny">
-      <label class="control-label" for="ILRI_actynatlevel">{{ _("Sub-national level coverage") }}</label>
-        <div class="controls">
-          <div id="cnt-ILRI_actynatlevel"></div>
-          <input type="hidden" id="ILRI_actynatlevel" name="ILRI_actynatlevel" placeholder="eg. Kenya-Nairobi" value="{{ data.ILRI_actynatlevel }}" > 
-          <input type="text" id="ILRI_actynatlevel2" name="ILRI_actynatlevel2" placeholder="eg. Kenya-Nairobi" class="tm-ILRI_actynatlevel tm-input-success">  
-        </div>
-    </div>
-    
-    <input type="hidden" id="ILRI_actymapextent" name="ILRI_actymapextent" value="{{ data.ILRI_actymapextent }}" >
-    <input type="hidden" id="ILRI_actymapzoom" name="ILRI_actymapzoom" value="{{ data.ILRI_actymapzoom }}" >
-    <input type="hidden" id="ILRI_actyboundbox" name="ILRI_actyboundbox" value="{{ data.ILRI_actyboundbox }}" >
-    <input type="hidden" id="ILRI_actyboundboxcenter" name="ILRI_actyboundboxcenter" value="{{ data.ILRI_actyboundboxcenter }}" >
-    
-    <b>Spatial area covered</b>
-    <button type="button" onclick="getCoordinates();" >Set coordinates manually</button>
-    <button type="button" onclick="cleaMapArea();" >Clear current area</button>
-    <div id="studyMap"></div>
-   
-  </div>
-  
-  <div id="metadatatab3">
-  
-    {{ form.input('ILRI_actydatecollected', label=_('Date of collection'), id='ILRI_actydatecollected', placeholder=_('eg. 28/07/2014'), value=data.ILRI_actydatecollected, error=errors.ILRI_actydatecollected, classes=['control-small']) }}
-    
-    {{ form.input('ILRI_actydatavailable', label=_('Availability date'), id='ILRI_actydatavailable', placeholder=_('eg. 28/07/2014'), value=data.ILRI_actydatavailable, error=errors.ILRI_actydatavailable, classes=['control-small']) }}
-  
-  </div>
-  
-  <div id="metadatatab4">
-  
-    <div class="control-group">
-    {% set error = errors.license_id %}
-    <label class="control-label" for="field-license">{{ _("License") }}</label>
-    <div class="controls">
-      <select id="field-license" name="license_id">
-        {% for license_desc, license_id in licenses|sort if license_desc  %}
-          <option value="{{ license_id }}" {% if data.get('license_id', 'notspecified') == license_id %}selected="selected"{% endif %}>{{ license_desc }}</option>
-        {% endfor %}
-      </select>
-      {% if error %}<span class="error-block">{{ error }}</span>{% endif %}
-      <span class="info-block info-inline">
-        <i class="icon-info-sign"></i>
-        {% trans %}
-          License definitions and additional information can be found
-          at <a href="http://opendefinition.org/licenses/" target="_blank">opendefinition.org</a>
-        {% endtrans %}
-      </span>
-    </div>
-  </div>
-    
-    {{ form.input('ILRI_actydataowner', label=_('Data Owner'), id='ILRI_actydataowner', placeholder=_('The person or institition who owns the data'), value=data.ILRI_actydataowner, error=errors.ILRI_actydataowner, classes=['control-full']) }}
-    
-    {{ form.markdown('ILRI_actysharingagreement', id='ILRI_actysharingagreement', label=_('Data sharing agreement'), placeholder=_('Under which conditions a data sharing agreement is needed'), value=data.ILRI_actysharingagreement, error=errors.ILRI_actysharingagreement) }}
-    
-    {{ form.markdown('ILRI_actyusageconditions', id='ILRI_actyusageconditions', label=_('Usage conditions'), placeholder=_('eg. This data is distributed in the hope that it will be useful, but WITHOUT ANY WARRANTY; without even the implied warranty of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE'), value=data.ILRI_actyusageconditions, error=errors.ILRI_actyusageconditions) }}
-    
-    {{ form.markdown('ILRI_actycitation', id='ILRI_actycitation', label=_('Citation'), placeholder=_('How this dataset should be cited'), value=data.ILRI_actycitation, error=errors.ILRI_actycitation) }}
-    
-    {{ form.markdown('ILRI_actycitationacknowledge', id='ILRI_actycitationacknowledge', label=_('Citation for acknowledgements'), placeholder=_('How this dataset should be cited for acknowledgements'), value=data.ILRI_actycitationacknowledge, error=errors.ILRI_actycitationacknowledge) }}
-  
-  </div>
-  
-
-</div>
 
 {% endblock %}
 

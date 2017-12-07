@@ -1,0 +1,213 @@
+/*
+.container,
+.navbar-static-top .container,
+.navbar-fixed-top .container,
+.navbar-fixed-bottom .container {
+  width: 1140px;
+} 
+
+[role=main] .secondary {
+  margin-left: 20px;
+  width: 25%;
+  margin-left: 0;
+  float: left;
+}
+
+[role=main] .primary {
+  width: 75%;
+  float: right;
+}
+*/
+
+
+
+#studyMap { height: 380px; }
+
+.tt-dropdown-menu {
+    width: 422px;
+    margin-top: 12px;
+    padding: 8px 0;
+    background-color: #fff;
+    border: 1px solid #ccc;
+    border: 1px solid rgba(0, 0, 0, 0.2);
+    -webkit-border-radius: 8px;
+    -moz-border-radius: 8px;
+    border-radius: 8px;
+    -webkit-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    -moz-box-shadow: 0 5px 10px rgba(0,0,0,.2);
+    box-shadow: 0 5px 10px rgba(0,0,0,.2);
+}
+
+.tt-suggestion {
+    padding: 3px 20px;
+    font-size: 18px;
+    line-height: 24px;
+}
+
+.container-center-text {
+    text-align: center;
+}
+
+.container-right-text {
+    text-align: right;
+    float:right;
+}
+
+.float-to-right {
+    float:right;
+}
+
+.tt-suggestion.tt-is-under-cursor {
+    color: #fff;
+    background-color: #0097cf;
+
+}
+
+.logos-left-padding {
+    padding-left: 10px;
+}
+
+.tt-suggestion p {
+    margin: 0;
+}
+
+
+.format-ILRI-resource-icon {
+    background: url("http://data.ilri.org/logos/sprite-resource-icons.png") no-repeat 0 0;
+    margin-left:10px;
+}
+.format-ILRI-resource-icon {
+    width: 32px;
+    height: 35px;
+    background-position: 0px -62px;
+}
+.format-ILRI-resource-icon[data-format=rdf],
+.format-ILRI-resource-icon[data-format*=rdf] {
+    width: 32px;
+    height: 35px;
+    background-position: -32px -62px;
+}
+.format-ILRI-resource-icon[data-format=pdf],
+.format-ILRI-resource-icon[data-format*=pdf] {
+    width: 32px;
+    height: 35px;
+    background-position: -64px -62px;
+}
+.format-ILRI-resource-icon[data-format=api],
+.format-ILRI-resource-icon[data-format*=api] {
+    width: 32px;
+    height: 35px;
+    background-position: -96px -62px;
+}
+.format-ILRI-resource-icon[data-format=zip],
+.format-ILRI-resource-icon[data-format*=zip] {
+    width: 32px;
+    height: 35px;
+    background-position: -128px -62px;
+}
+.format-ILRI-resource-icon[data-format=xls],
+.format-ILRI-resource-icon[data-format*=xls] {
+    width: 32px;
+    height: 35px;
+    background-position: -160px -62px;
+}
+.format-ILRI-resource-icon[data-format=csv],
+.format-ILRI-resource-icon[data-format*=csv] {
+    width: 32px;
+    height: 35px;
+    background-position: -192px -62px;
+}
+.format-ILRI-resource-icon[data-format=txt],
+.format-ILRI-resource-icon[data-format*=txt] {
+    width: 32px;
+    height: 35px;
+    background-position: -224px -62px;
+}
+.format-ILRI-resource-icon[data-format=xml],
+.format-ILRI-resource-icon[data-format*=xml] {
+    width: 32px;
+    height: 35px;
+    background-position: -256px -62px;
+}
+.format-ILRI-resource-icon[data-format=json],
+.format-ILRI-resource-icon[data-format*=json] {
+    width: 32px;
+    height: 35px;
+    background-position: -288px -62px;
+}
+.format-ILRI-resource-icon[data-format=html],
+.format-ILRI-resource-icon[data-format*=html] {
+    width: 32px;
+    height: 35px;
+    background-position: -320px -62px;
+}
+
+.resource-item {
+    position: relative;
+    padding: 10px 10px 10px 10px;
+    margin-bottom: 0px;
+    -webkit-border-radius: 3px;
+    -moz-border-radius: 3px;
+    border-radius: 3px;
+}
+
+
+.label[data-format=stata],
+.label[data-format*=stata] {
+    background-color: #aecf00;
+}
+
+.label[data-format=spss],
+.label[data-format*=spss] {
+    background-color: #aecf00;
+}
+
+.label[data-format=sql],
+.label[data-format*=sql] {
+    background-color: #83caff;
+}
+
+.new-ckan-footer-logo {
+    display: block;
+    width: 68px;
+    height: 21px;
+    margin-top: 2px;
+    background: url("../../../base/images/ckan-logo-footer.png") no-repeat top left;
+    text-indent: -900em;
+    float:right;
+}
+
+.form-actions2 {
+    padding: 0px 0px 0px;
+    background-color: white;
+    border-top: 0px solid #e5e5e5;
+    *zoom: 1;
+}
+
+.ckan-footer-logo {
+    display: block;
+    width: 68px;
+    height: 21px;
+    margin-top: 2px;
+    background: url("../../../base/images/ckan-logo-footer.png") no-repeat top right;
+    text-indent: -900em;
+    float: right;
+}
+
+.section-right {
+    float: right;
+}
+
+.section-search-centered {
+    margin: 20px 8px 2px 0;
+    width: 300px;
+}
+
+.nav-collapse-left {
+    float: left !important;
+}
+
+IMG.CCLicenceImage {
+    display: block;
+    margin-left: auto;
+    margin-right: auto }

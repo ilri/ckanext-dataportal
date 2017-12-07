@@ -3,45 +3,49 @@
 {% set resourceData = h.ILRIMetadata_stringToDict(data.description) %}
 
 {% block basic_fields_name %}
-      {{ form.input('name', id='field-name', label=_('Name'), placeholder=_('eg. January 2011 Cattle Prices'), value=data.name, error=errors.name, classes=['control-full']) }}
+    {{ form.input('name', id='field-name', label=_('Name'), placeholder=_('eg. January 2011 Cattle Prices'), value=data.name, error=errors.name, classes=['control-full']) }}
 {% endblock %}
 
 {% block basic_fields_description %}
-  <input type="hidden" id="field-description" name="description" placeholder="Species" value="{{ data.description }}" >  
-  {{ form.markdown('resource_description', id='resource_description', label=_('Description'), placeholder=_('Some useful notes about the data'), value=resourceData['resource_description']) }}
+    <input type="hidden" id="field-description" name="description" placeholder="Species" value="{{ data.description }}" >
+    {{ form.markdown('resource_description', id='resource_description', label=_('Description'), placeholder=_('Some useful notes about the data'), value=resourceData['resource_description']) }}
+    <div class="form-actions form-actions2">
+        <button class="btn btn-info btn-xs" onclick="loadConfFields('{{ request.host_url }}/portal/api/ilri/1/action/list_confidential_fields'); return false;">Append confidential fields <i class="icon-paste"></i></button>
+    </div>
+    <hr>
 {% endblock %}
 
 {% block basic_fields_format %}
-  <div class="control-group">
-    <label class="control-label" for="field-format">{{ _("Format") }}</label>
-    <div class="controls">
-      <select id="field-format" name="format" data-module="autocomplete">        
-        {% for ftype in h.ILRIMetadata_getResourceTypes()  %}
-          {% if data.format %}
-            <option value="{{ ftype }}" {% if ftype.lower() == data.format.lower() %}selected="selected"{% endif %}>{{ ftype }}</option>
-          {% else %}
-            <option value="{{ ftype }}">{{ ftype }}</option>
-          {% endif %}
-        {% endfor %}
-      </select>
+    <div class="control-group">
+        <label class="control-label" for="field-format">{{ _("Format") }}</label>
+        <div class="controls">
+            <select id="field-format" name="format" data-module="autocomplete">
+                {% for ftype in h.ILRIMetadata_getResourceTypes()  %}
+                    {% if data.format %}
+                        <option value="{{ ftype }}" {% if ftype.lower() == data.format.lower() %}selected="selected"{% endif %}>{{ ftype }}</option>
+                    {% else %}
+                        <option value="{{ ftype }}">{{ ftype }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
     </div>
-  </div>
 {% endblock %}
 
 {% block metadata_fields %}
-  <div class="control-group">
-    <label class="control-label" for="field-format">{{ _("Accessibility") }}</label>
-    <div class="controls">      
-     <select id="ILRIResourceAccess" name="ILRIResourceAccess">        
-        {% for accesstype in ["Public","Confidential","Private"]  %}
-	    {% if "resource_access" in resourceData.keys()  %}
-	      <option value="{{ accesstype }}" {% if accesstype.lower() == resourceData['resource_access'].lower() %}selected="selected"{% endif %}>{{ accesstype }}</option>
-	    {% else %}
-	      <option value="{{ accesstype }}" >{{ accesstype }}</option>
-	    {% endif %}
-        {% endfor %}
-      </select>      
+    <div class="control-group">
+        <label class="control-label" for="field-format">{{ _("Accessibility") }}</label>
+        <div class="controls">
+            <select id="ILRIResourceAccess" name="ILRIResourceAccess">
+                {% for accesstype in ["Public","Confidential","Private"]  %}
+                    {% if "resource_access" in resourceData.keys()  %}
+                        <option value="{{ accesstype }}" {% if accesstype.lower() == resourceData['resource_access'].lower() %}selected="selected"{% endif %}>{{ accesstype }}</option>
+                    {% else %}
+                        <option value="{{ accesstype }}" >{{ accesstype }}</option>
+                    {% endif %}
+                {% endfor %}
+            </select>
+        </div>
     </div>
-  </div>
 
 {% endblock %}

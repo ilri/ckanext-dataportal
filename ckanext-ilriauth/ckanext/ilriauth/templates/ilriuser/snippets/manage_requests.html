@@ -1,0 +1,105 @@
+{% import 'macros/form.html' as form %}
+
+{% resource 'ILRIAuthDir/3rdParty/datatables/js/jquery.dataTables.js' %}
+{% resource 'ILRIAuthDir/3rdParty/datatables/css/jquery.dataTables.css' %}
+
+{% resource 'ILRIAuthDir/remove_after.css' %}
+{% resource 'ILRIAuthDir/ilriauth_addtoken.js' %}
+
+<div class="fix-table-height" >
+
+        <table id="tokeList" class="display table table-striped table-bordered table-condensed" width="100%" cellspacing="0">
+            <thead>
+            <tr>
+                <th scope="col">{{ _('Date') }}</th>
+                <th scope="col">{{ _('Dataset') }}</th>
+                <th scope="col">{{ _('Resource') }}</th>
+                <th scope="col">{{ _('Request by') }}</th>
+                <th scope="col">{{ _('Email') }}</th>
+                <th scope="col">{{ _('Token given') }}</th>
+                <th scope="col">{{ _('Actions') }}</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% for request in requests %}
+                <tr>
+                    <td class="dataset-details">{{ request.request_date }}</td>
+                    <td class="dataset-details">{{ request.datasetName  }}</td>
+                    <td class="dataset-details">{{ request.resourceName }}</td>
+                    <td class="dataset-details">{{ request.user_name }}</td>
+                    <td class="dataset-details">{{ request.user_email }}</td>
+                    {% if request.token_given %}
+                        <td class="dataset-details"><a href=" {{ h.url_for(controller='ckanext.ilriauth.controller:resourceAuthController', action='manageOneToken', tokenID=request.token_given) }}" title="Edit token dataset access">{{ request.token_given }}</a></td>
+                    {% else %}
+                        <td class="dataset-details">None</td>
+                    {% endif %}
+                    <td class="dataset-details">
+                        <button class="btn btn-info btn-xs" title="View request details" onclick="location.href='{{ h.url_for(controller='ckanext.ilriauth.controller:resourceAuthController', action='showRequestDetails', requestID=request.request_id) }}';"><i class="fa fa-search"></i></button>
+                        {% if request.token_given %}
+                            <button class="btn btn-danger btn-xs" title="Remove token" onclick="showDeleteUser('{{ request.token_given }}')"><i class="fa fa-trash-o"></i></button>
+                        {% else %}
+                            <button class="btn btn-success btn-xs" title="Allocate token" onclick="showAllocateToken('{{ request.request_id }}');"><i class="fa fa-unlock-alt"></i></button>
+                        {% endif %}
+                    </td>
+                </tr>
+            {% endfor %}
+            </tbody>
+            <tfoot>
+            <tr>
+                <th scope="col">{{ _('Date') }}</th>
+                <th scope="col">{{ _('Dataset') }}</th>
+                <th scope="col">{{ _('Resource') }}</th>
+                <th scope="col">{{ _('Request by') }}</th>
+                <th scope="col">{{ _('Email') }}</th>
+                <th scope="col">{{ _('Token given') }}</th>
+                <th scope="col">{{ _('Actions') }}</th>
+            </tr>
+            </tfoot>
+        </table>
+
+</div>
+
+<div class="modal fade " id="RemoveToken" tabindex="-1" role="dialog" aria-labelledby="RemoveTokenLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header modal-header-delete">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+				<h4 class="modal-title">Remove token</h4>
+			</div>
+			<form class="form-horizontal" action="{{ action }}" method="post">
+				<div class="modal-body">
+					<input id="tokenID", name="tokenID", type="hidden">
+					Do you really want to remove this token?
+				</div>
+				<div class="modal-footer">
+					<button data-dismiss="modal" class="btn btn-default" type="button">Close</button>
+					<button class="btn btn-success" id="removeToken" type="submit" name="removeToken">Remove</button>
+				</div>
+			</form>
+		</div>
+	</div>
+</div>
+
+<div class="modal fade " id="AllocateToken" tabindex="-1" role="dialog" aria-labelledby="AllocateTokenLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title">Allocate token</h4>
+            </div>
+            <form class="form-horizontal" action="{{ action }}" method="post">
+                <div class="modal-body" >
+                    <input id="requestID", name="requestID", type="hidden">
+					Do you really want to allocate a token to this request? An Non-Disclosure Agreement (NDA) shall be signed before allocating a token.
+                </div>
+                <div class="modal-footer">
+                    <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
+                    <button class="btn btn-success" id="allocateToken" type="submit" name="allocateToken">Allocate</button>
+                </div>
+            </form>
+        </div>
+	</div>
+</div>
+
+
+
