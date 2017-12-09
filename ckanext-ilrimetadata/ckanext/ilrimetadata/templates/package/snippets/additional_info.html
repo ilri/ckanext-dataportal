@@ -14,6 +14,25 @@
                 </thead>
                 <tbody>
 
+                {% if pkg_dict.ILRI_actyproduct %}
+                    <tr>
+                        <th scope="row" class="dataset-label">{{ _("Product") }}</th>
+                        <td class="dataset-details">{{ pkg_dict.ILRI_actyproduct[0] }}</td>
+                    </tr>
+                {% else %}
+                    <tr>
+                        <th scope="row" class="dataset-label">{{ _("Product") }}</th>
+                        <td class="dataset-details" style="color: red">Not set (You need to set it)</td>
+                    </tr>
+                {% endif %}
+
+                {% if pkg_dict.notes %}
+                    <tr>
+                        <th scope="row" class="dataset-label">{{ _("Abstract") }}</th>
+                        <td class="dataset-details">{{ pkg_dict.notes }}</td>
+                    </tr>
+                {% endif %}
+
                 {% if pkg_dict.ILRI_actytitle %}
                     <tr>
                         <th scope="row" class="dataset-label">{{ _("Study title") }}</th>
@@ -145,6 +164,20 @@
                         <th scope="row" class="dataset-label">{{ _("Sub-National Level") }}</th>
                         {% set natlevel = h.ILRIMetadata_tagsToList(pkg_dict.ILRI_actynatlevel,",") %}
                         <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=natlevel, vocab="NONE" %} </td>
+                    </tr>
+                {% endif %}
+
+                {% if pkg_dict.ILRI_actyprojection %}
+                    <tr>
+                        <th scope="row" class="dataset-label">{{ _("Projection") }}</th>
+                        <td class="dataset-details">{{ pkg_dict.ILRI_actyprojection }}</td>
+                    </tr>
+                {% endif %}
+
+                {% if pkg_dict.ILRI_actyresolution %}
+                    <tr>
+                        <th scope="row" class="dataset-label">{{ _("Resolution") }}</th>
+                        <td class="dataset-details">{{ pkg_dict.ILRI_actyresolution }}</td>
                     </tr>
                 {% endif %}
 

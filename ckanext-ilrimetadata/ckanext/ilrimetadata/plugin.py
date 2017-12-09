@@ -206,6 +206,8 @@ def createRegionsVocab():
 def createCountriesVocab():
     return createVocabulary("ILRI_voccountries",os.path.join(PATH, "sourcetxt/ilri-countries.txt"))
 
+def createProductsVocab():
+    return createVocabulary("ILRI_vocproduct",os.path.join(PATH, "sourcetxt/products.txt"))
 
 # This Helper function creates the species vocabulary from a text file
 def createSpeciesVocab():
@@ -220,6 +222,9 @@ def createSubjectsVocab():
 #A helper fuction that returs the countries. Used in the request_info.html
 def getCountries():
     return getArrayFromFile(os.path.join(PATH, "sourcetxt/ilri-countries.txt"))
+
+def getProducts():
+    return getArrayFromFile(os.path.join(PATH, "sourcetxt/products.txt"))
 
 #This helper function returs the current list of datasets.
 #Used to populate the combo of source datasets
@@ -344,6 +349,16 @@ def tagsToString(tags,separator):
 
     return tag_string
 
+def arrayToString(tags):
+    if type(tags) is list:
+        tag_string = ""
+        for tag in tags:
+            tag_string = tag_string + tag + ","
+        tag_string = tag_string[:len(tag_string)-1]
+
+        return tag_string
+    else:
+        return tags
 
 class IlrimetadataPlugin(plugins.SingletonPlugin, toolkit.DefaultDatasetForm):
     plugins.implements(plugins.IConfigurer)
@@ -357,6 +372,7 @@ class IlrimetadataPlugin(plugins.SingletonPlugin, toolkit.DefaultDatasetForm):
         facets_dict['vocab_ILRI_voccountries'] = 'Countries'
         facets_dict['vocab_ILRI_vocspecies'] = 'Commodities'
         facets_dict['vocab_ILRI_vocsubjects'] = 'Subjects'
+        facets_dict['vocab_ILRI_vocproduct'] = 'Product'
         return facets_dict
 
     def group_facets(self, facets_dict, group_type, package_type):
@@ -364,6 +380,7 @@ class IlrimetadataPlugin(plugins.SingletonPlugin, toolkit.DefaultDatasetForm):
         facets_dict['vocab_ILRI_voccountries'] = 'Countries'
         facets_dict['vocab_ILRI_vocspecies'] = 'Commodities'
         facets_dict['vocab_ILRI_vocsubjects'] = 'Subjects'
+        facets_dict['vocab_ILRI_vocproduct'] = 'Product'
         return facets_dict
 
     def organization_facets(self,facets_dict, organization_type, package_type):
@@ -371,6 +388,7 @@ class IlrimetadataPlugin(plugins.SingletonPlugin, toolkit.DefaultDatasetForm):
         facets_dict['vocab_ILRI_voccountries'] = 'Countries'
         facets_dict['vocab_ILRI_vocspecies'] = 'Commodities'
         facets_dict['vocab_ILRI_vocsubjects'] = 'Subjects'
+        facets_dict['vocab_ILRI_vocproduct'] = 'Product'
         return facets_dict
 
 
@@ -460,14 +478,17 @@ class IlrimetadataPlugin(plugins.SingletonPlugin, toolkit.DefaultDatasetForm):
                 'ILRIMetadata_listGetDataTypes': listGetDataTypes,
                 'ILRIMetadata_createRegionsVocab': createRegionsVocab,
                 'ILRIMetadata_createCountriesVocab': createCountriesVocab,
+                'ILRIMetadata_createProductsVocab': createProductsVocab,
                 'ILRIMetadata_createSpeciesVocab': createSpeciesVocab,
                 'ILRIMetadata_createSubjectsVocab': createSubjectsVocab,
                 'ILRIMetadata_stringToDict': stringToDict,
                 'ILRIMetadata_getPackageList': getPackageList,
                 'ILRIMetadata_isDatasetNew': isDatasetNew,
                 'ILRIMetadata_tagsToString': tagsToString,
+                'ILRIMetadata_arrayToString': arrayToString,
                 'ILRIMetadata_underscoreToComa': underscoreToComa,
                 'ILRIMetadata_getCountries': getCountries,
+                'ILRIMetadata_getProducts': getProducts,
                 'ILRIMetadata_isListDatasets': isListDatasets,
                 'ILRIMetadata_getResourceStats': getResourceStats,
                 'ILRIMetadata_getFeaturedGroups': getFeaturedGroups,
@@ -546,6 +567,17 @@ class IlrimetadataPlugin(plugins.SingletonPlugin, toolkit.DefaultDatasetForm):
         schema.update({'ILRI_actyregions': [toolkit.get_validator('ignore_missing'), stringToTags]})
         schema.update({'ILRI_actycountries': [toolkit.get_validator('ignore_missing'), stringToTags]})
         schema.update({'ILRI_actyspecies': [toolkit.get_validator('ignore_missing'), stringToTags]})
+
+        schema.update({'ILRI_actycountries': [toolkit.get_validator('ignore_missing'), stringToTags]})
+
+        schema.update({'ILRI_actyproduct': [toolkit.get_validator('ignore_missing'),toolkit.get_converter('convert_to_tags')('ILRI_vocproduct')]})
+
+        schema.update({'ILRI_actyprojection': [toolkit.get_validator('ignore_missing'),
+                                                  toolkit.get_converter('convert_to_extras')]})
+
+        schema.update({'ILRI_actyresolution': [toolkit.get_validator('ignore_missing'),
+                                               toolkit.get_converter('convert_to_extras')]})
+
 
         schema.update({'ILRI_actynatlevel': [toolkit.get_validator('ignore_missing'),
                                              toolkit.get_converter('convert_to_extras')]})
@@ -675,6 +707,15 @@ class IlrimetadataPlugin(plugins.SingletonPlugin, toolkit.DefaultDatasetForm):
                                               toolkit.get_validator('ignore_missing')]})
         schema.update({'ILRI_actyspecies': [toolkit.get_converter('convert_from_tags')("ILRI_vocspecies"),
                                             toolkit.get_validator('ignore_missing')]})
+
+        schema.update({'ILRI_actyproduct': [toolkit.get_converter('convert_from_tags')("ILRI_vocproduct"),
+                                        toolkit.get_validator('ignore_missing')]})
+
+        schema.update({'ILRI_actyprojection': [toolkit.get_converter('convert_from_extras'),
+                                                  toolkit.get_validator('ignore_missing')]})
+
+        schema.update({'ILRI_actyresolution': [toolkit.get_converter('convert_from_extras'),
+                                               toolkit.get_validator('ignore_missing')]})
 
         schema.update({'ILRI_actynatlevel': [toolkit.get_converter('convert_from_extras'),
                                              toolkit.get_validator('ignore_missing')]})

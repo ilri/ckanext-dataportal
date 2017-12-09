@@ -71,6 +71,17 @@
                 </div>
             </div>
 
+            <div class="control-group">
+                <label class="control-label" for="ILRI_actyproduct">{{ _("Product") }}</label>
+                <div class="controls">
+                    <select id="ILRI_actyproduct" name="ILRI_actyproduct" data-module="autocomplete">
+                        {% for product in h.ILRIMetadata_getProducts() %}
+                            <option value="{{ product }}" {% if h.ILRIMetadata_arrayToString(data.ILRI_actyproduct) == product %}selected="selected"{% endif %}>{{ product }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+
             {{ form.markdown('notes', id='field-notes', label=_('Abstract'), placeholder=_('eg. A short description of the dataset'), value=data.notes, error=errors.notes) }}
             {{ form.markdown('ILRI_actyotheruse', id='ILRI_actyotheruse', label=_('How this dataset could be used by others'), placeholder=_('Describe how others outside this organization could use this dataset both for research and development'), value=data.ILRI_actyotheruse, error=errors.ILRI_actyotheruse) }}
             {{ form.input('ILRI_actypi', label=_('Principal investigator'), id='ILRI_actypi', placeholder=_('Surname, Initials (e.g. Poole, E.J.)'), value=data.ILRI_actypi, error=errors.ILRI_actypi, classes=['control-full']) }}
@@ -162,6 +173,9 @@
                     <input type="text" id="ILRI_actynatlevel2" name="ILRI_actynatlevel2" placeholder="eg. Kenya-Nairobi" class="tm-ILRI_actynatlevel tm-input-success">
                 </div>
             </div>
+
+            {{ form.input('ILRI_actyprojection', label=_('Projection'), id='ILRI_actyprojection', placeholder=_('Leave blank if this dataset is not GIS product'), value=data.ILRI_actyprojection, error=errors.ILRI_actyprojection, classes=['control-full']) }}
+            {{ form.input('ILRI_actyresolution', label=_('Resolution'), id='ILRI_actyresolution', placeholder=_('Leave blank if this dataset is not GIS product'), value=data.ILRI_actyresolution, error=errors.ILRI_actyresolution, classes=['control-full']) }}
 
             <input type="hidden" id="ILRI_actymapextent" name="ILRI_actymapextent" value="{{ data.ILRI_actymapextent }}" >
             <input type="hidden" id="ILRI_actymapzoom" name="ILRI_actymapzoom" value="{{ data.ILRI_actymapzoom }}" >
@@ -256,7 +270,7 @@
 {% endblock %}
 
 
-{% block organizations_selector  %}
+{% block package_basic_fields_org  %}
 {% endblock %}
 
 {% block package_metadata_fields_visibility %}
