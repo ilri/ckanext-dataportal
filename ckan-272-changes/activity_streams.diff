@@ -1,0 +1,58 @@
+diff --git a/ckan/lib/activity_streams.py b/ckan/lib/activity_streams.py
+index 481e7a696..2cde7140f 100644
+--- a/ckan/lib/activity_streams.py
++++ b/ckan/lib/activity_streams.py
+@@ -226,31 +226,28 @@ def activity_list_to_html(context, activity_stream, extra_vars):
+                 if new_activity_type in activity_stream_string_functions:
+                     activity_type = new_activity_type
+ 
+-        if not activity_type in activity_stream_string_functions:
+-            raise NotImplementedError("No activity renderer for activity "
+-                "type '%s'" % activity_type)
+-
+-        if activity_type in activity_stream_string_icons:
+-            activity_icon = activity_stream_string_icons[activity_type]
+-        else:
+-            activity_icon = activity_stream_string_icons['undefined']
+-
+-        activity_msg = activity_stream_string_functions[activity_type](context,
+-                activity)
+-
+-        # Get the data needed to render the message.
+-        matches = re.findall('\{([^}]*)\}', activity_msg)
+-        data = {}
+-        for match in matches:
+-            snippet = activity_snippet_functions[match](activity, detail)
+-            data[str(match)] = snippet
+-
+-        activity_list.append({'msg': activity_msg,
+-                              'type': activity_type.replace(' ', '-').lower(),
+-                              'icon': activity_icon,
+-                              'data': data,
+-                              'timestamp': activity['timestamp'],
+-                              'is_new': activity.get('is_new', False)})
++        if activity_type in activity_stream_string_functions:
++            if activity_type in activity_stream_string_icons:
++                activity_icon = activity_stream_string_icons[activity_type]
++            else:
++                activity_icon = activity_stream_string_icons['undefined']
++
++            activity_msg = activity_stream_string_functions[activity_type](context,
++                    activity)
++
++            # Get the data needed to render the message.
++            matches = re.findall('\{([^}]*)\}', activity_msg)
++            data = {}
++            for match in matches:
++                snippet = activity_snippet_functions[match](activity, detail)
++                data[str(match)] = snippet
++
++            activity_list.append({'msg': activity_msg,
++                                  'type': activity_type.replace(' ', '-').lower(),
++                                  'icon': activity_icon,
++                                  'data': data,
++                                  'timestamp': activity['timestamp'],
++                                  'is_new': activity.get('is_new', False)})
+     extra_vars['activities'] = activity_list
+     return literal(base.render('activity_streams/activity_stream_items.html',
+         extra_vars=extra_vars))
