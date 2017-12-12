@@ -1,2 +1,2 @@
-GIS Product
-Not GIS product
+Non-spatial
+Spatial

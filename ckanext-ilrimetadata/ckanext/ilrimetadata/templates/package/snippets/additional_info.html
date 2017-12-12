@@ -16,12 +16,12 @@
 
                 {% if pkg_dict.ILRI_actyproduct %}
                     <tr>
-                        <th scope="row" class="dataset-label">{{ _("Product") }}</th>
+                        <th scope="row" class="dataset-label">{{ _("Dataset type") }}</th>
                         <td class="dataset-details">{{ pkg_dict.ILRI_actyproduct[0] }}</td>
                     </tr>
                 {% else %}
                     <tr>
-                        <th scope="row" class="dataset-label">{{ _("Product") }}</th>
+                        <th scope="row" class="dataset-label">{{ _("Dataset type") }}</th>
                         <td class="dataset-details" style="color: red">Not set (You need to set it)</td>
                     </tr>
                 {% endif %}

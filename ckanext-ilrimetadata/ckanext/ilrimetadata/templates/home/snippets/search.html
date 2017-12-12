@@ -3,6 +3,7 @@
 {% set countries = h.get_facet_items_dict('vocab_ILRI_voccountries', limit=3) %}
 {% set species = h.get_facet_items_dict('vocab_ILRI_vocspecies', limit=3) %}
 {% set subjects = h.get_facet_items_dict('vocab_ILRI_vocsubjects', limit=3) %}
+{% set products = h.get_facet_items_dict('vocab_ILRI_vocproduct', limit=3) %}
 {% set placeholder = _('eg. Livestock health') %}
 
 <div class="module module-search module-narrow module-shallow box">
@@ -16,6 +17,12 @@
       </button>
     </div>
   </form>
+    <div class="tags">
+    <h3>{{ _('Popular Types') }}</h3>
+    {% for product in products %}
+      <a class="tag" href="{% url_for controller='package', action='search', vocab_ILRI_vocproduct=product.name %}" title="{{ product.name }}">{{ h.truncate(product.name, 22) }}</a>
+    {% endfor %}
+  </div>
   <div class="tags">    
     <h3>{{ _('Popular Regions') }}</h3>
     {% for region in regions %}
