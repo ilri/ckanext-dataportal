@@ -32,7 +32,8 @@ def add_msg_niceties(recipient_name, body, sender_name, sender_url):
            + u"--\r\n%s (%s)" % (sender_name, sender_url)
 
 def sendTokenRequestMail(body,targetName,targetEmail):
-
+    print "Sending email!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
+    targetEmail = "cquiros@qlands.com"
     mail_from = config.get('smtp.mail_from')
     body = add_msg_niceties(targetName, body, "ILRI Datasets Portal", "http://data.ilri.org/portal")
     msg = MIMEText(body.encode('utf-8'), 'plain', 'utf-8')
@@ -53,10 +54,11 @@ def sendTokenRequestMail(body,targetName,targetEmail):
         smtp_connection.connect(smtp_server)
         smtp_connection.login(smtp_user, smtp_password)
         smtp_connection.sendmail(mail_from, [targetEmail], msg.as_string())
-        logging.info("Token Email sent to " + targetEmail)
+        logging.debug("Token Email sent to " + targetEmail)
 
     except Exception,e:
-        logging.info("Token Sendmail error: " + str(e))
+        print str(e)
+        logging.debug("Token Sendmail error: " + str(e))
 
 
 
@@ -260,10 +262,12 @@ def processRequestToken(requestID,ipAddress,data,datasetID,resourceID):
             message = message + "Hear from: " + data["field_hearfrom"] + "\n"
             message = message + "Other datasets: " + data["field_otherdatasets"] + "\n\n"
 
-            message = message + "Please contact the custodian for approval of this application";
+            message = message + "Please contact the custodian for approval of this application\n"
 
             if contactemail != "":
                 sendTokenRequestMail(message,contact,contactemail)
+            else:
+                logging.debug("Cannot send email. The contact person is empty")
 
         except Exception,e:
             closeSession(dbSession)

@@ -16,7 +16,7 @@ def findall(v):
 #Patch JSON data to override URL entries
 def pathJSON(data):
     obj = json.loads(data)
-    findall(obj)
+    #findall(obj)
     return json.dumps(obj)
 
 
