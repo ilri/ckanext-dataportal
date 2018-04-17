@@ -44,7 +44,7 @@ function copyStudyData()
     var seldataset = $( "#sourceStudy" ).val();
     if (seldataset !== "None")
     {
-        $.getJSON( "/portal2/api/3/action/package_show?id=" + seldataset, function( data ) {
+        $.getJSON( "/portal/api/3/action/package_show?id=" + seldataset, function( data ) {
             $('#field-notes').val(data["result"].notes);
             $.each( data["result"], function( key, val ) {
                 var value = val;
@@ -115,7 +115,7 @@ function copyProjectData()
     var seldataset = $( "#sourceProject" ).val();
     if (seldataset != "None")
     {
-        $.getJSON( "/portal2/api/3/action/package_show?id=" + seldataset, function( data ) {
+        $.getJSON( "/portal/api/3/action/package_show?id=" + seldataset, function( data ) {
             $.each( data['result'], function( key,value ) {
                 var sub = key.substring(0,8);
                 if (sub == "ILRI_prj")
@@ -665,14 +665,14 @@ $(function()
         actySpeciesTags = jQuery(".tm-ILRI_actyspecies").tagsManager({
             output: '#ILRI_actyspecies',
             onlyTagList: true,
-            tagList: getTagList("/portal2/api/ilri/1/action/list_species"),
+            tagList: getTagList("/portal/api/ilri/1/action/list_species"),
             tagsContainer: '#cnt-ILRI_actyspecies'
         });
 
         jQuery(".tm-ILRI_actyspecies").typeahead({
             name: 'ActySpecies',
             limit: 5,
-            prefetch: '/portal2/api/ilri/1/action/list_species'
+            prefetch: '/portal/api/ilri/1/action/list_species'
         }).on('typeahead:selected', function (e, d) {
             actySpeciesTags.tagsManager("pushTag", d.value);
         });
@@ -684,7 +684,7 @@ $(function()
         actyRegionsTags = jQuery(".tm-ILRI_actyregions").tagsManager({
                 output: '#ILRI_actyregions',
                 onlyTagList: true,
-                tagList: getTagList("/portal2/api/ilri/1/action/list_regions"),
+                tagList: getTagList("/portal/api/ilri/1/action/list_regions"),
                 tagsContainer: '#cnt-ILRI_actyregions'
             }
         );
@@ -692,7 +692,7 @@ $(function()
         jQuery(".tm-ILRI_actyregions").typeahead({
             name: 'ActyRegions',
             limit: 5,
-            prefetch: '/portal2/api/ilri/1/action/list_regions'
+            prefetch: '/portal/api/ilri/1/action/list_regions'
         }).on('typeahead:selected', function (e, d) {
 
             actyRegionsTags.tagsManager("pushTag", d.value);
@@ -707,7 +707,7 @@ $(function()
                 output: '#ILRI_actycountries',
                 onlyTagList: true,
                 delimiters: [43],
-                tagList: getTagList("/portal2/api/ilri/1/action/list_countries"),
+                tagList: getTagList("/portal/api/ilri/1/action/list_countries"),
                 tagsContainer: '#cnt-ILRI_actycountries'
             }
         );
@@ -715,7 +715,7 @@ $(function()
         jQuery(".tm-ILRI_actycountries").typeahead({
             name: 'ActyCountries',
             limit: 5,
-            prefetch: '/portal2/api/ilri/1/action/list_countries'
+            prefetch: '/portal/api/ilri/1/action/list_countries'
         }).on('typeahead:selected', function (e, d) {
 
             actyCountriesTags.tagsManager("pushTag", d.value);
@@ -738,7 +738,7 @@ $(function()
         subjectsTags = jQuery(".tm-ILRI_prjsubjects").tagsManager({
                 output: '#ILRI_prjsubjects',
                 onlyTagList: true,
-                tagList: getTagList("/portal2/api/ilri/1/action/list_subjects"),
+                tagList: getTagList("/portal/api/ilri/1/action/list_subjects"),
                 tagsContainer: '#cnt-ILRI_prjsubjects'
             }
         );
@@ -746,7 +746,7 @@ $(function()
         jQuery(".tm-ILRI_prjsubjects").typeahead({
             name: 'Subjects',
             limit: 5,
-            prefetch: '/portal2/api/ilri/1/action/list_subjects'
+            prefetch: '/portal/api/ilri/1/action/list_subjects'
         }).on('typeahead:selected', function (e, d) {
 
             subjectsTags.tagsManager("pushTag", d.value);
@@ -766,7 +766,7 @@ $(function()
         jQuery(".tm-tag_string").typeahead({
             name: 'mainTags',
             limit: 5,
-            prefetch: '/portal2/api/ilri/1/action/list_tags'
+            prefetch: '/portal/api/ilri/1/action/list_tags'
         }).on('typeahead:selected', function (e, d) {
 
             mainTags.tagsManager("pushTag", d.value);
@@ -781,7 +781,7 @@ $(function()
         regionsTags = jQuery(".tm-ILRI_prjregions").tagsManager({
                 output: '#ILRI_prjregions',
                 onlyTagList: true,
-                tagList: getTagList("/portal2/api/ilri/1/action/list_regions"),
+                tagList: getTagList("/portal/api/ilri/1/action/list_regions"),
                 tagsContainer: '#cnt-ILRI_prjregions',
             }
         );
@@ -789,7 +789,7 @@ $(function()
         jQuery(".tm-ILRI_prjregions").typeahead({
             name: 'Regions',
             limit: 5,
-            prefetch: '/portal2/api/ilri/1/action/list_regions'
+            prefetch: '/portal/api/ilri/1/action/list_regions'
         }).on('typeahead:selected', function (e, d) {
 
             regionsTags.tagsManager("pushTag", d.value);
@@ -804,7 +804,7 @@ $(function()
                 output: '#ILRI_prjcountries',
                 onlyTagList: true,
                 delimiters: [43],
-                tagList: getTagList("/portal2/api/ilri/1/action/list_countries"),
+                tagList: getTagList("/portal/api/ilri/1/action/list_countries"),
                 tagsContainer: '#cnt-ILRI_prjcountries'
             }
         );
@@ -812,7 +812,7 @@ $(function()
         jQuery(".tm-ILRI_prjcountries").typeahead({
             name: 'Countries',
             limit: 5,
-            prefetch: '/portal2/api/ilri/1/action/list_countries'
+            prefetch: '/portal/api/ilri/1/action/list_countries'
         }).on('typeahead:selected', function (e, d) {
 
             countryTags.tagsManager("pushTag", d.value);
@@ -825,7 +825,7 @@ $(function()
         speciesTags = jQuery(".tm-ILRI_prjspecies").tagsManager({
                 output: '#ILRI_prjspecies',
                 onlyTagList: true,
-                tagList: getTagList("/portal2/api/ilri/1/action/list_species"),
+                tagList: getTagList("/portal/api/ilri/1/action/list_species"),
                 tagsContainer: '#cnt-ILRI_prjspecies'
             }
         );
@@ -833,7 +833,7 @@ $(function()
         jQuery(".tm-ILRI_prjspecies").typeahead({
             name: 'Species',
             limit: 5,
-            prefetch: '/portal2/api/ilri/1/action/list_species'
+            prefetch: '/portal/api/ilri/1/action/list_species'
         }).on('typeahead:selected', function (e, d) {
 
             speciesTags.tagsManager("pushTag", d.value);
