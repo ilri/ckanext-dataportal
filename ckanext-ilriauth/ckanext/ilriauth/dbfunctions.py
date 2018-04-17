@@ -1,11 +1,13 @@
 from .connection import getSession,closeSession
 from .dbmodels import adminUsersModel
 from .dbmodels import userModel, userdatasetModel, useresourceModel, authgroupModel, usergroupModel, \
-    groupdatasetModel, groupresourceModel, tokenrequestModel, tokenModel, datasetokenModel, resourcetokenModel
+    groupdatasetModel, groupresourceModel, tokenrequestModel, tokenModel, datasetokenModel, resourcetokenModel, \
+    resourcestatsModel
 from sqlalchemy import or_
 
 from sqlalchemy.exc import IntegrityError
-import uuid
+import uuid,datetime,json
+from decimal import Decimal
 
 def userCanAddUsers(userID):
     dbSession = getSession()
@@ -604,3 +606,70 @@ def getRequestData(requestID,ckanToolkit):
     else:
         closeSession(dbSession)
         return False,{}
+
+#-----------------------------------------Control the statistics-----------------------
+
+def getRequestStats(draw, fields, start, length, orderIndex, orderDirection, searchValue):
+    sqlFields = ','.join(fields)
+    tableOrder = fields[orderIndex]
+
+    if searchValue == "":
+        sql = "SELECT " + sqlFields + " FROM resourcestats"
+        whereClause = ''
+    else:
+        sql = "SELECT " + sqlFields + " FROM resourcestats"
+        sql = sql + " WHERE LOWER(CONCAT(" + sqlFields + ")) like '%" + searchValue.lower() + "%'"
+        whereClause = " WHERE LOWER(CONCAT(" + sqlFields + ")) like '%" + searchValue.lower() + "%'"
+
+    sql = sql + " ORDER BY " + tableOrder + " " + orderDirection
+    if length != -1:
+        sql = sql + " LIMIT " + str(start) + "," + str(length)
+    countSQL = "SELECT count(*) as total FROM resourcestats" + whereClause
+    dbSession = getSession()
+    records = dbSession.execute(sql).fetchall()
+    data = []
+    if records is not None:
+        for record in records:
+            aRecord = {}
+            for field in fields:
+                try:
+                    if isinstance(record[field], datetime.datetime) or isinstance(record[field],
+                                                                                  datetime.date) or isinstance(
+                            record[field], datetime.time):
+                        aRecord[field] = record[field].isoformat().replace("T", " ")
+                    else:
+                        if isinstance(record[field], float):
+                            aRecord[field] = str(record[field])
+                        else:
+                            if isinstance(record[field], Decimal):
+                                aRecord[field] = str(record[field])
+                            else:
+                                if isinstance(record[field], datetime.timedelta):
+                                    aRecord[field] = str(record[field])
+                                else:
+                                    aRecord[field] = record[field]
+
+                except Exception as e:
+                    aRecord[field] = "AJAX Data error. Report this error to support_for_cabi@qlands.com"
+            data.append(aRecord)
+
+    records = dbSession.execute(countSQL).fetchone()
+    total = records.total
+    closeSession(dbSession)
+
+    result = {'draw': draw, 'recordsTotal': total, 'recordsFiltered': total, 'data': data}
+    return json.dumps(result)
+
+def getStatistics():
+    dbSession = getSession()
+    requestData = dbSession.query(resourcestatsModel).all()
+    result = []
+    for data in requestData:
+        result.append({'request_id':data.request_date,'request_date': data.request_date,'request_ip': data.request_ip,
+                       'resource_id': data.resource_id,'resource_format': data.resource_format,
+                       'token_id': data.token_id,'user_id': data.user_id,'request_name': data.request_name,
+                       'request_email': data.request_email,'request_org': data.request_org,'request_orgtype': data.request_orgtype,
+                       'request_country': data.request_country,'request_datausage': data.request_datausage,
+                       'request_hearfrom': data.request_hearfrom})
+    closeSession(dbSession)
+    return result

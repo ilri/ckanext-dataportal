@@ -439,6 +439,7 @@ class IlrimetadataPlugin(plugins.SingletonPlugin, toolkit.DefaultDatasetForm):
 
         with r.SubMapper(map,  controller='ckanext.ilrimetadata.controller:ILRIMetadataNDAController') as confAggrement:
             confAggrement.connect('displayAgreement','/dataset/{id}/resource/{resource_id}/nda',action='displayAgreement')
+            confAggrement.connect('displayAgreement2', '/nda',action='displayAgreement2')
 
         with r.SubMapper(map,  controller='ckanext.ilrimetadata.controller:ILRIMetadataNDAController') as downloadLicense:
             downloadLicense.connect('downloadLicense','/dataset/{id}/resource/{resource_id}/license',action='displayLicense')

@@ -117,6 +117,9 @@ class ILRIMetadataNDAController(toolkit.BaseController):
         vars = {'package': package_dict,  'resource': resource_dict}
         return toolkit.render('ilripages/nda.html',extra_vars=vars)
 
+    def displayAgreement2(self):
+        return toolkit.render('ilripages/nda2.html')
+
     def displayLicense(self, id, resource_id):
         try:
             package_dict = toolkit.get_action('package_show')({}, {'id': id})

@@ -1,22 +1,28 @@
 import ckan.plugins.toolkit as toolkit
-import json
+import json,pprint
 from ckan.controllers.api import ApiController as CKANApiController
 
 # Recursively goes through the JSON patching url
-def findall(v):
-  if type(v) == type({}):
-     for k1 in v:
-         if k1 == "url":
-            v[k1] = "http://data.ilri.org/portal/"
-         findall(v[k1])
-  if type(v) == type([]):
-      for x in v:
-          findall(x)
+def findall(v,resource = False,dataset=""):
+    if type(v) == type({}):
+        for k1 in v:
+            if k1 == "url":
+                if resource:
+                    v[k1] = "http://data.ilri.org/portal/dataset/" + dataset + "/resource/" + v["id"]
+            if k1 == "resources":
+                v["url"] = "http://data.ilri.org/portal/dataset/" + v["name"]
+                findall(v[k1],True,v["name"])
+            else:
+                findall(v[k1], resource,dataset)
+    if type(v) == type([]):
+        for x in v:
+            findall(x,resource,dataset)
+
 
 #Patch JSON data to override URL entries
 def pathJSON(data):
     obj = json.loads(data)
-    #findall(obj)
+    findall(obj)
     return json.dumps(obj)
 
 

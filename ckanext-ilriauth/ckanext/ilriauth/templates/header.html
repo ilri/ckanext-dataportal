@@ -5,6 +5,9 @@
             <i class="icon-cog"></i>
         </a>
     </li>
+    {% if h.ILRIAuth_userCanManageResources(c.userobj.name) %}
+        <li>{% link_for _('View download statistics'), controller='ckanext.ilriauth.controller:statisticsController', action='display_stats' %}</li>
+    {% endif %}
     {% if h.ILRIAuth_userCanAddUsers(c.userobj.name) %}
         <li>{% link_for _('Register a new CKAN user'), controller='ckanext.ilriauth.controller:addNewUserController', action='display_addNewUser' %}</li>
     {% endif %}

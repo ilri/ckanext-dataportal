@@ -26,35 +26,40 @@ import logging
 
 import ckan.plugins.toolkit as toolkit
 
-def add_msg_niceties(recipient_name, body, sender_name, sender_url):
-    return _(u"Dear %s,") % recipient_name \
+def add_msg_niceties(recipient_name, body, sender_name, sender_url, recipient_name2):
+    return _(u"Dear %s and %s") % (recipient_name,recipient_name2) \
            + u"\r\n\r\n%s\r\n\r\n" % body \
            + u"--\r\n%s (%s)" % (sender_name, sender_url)
 
-def sendTokenRequestMail(body,targetName,targetEmail):
+def sendTokenRequestMail(body,targetName,targetEmail,targetName2,targetEmail2):
     print "Sending email!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!"
     targetEmail = "cquiros@qlands.com"
+    targetEmail2 = "c.f.quiros@cgiar.org"
     mail_from = config.get('smtp.mail_from')
-    body = add_msg_niceties(targetName, body, "ILRI Datasets Portal", "http://data.ilri.org/portal")
+    body = add_msg_niceties(targetName, body, "ILRI Datasets Portal", "http://data.ilri.org/portal",targetName2)
     msg = MIMEText(body.encode('utf-8'), 'plain', 'utf-8')
     ssubject = "New token request for confidential data"
     subject = Header(ssubject.encode('utf-8'), 'utf-8')
     msg['Subject'] = subject
     msg['From'] = _("%s <%s>") % ("CKAN Portal", mail_from)
-    recipient = u"%s <%s>" % (targetName, targetEmail)
+    recipient = u"%s <%s>" % (targetName, targetEmail) + "," + u"%s <%s>" % (targetName2, targetEmail2)
     msg['To'] = Header(recipient, 'utf-8')
     msg['Date'] = Utils.formatdate(time())
 
     try:
-        smtp_connection = smtplib.SMTP()
+
         smtp_server = config.get('smtp.server', 'localhost')
         smtp_user = config.get('smtp.user')
         smtp_password = config.get('smtp.password')
 
-        smtp_connection.connect(smtp_server)
-        smtp_connection.login(smtp_user, smtp_password)
-        smtp_connection.sendmail(mail_from, [targetEmail], msg.as_string())
-        logging.debug("Token Email sent to " + targetEmail)
+        server = smtplib.SMTP(smtp_server,587)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login(smtp_user, smtp_password)
+        server.sendmail(mail_from, [targetEmail,targetEmail2], msg.as_string())
+        server.quit()
+        logging.debug("Token Email sent to " + targetEmail + " and " + targetEmail2)
 
     except Exception,e:
         print str(e)
@@ -241,9 +246,13 @@ def processRequestToken(requestID,ipAddress,data,datasetID,resourceID):
             try:
                 contact = pkg["ILRI_actycontactperson"]
                 contactemail = pkg["ILRI_actycontactemail"]
+                contact2 = pkg["ILRI_actycustodian"]
+                contactemail2 = pkg["ILRI_actycustodianemail"]
             except:
                 contact = ""
                 contactemail = ""
+                contact2 = ""
+                contactemail2 = ""
 
             message = "We have received a confidential application with the following details: \n\n";
             message = message + "Request ID: " + str(requestID) + "\n"
@@ -262,12 +271,12 @@ def processRequestToken(requestID,ipAddress,data,datasetID,resourceID):
             message = message + "Hear from: " + data["field_hearfrom"] + "\n"
             message = message + "Other datasets: " + data["field_otherdatasets"] + "\n\n"
 
-            message = message + "Please contact the custodian for approval of this application\n"
+            message = message + "The Contact Person should check the consent provided by the research participants and liaise with the ILRI Legal / IP department (Muthoni Mucheru / Linda Opati) and their Program Manager to produce a Non-Disclosure Agreement (NDA, http://data.ilri.org/portal2/nda) in order to release the confidential data, if appropriate.\n\nAfter completion of the NDA please ensure that Harrison Njamba of RMG (h.njamba@cgiar.org) is informed to provide a user token for confidential access\n"
 
-            if contactemail != "":
-                sendTokenRequestMail(message,contact,contactemail)
+            if contactemail != "" and contactemail2 != "":
+                sendTokenRequestMail(message,contact,contactemail,contact2,contactemail2)
             else:
-                logging.debug("Cannot send email. The contact person is empty")
+                logging.debug("Cannot send email. The contact person or the custodian are empty")
 
         except Exception,e:
             closeSession(dbSession)

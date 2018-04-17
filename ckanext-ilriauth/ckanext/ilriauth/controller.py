@@ -8,7 +8,7 @@ from .dbfunctions import getUsers, userExists, addUser, updateUserPassword, \
     addResourceToGroup, removeResourceFromGroup, getDatasetsFromGroup, getResourcesFromGroup, \
     getTokenRequests, deleteToken, createToken, setTokenToRequest, getTokenData, getDatasetsFromToken, \
     getResourcesFromToken, addDataSetToToken, removeDataSetFromToken, addResourceToToken, removeResourceFromToken, \
-    getRequestData
+    getRequestData, getRequestStats
 import ckan.lib.navl.dictization_functions as dict_fns
 import ckan.logic as logic
 import ckan.lib.helpers as h
@@ -20,6 +20,46 @@ import pprint
 tuplize_dict = logic.tuplize_dict
 clean_dict = logic.clean_dict
 parse_params = logic.parse_params
+
+
+class statisticsController(toolkit.BaseController):
+    def display_stats(self):
+        data = {}
+        errors = {}
+        vars = {'data': data, 'errors': errors}
+        return toolkit.render('ilriuser/stats.html',extra_vars=vars)
+
+    def request_stats(self):
+        toolkit.response.content_type = 'application/json'
+        toolkit.response.headerlist.append(('Access-Control-Allow-Origin', '*'))
+        if toolkit.request.method == 'POST':
+            postdata = clean_dict(dict_fns.unflatten(tuplize_dict(parse_params(toolkit.request.POST))))
+            draw = int(postdata['draw'])
+            fields = []
+            start = 0
+            length = 0
+            orderIndex = 0
+            orderDirection = ''
+            searchValue = ""
+            for key in postdata.keys():
+                if key.find("columns[") >= 0 and key.find("[data]") >= 0:
+                    fields.append(postdata[key])
+                if key == "start":
+                    start = int(postdata[key])
+                if key == "length":
+                    length = int(postdata[key])
+                if key.find("order[") >= 0 and key.find("[column]") >= 0:
+                    orderIndex = int(postdata[key])
+                if key.find("order[") >= 0 and key.find("[dir]") >= 0:
+                    orderDirection = postdata[key]
+                if key.find("search[") == 0 and key.find("[value]") >= 0:
+                    searchValue = postdata[key]
+            result = getRequestStats(draw, fields, start, length, orderIndex,orderDirection, searchValue)
+            return result
+
+        else:
+            abort(404, 'Page not found')
+
 
 class addNewUserController(toolkit.BaseController):
     def display_addNewUser(self):

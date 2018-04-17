@@ -28,6 +28,10 @@ class IlriauthPlugin(plugins.SingletonPlugin):
         with r.SubMapper(map, controller='ckanext.ilriauth.controller:addNewUserController') as addNewUser:
             addNewUser.connect('addNewUser', '/ilriauth/addNewUser', action='display_addNewUser')
 
+        with r.SubMapper(map, controller='ckanext.ilriauth.controller:statisticsController') as showStats:
+            showStats.connect('showStats', '/ilriauth/showstats', action='display_stats')
+            showStats.connect('requestStats', '/ilriauth/requeststats', action='request_stats')
+
         with r.SubMapper(map, controller='ckanext.ilriauth.controller:resourceAuthController') as manageUsers:
             manageUsers.connect('manageUsers', '/ilriauth/manageusers', action='manageUsers')
 

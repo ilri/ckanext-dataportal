@@ -1,0 +1,65 @@
+{% extends "page.html" %}
+
+{% block subtitle %}Download statistics{% endblock %}
+
+{% block secondary %}{% endblock %}
+
+{% block primary %}
+
+    {% resource 'ILRIAuthDir/3rdParty/datatables/js/jquery.dataTables.js' %}
+    {% resource 'ILRIAuthDir/3rdParty/datatables/css/jquery.dataTables.css' %}
+
+    {% resource 'ILRIAuthDir/3rdParty/datatables/js/00External/JSZip-2.5.0/jszip.js' %}
+    {% resource 'ILRIAuthDir/3rdParty/datatables/js/00External/pdfmake-0.1.32/pdfmake.js' %}
+    {% resource 'ILRIAuthDir/3rdParty/datatables/js/00External/pdfmake-0.1.32/vfs_fonts.js' %}
+
+    {% resource 'ILRIAuthDir/3rdParty/datatables/js/01Extensions/Buttons-1.5.1/js/dataTables.buttons.js' %}
+    {% resource 'ILRIAuthDir/3rdParty/datatables/js/01Extensions/Buttons-1.5.1/css/buttons.dataTables.css' %}
+    {% resource 'ILRIAuthDir/3rdParty/datatables/js/01Extensions/Buttons-1.5.1/js/buttons.html5.js' %}
+
+    {% resource 'ILRIAuthDir/3rdParty/datatables/js/02Custom/stats.js' %}
+
+    <article class="module">
+        <div class="module-content">
+            <input id="statsurl" type="hidden" value="{{ h.url_for(controller='ckanext.ilriauth.controller:statisticsController', action='request_stats', qualified=True) }}">
+            <table id="stats">
+                <thead>
+                <tr>
+                    <th>{{ _('Id') }}</th>
+                    <th>{{ _('Date') }}</th>
+                    <th>{{ _('IP') }}</th>
+                    <th>{{ _('Resource') }}</th>
+                    <th>{{ _('Format') }}</th>
+                    <th>{{ _('Token') }}</th>
+                    <th>{{ _('User') }}</th>
+                    <th>{{ _('Name') }}</th>
+                    <th>{{ _('Email') }}</th>
+                    <th>{{ _('Organisation') }}</th>
+                    <th>{{ _('Organisation type') }}</th>
+                    <th>{{ _('Country') }}</th>
+                    <th>{{ _('Usage') }}</th>
+                    <th>{{ _('Hear from') }}</th>
+                </tr>
+                </thead>
+                <tfoot>
+                <tr>
+                    <th>{{ _('Id') }}</th>
+                    <th>{{ _('Date') }}</th>
+                    <th>{{ _('IP') }}</th>
+                    <th>{{ _('Resource') }}</th>
+                    <th>{{ _('Format') }}</th>
+                    <th>{{ _('Token') }}</th>
+                    <th>{{ _('User') }}</th>
+                    <th>{{ _('Name') }}</th>
+                    <th>{{ _('Email') }}</th>
+                    <th>{{ _('Organisation') }}</th>
+                    <th>{{ _('Organisation type') }}</th>
+                    <th>{{ _('Country') }}</th>
+                    <th>{{ _('Usage') }}</th>
+                    <th>{{ _('Hear from') }}</th>
+                </tr>
+                </tfoot>
+            </table>
+        </div>
+    </article>
+{% endblock %}
