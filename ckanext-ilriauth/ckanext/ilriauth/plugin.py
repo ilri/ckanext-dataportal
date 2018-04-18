@@ -55,6 +55,7 @@ class IlriauthPlugin(plugins.SingletonPlugin):
 
         with r.SubMapper(map, controller='ckanext.ilriauth.controller:resourceAuthController') as manageOneToken:
             manageOneToken.connect('manageOneToken', '/ilriauth/managetokens/{tokenID}', action='manageOneToken')
+            manageOneToken.connect('emailToken', '/ilriauth/emailtoken/{tokenID}', action='emailToken')
 
         with r.SubMapper(map,
                          controller='ckanext.ilriauth.controller:resourceAuthController') as showRequestDetails:

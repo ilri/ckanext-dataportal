@@ -59,7 +59,7 @@
     </div>
 </div>
 
-<div class="modal fade " id="AddUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal hide fade" id="AddUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header">
@@ -89,7 +89,7 @@
 {% if error_summary %}
     {% if return_action == "addUser" %}
         {% resource 'ILRIAuthDir/ilriauth_adduser_autoshow.js' %}
-		<div class="modal fade " id="AddUserReturn" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal hide fade" id="AddUserReturn" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header">
@@ -119,7 +119,7 @@
     {% endif %}
 {% endif %}
 
-<div class="modal fade " id="UpdateUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal hide fade" id="UpdateUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header modal-header-update">
@@ -159,7 +159,7 @@
     {% if return_action == "updateUser" %}
         {% resource 'ILRIAuthDir/ilriauth_updateuser_autoshow.js' %}
 
-		<div class="modal fade " id="UpdateUserReturn" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+		<div class="modal hide fade" id="UpdateUserReturn" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 			<div class="modal-dialog">
 				<div class="modal-content">
 					<div class="modal-header modal-header-update">
@@ -201,7 +201,7 @@
     {% endif %}
 {% endif %}
 
-<div class="modal fade " id="DeleteUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal hide fade" id="DeleteUser" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
 	<div class="modal-dialog">
 		<div class="modal-content">
 			<div class="modal-header modal-header-delete">

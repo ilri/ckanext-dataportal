@@ -8,6 +8,14 @@ from sqlalchemy import or_
 from sqlalchemy.exc import IntegrityError
 import uuid,datetime,json
 from decimal import Decimal
+from pylons import config
+import smtplib
+from email.mime.text import MIMEText
+from email.header import Header
+from email import Utils
+from time import time
+import logging
+from ckan.common import _
 
 def userCanAddUsers(userID):
     dbSession = getSession()
@@ -460,7 +468,7 @@ def deleteToken(tokenID):
 
 def createToken(added_by):
     dbSession = getSession()
-    tokenID = uuid.uuid4()
+    tokenID = str(uuid.uuid4())
     newToken = tokenModel(tokenID,added_by)
     try:
         dbSession.add(newToken)
@@ -471,6 +479,66 @@ def createToken(added_by):
         
         closeSession(dbSession)
         return False,str(e)
+
+def add_msg_niceties(recipient_name, body, sender_name, sender_url):
+    return _(u"Dear %s") % (recipient_name) \
+           + u"\r\n\r\n%s\r\n\r\n" % body \
+           + u"--\r\n%s (%s)" % (sender_name, sender_url)
+
+def sendTokenRequestMail(body,targetName,targetEmail):
+    #print "IN sendTokenRequestMail********************"
+    #targetEmail = "cquiros@qlands.com"
+    #targetEmail2 = "c.f.quiros@cgiar.org"
+    mail_from = config.get('smtp.mail_from')
+    body = add_msg_niceties(targetName, body, "ILRI Datasets Portal", "http://data.ilri.org/portal")
+    msg = MIMEText(body.encode('utf-8'), 'plain', 'utf-8')
+    ssubject = "Your application for confidential information at http://data.ilri.org/portal"
+    subject = Header(ssubject.encode('utf-8'), 'utf-8')
+    msg['Subject'] = subject
+    msg['From'] = _("%s <%s>") % ("CKAN Portal", mail_from)
+    recipient = u"%s <%s>" % (targetName, targetEmail)
+    msg['To'] = Header(recipient, 'utf-8')
+    msg['Date'] = Utils.formatdate(time())
+
+
+
+    try:
+        smtp_server = config.get('smtp.server', 'localhost')
+        smtp_user = config.get('smtp.user')
+        smtp_password = config.get('smtp.password')
+
+        server = smtplib.SMTP(smtp_server,587)
+        server.ehlo()
+        server.starttls()
+        server.ehlo()
+        server.login(smtp_user, smtp_password)
+        server.sendmail(mail_from, [targetEmail], msg.as_string())
+        server.quit()
+        logging.debug("Token Email sent to " + targetEmail)
+    except Exception,e:
+        print str(e)
+        logging.debug("Token Sendmail error: " + str(e))
+
+def sendTokenByEmail(tokenID):
+    #print "IN sendTokenByEmail********************"
+    dbSession = getSession()
+    try:
+        tokenInfo = dbSession.query(tokenrequestModel).filter_by(token_given=tokenID).first()
+        if tokenInfo is not None:
+            user_email = tokenInfo.user_email
+            user_name = tokenInfo.user_name
+            closeSession(dbSession)
+            message = "Your application for confidential information at http://data.ilri.org/portal has been approved \n\n";
+            message = message + "Use the token: " + str(tokenID) + " to access the data\n\n"
+            message = message + "With regards\n"
+            message = message + "ILRI Research Methods group"
+            sendTokenRequestMail(message,user_name,user_email)
+        else:
+            closeSession(dbSession)
+    except Exception, e:
+        closeSession(dbSession)
+        return False, str(e)
+    return True, ""
 
 def setTokenToRequest(requestID,tokenID):
     dbSession = getSession()
