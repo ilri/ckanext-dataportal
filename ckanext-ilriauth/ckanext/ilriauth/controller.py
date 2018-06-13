@@ -8,14 +8,14 @@ from .dbfunctions import getUsers, userExists, addUser, updateUserPassword, \
     addResourceToGroup, removeResourceFromGroup, getDatasetsFromGroup, getResourcesFromGroup, \
     getTokenRequests, deleteToken, createToken, setTokenToRequest, getTokenData, getDatasetsFromToken, \
     getResourcesFromToken, addDataSetToToken, removeDataSetFromToken, addResourceToToken, removeResourceFromToken, \
-    getRequestData, getRequestStats
+    getRequestData, getRequestStats, sendTokenByEmail
 import ckan.lib.navl.dictization_functions as dict_fns
 import ckan.logic as logic
 import ckan.lib.helpers as h
 from ckan.common import _
 from ckan.lib.base import abort
 
-import pprint
+import json
 
 tuplize_dict = logic.tuplize_dict
 clean_dict = logic.clean_dict
@@ -417,6 +417,15 @@ class resourceAuthController(toolkit.BaseController):
         requests = getTokenRequests(toolkit)
         vars = {'error_summary': errors,'action_type':'manageRequests','action_group':'tokens','requests':requests}
         return toolkit.render('ilriuser/resource_edit.html',extra_vars=vars)
+
+    def emailToken(self,tokenID):
+        toolkit.response.content_type = 'application/json'
+        if userResourceAccess(c.user,3) == False:
+            abort(404, 'Page not found')
+        if toolkit.request.method == 'POST':
+            sendTokenByEmail(tokenID)
+            return json.dumps({})
+        return json.dumps({})
 
     def manageOneToken(self,tokenID):
         if userResourceAccess(c.user,3) == False:
