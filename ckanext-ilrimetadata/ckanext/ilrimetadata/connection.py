@@ -26,8 +26,10 @@ def getSession():
 def closeSession(DBSession):
     try:
         DBSession.commit()
-    except:
-        print "Cannot commit session*************************666"
+    except Exception as e:
+        print "*************************666"
+        print e
+        print "*************************666"
         try:
             DBSession.rollback()
         except:
