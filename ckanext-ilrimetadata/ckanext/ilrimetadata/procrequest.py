@@ -89,7 +89,7 @@ def processToken(requestID,ipAddress,datasetID,resourceID,token,format):
     else:
         #If the token is valid then we add the request to the Book
         try:
-            newGuestBookRecord = resourcestatsModel(requestID,datetime.datetime.now(),ipAddress,resourceID,format,token,None,"","","","","","","")
+            newGuestBookRecord = resourcestatsModel(str(requestID),datetime.datetime.now(),ipAddress,resourceID,format,token,None,"","","","","","","")
             dbSession.add(newGuestBookRecord)
             closeSession(dbSession)
         except:
@@ -128,7 +128,7 @@ def processUser(requestID,ipAddress,datasetID,resourceID,user,password,format):
                 if groupAccess == True:
                     #If the user is valid then we add the request to the Book
                     try:
-                        newGuestBookRecord = resourcestatsModel(requestID,datetime.datetime.now(),ipAddress,resourceID,format,None,user,"","","","","","","")
+                        newGuestBookRecord = resourcestatsModel(str(requestID),datetime.datetime.now(),ipAddress,resourceID,format,None,user,"","","","","","","")
                         dbSession.add(newGuestBookRecord)
                         closeSession(dbSession)
                         return True
@@ -192,11 +192,8 @@ def processGuest(requestID,ipAddress,resourceID,data,format):
     else:
         dbSession = getSession()
         try:
-            print "**************************665"
-            print "Adding a new guest entry"
-            print "**************************665"
             #If there are no errors in the data try to add the new Guest Book Record
-            newGuestBookRecord = resourcestatsModel(requestID,datetime.datetime.now(),ipAddress,resourceID,format,None,None,data["field_name"],data["field_email"],data["field_organization"],data["field_organizationType"],data["field_country"],data["field_notes"],data["field_hearfrom"])
+            newGuestBookRecord = resourcestatsModel(str(requestID),datetime.datetime.now(),ipAddress,resourceID,format,None,None,data["field_name"],data["field_email"],data["field_organization"],data["field_organizationType"],data["field_country"],data["field_notes"],data["field_hearfrom"])
             dbSession.add(newGuestBookRecord)
             closeSession(dbSession)
         except Exception,e:
@@ -238,7 +235,7 @@ def processRequestToken(requestID,ipAddress,data,datasetID,resourceID):
         dbSession = getSession()
         try:
             #If there are no errors in the data try to add the new token request
-            newTokenRequest = tokenrequestModel(requestID,datetime.datetime.now(),ipAddress,datasetID,resourceID,data["field_name"],data["field_email"],data["field_organization"],data["field_organizationType"],data["field_country"],data["field_notes"],data["field_otherdatasets"],data["field_hearfrom"])
+            newTokenRequest = tokenrequestModel(str(requestID),datetime.datetime.now(),ipAddress,datasetID,resourceID,data["field_name"],data["field_email"],data["field_organization"],data["field_organizationType"],data["field_country"],data["field_notes"],data["field_otherdatasets"],data["field_hearfrom"])
 
             dbSession.add(newTokenRequest)
             closeSession(dbSession)
