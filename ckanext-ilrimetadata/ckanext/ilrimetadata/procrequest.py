@@ -192,6 +192,9 @@ def processGuest(requestID,ipAddress,resourceID,data,format):
     else:
         dbSession = getSession()
         try:
+            print "**************************665"
+            print "Adding a new guest entry"
+            print "**************************665"
             #If there are no errors in the data try to add the new Guest Book Record
             newGuestBookRecord = resourcestatsModel(requestID,datetime.datetime.now(),ipAddress,resourceID,format,None,None,data["field_name"],data["field_email"],data["field_organization"],data["field_organizationType"],data["field_country"],data["field_notes"],data["field_hearfrom"])
             dbSession.add(newGuestBookRecord)
