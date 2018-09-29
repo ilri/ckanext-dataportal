@@ -2,7 +2,7 @@ import ckan.plugins as plugins
 import ckan.plugins.toolkit as toolkit
 import routes.mapper as r
 
-import logging
+import logging, arrow
 import json,os
 
 import ckan.model as model
@@ -36,6 +36,10 @@ def string_contains(variable,value):
         return True
     except:
         return False
+
+def readble_date(date):
+    ar = arrow.get(date)
+    return ar.format('dddd Do of MMMM, YYYY')
 
 def getFeaturedGroups(max = 1):
 
@@ -493,7 +497,8 @@ class IlrimetadataPlugin(plugins.SingletonPlugin, toolkit.DefaultDatasetForm):
                 'ILRIMetadata_isListDatasets': isListDatasets,
                 'ILRIMetadata_getResourceStats': getResourceStats,
                 'ILRIMetadata_getFeaturedGroups': getFeaturedGroups,
-                'ILRIMetadata_stringContains': string_contains}
+                'ILRIMetadata_stringContains': string_contains,
+                'ILRIMetadata_readbleDate': readble_date}
 
 
     def _add_custom_metadata_to_schema(self, schema):

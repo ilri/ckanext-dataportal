@@ -13,282 +13,289 @@
                 </tr>
                 </thead>
                 <tbody>
-
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Created") }}</th>
+                    <td class="dataset-details">{{ h.ILRIMetadata_readbleDate(pkg_dict.metadata_created) }}</td>
+                </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Last updated") }}</th>
+                    <td class="dataset-details">{{ h.ILRIMetadata_readbleDate(pkg_dict.metadata_modified) }}</td>
+                </tr>
                 {% if pkg_dict.ILRI_actyproduct %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Dataset type") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.ILRI_actyproduct[0] }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Dataset type") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actyproduct[0] }}</td>
+                </tr>
                 {% else %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Dataset type") }}</th>
-                        <td class="dataset-details" style="color: red">Not set (You need to set it)</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Dataset type") }}</th>
+                    <td class="dataset-details" style="color: red">Not set (You need to set it)</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.notes %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Abstract") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.notes }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Abstract") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.notes }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actytitle %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Study title") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.ILRI_actytitle }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Study title") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actytitle }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actyabstract %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Study abstract") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.ILRI_actyabstract }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Study abstract") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actyabstract }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actyotheruse %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("How this dataset could be used by others") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.ILRI_actyotheruse }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("How this dataset could be used by others") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actyotheruse }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actypi %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Principal investigator") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.ILRI_actypi }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Principal investigator") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actypi }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actypiemail %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Principal investigator email") }}</th>
-                        <td class="dataset-details">{{ h.mail_to(email_address=pkg_dict.ILRI_actypiemail, name=pkg_dict.ILRI_actypiemail) }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Principal investigator email") }}</th>
+                    <td class="dataset-details">{{ h.mail_to(email_address=pkg_dict.ILRI_actypiemail, name=pkg_dict.ILRI_actypiemail) }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actypartners %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Partners") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.ILRI_actypartners }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Partners") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actypartners }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actystaff %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Other researchers involved") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.ILRI_actystaff }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Other researchers involved") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actystaff }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actycontactperson %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Contact person") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.ILRI_actycontactperson }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Contact person") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actycontactperson }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actycontactemail %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Contact email") }}</th>
-                        <td class="dataset-details">{{ h.mail_to(email_address=pkg_dict.ILRI_actycontactemail, name=pkg_dict.ILRI_actycontactemail) }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Contact email") }}</th>
+                    <td class="dataset-details">{{ h.mail_to(email_address=pkg_dict.ILRI_actycontactemail, name=pkg_dict.ILRI_actycontactemail) }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actycustodian %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Custodian") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.ILRI_actycustodian }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Custodian") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actycustodian }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actycustodianemail %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Custodian email") }}</th>
-                        <td class="dataset-details">{{ h.mail_to(email_address=pkg_dict.ILRI_actycustodianemail, name=pkg_dict.ILRI_actycustodianemail) }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Custodian email") }}</th>
+                    <td class="dataset-details">{{ h.mail_to(email_address=pkg_dict.ILRI_actycustodianemail, name=pkg_dict.ILRI_actycustodianemail) }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.groups %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Groups") }}</th>
-                        {% set groups = pkg_dict.groups %}
-                        <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=groups, vocab="groups" %} </td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Groups") }}</th>
+                    {% set groups = pkg_dict.groups %}
+                    <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=groups, vocab="groups" %} </td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actyspecies %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Commodities") }}</th>
-                        {% set species = pkg_dict.ILRI_actyspecies %}
-                        <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=species, vocab="ILRI_vocspecies" %} </td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Commodities") }}</th>
+                    {% set species = pkg_dict.ILRI_actyspecies %}
+                    <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=species, vocab="ILRI_vocspecies" %} </td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_prjsubjects %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Subjects") }}</th>
-                        {% set subjects = pkg_dict.ILRI_prjsubjects %}
-                        <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=subjects, vocab="ILRI_vocsubjects" %} </td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Subjects") }}</th>
+                    {% set subjects = pkg_dict.ILRI_prjsubjects %}
+                    <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=subjects, vocab="ILRI_vocsubjects" %} </td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.tags %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Agrovoc Tags") }}</th>
-                        <td class="dataset-details"> {% snippet "package/snippets/tags.html", tags=pkg_dict.tags %} </td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Agrovoc Tags") }}</th>
+                    <td class="dataset-details"> {% snippet "package/snippets/tags.html", tags=pkg_dict.tags %} </td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actyregions %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Regions") }}</th>
-                        {% set regions = pkg_dict.ILRI_actyregions %}
-                        <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=regions, vocab="ILRI_vocregions" %} </td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Regions") }}</th>
+                    {% set regions = pkg_dict.ILRI_actyregions %}
+                    <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=regions, vocab="ILRI_vocregions" %} </td>
+                </tr>
                 {% endif %}
 
 
                 {% if pkg_dict.ILRI_actycountries %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Countries") }}</th>
-                        {% set countries = pkg_dict.ILRI_actycountries %}
-                        <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=countries, vocab="ILRI_voccountries"  %} </td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Countries") }}</th>
+                    {% set countries = pkg_dict.ILRI_actycountries %}
+                    <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=countries, vocab="ILRI_voccountries"  %} </td>
+                </tr>
                 {% endif %}
 
 
                 {% if pkg_dict.ILRI_actynatlevel %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Sub-National Level") }}</th>
-                        {% set natlevel = h.ILRIMetadata_tagsToList(pkg_dict.ILRI_actynatlevel,",") %}
-                        <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=natlevel, vocab="NONE" %} </td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Sub-National Level") }}</th>
+                    {% set natlevel = h.ILRIMetadata_tagsToList(pkg_dict.ILRI_actynatlevel,",") %}
+                    <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=natlevel, vocab="NONE" %} </td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actyprojection %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Projection") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.ILRI_actyprojection }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Projection") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actyprojection }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actyresolution %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Resolution") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.ILRI_actyresolution }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Resolution") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actyresolution }}</td>
+                </tr>
                 {% endif %}
 
 
                 {% if pkg_dict.ILRI_actydatecollected %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Data collected from") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.ILRI_actydatecollected }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Data collected from") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actydatecollected }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actydatecollectedend %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Data collected to") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.ILRI_actydatecollectedend }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Data collected to") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actydatecollectedend }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actydatavailable %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Availability date") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.ILRI_actydatavailable }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Availability date") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actydatavailable }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.license_title %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("License") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.license_title }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("License") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.license_title }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actyrelconfdata %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Release of confidential data?") }}</th>
-                        <td class="dataset-details">{% if pkg_dict.ILRI_actyrelconfdata == 'on' %}Yes{% else %}No{% endif %}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Release of confidential data?") }}</th>
+                    <td class="dataset-details">{% if pkg_dict.ILRI_actyrelconfdata == 'on' %}Yes{% else %}No{% endif %}</td>
+                </tr>
                 {% else %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Release of confidential data?") }}</th>
-                        <td class="dataset-details">No</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Release of confidential data?") }}</th>
+                    <td class="dataset-details">No</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actyfarmconsent %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Consent obtained?") }}</th>
-                        <td class="dataset-details">{% if pkg_dict.ILRI_actyfarmconsent == 'on' %}Yes{% else %}No{% endif %}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Consent obtained?") }}</th>
+                    <td class="dataset-details">{% if pkg_dict.ILRI_actyfarmconsent == 'on' %}Yes{% else %}No{% endif %}</td>
+                </tr>
                 {% else %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Consent obtained?") }}</th>
-                        <td class="dataset-details">No</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Consent obtained?") }}</th>
+                    <td class="dataset-details">No</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actyipownership %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Intellectual Property Ownership") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.ILRI_actyipownership }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Intellectual Property Ownership") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actyipownership }}</td>
+                </tr>
                 {% endif %}
 
 
 
                 {# pkg_dict.license_title
-        {% if pkg_dict.ILRI_actydataowner %}
-          <tr>
-            <th scope="row" class="dataset-label">{{ _("Data owner") }}</th>
-            <td class="dataset-details">{{ pkg_dict.ILRI_actydataowner }}</td>
-          </tr>
-        {% endif %}
+                {% if pkg_dict.ILRI_actydataowner %}
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Data owner") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actydataowner }}</td>
+                </tr>
+                {% endif %}
 
 
-        {% if pkg_dict.ILRI_actysharingagreement %}
-          <tr>
-            <th scope="row" class="dataset-label">{{ _("Sharing agreement") }}</th>
-            <td class="dataset-details">{{ pkg_dict.ILRI_actysharingagreement }}</td>
-          </tr>
-        {% endif %}
-        
-        {% if pkg_dict.ILRI_actyusageconditions %}
-          <tr>
-            <th scope="row" class="dataset-label">{{ _("Usage conditions") }}</th>
-            <td class="dataset-details">{{ pkg_dict.ILRI_actyusageconditions }}</td>
-          </tr>
-        {% endif %}
-        #}
+                {% if pkg_dict.ILRI_actysharingagreement %}
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Sharing agreement") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actysharingagreement }}</td>
+                </tr>
+                {% endif %}
+
+                {% if pkg_dict.ILRI_actyusageconditions %}
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Usage conditions") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actyusageconditions }}</td>
+                </tr>
+                {% endif %}
+                #}
                 {% if pkg_dict.ILRI_actycitation %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Citation") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.ILRI_actycitation }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Citation") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actycitation }}</td>
+                </tr>
                 {% endif %}
 
                 {% if pkg_dict.ILRI_actycitationacknowledge %}
-                    <tr>
-                        <th scope="row" class="dataset-label">{{ _("Acknowledgements") }}</th>
-                        <td class="dataset-details">{{ pkg_dict.ILRI_actycitationacknowledge }}</td>
-                    </tr>
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Acknowledgements") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_actycitationacknowledge }}</td>
+                </tr>
                 {% endif %}
                 </tbody>
             </table>
 
             {% if pkg_dict.ILRI_actyboundbox and pkg_dict.ILRI_actyboundbox != "" %}
-                <input type="hidden" id="ILRI_actymapextent" name="ILRI_actymapextent" value="{{ pkg_dict.ILRI_actymapextent }}" >
-                <input type="hidden" id="ILRI_actymapzoom" name="ILRI_actymapzoom" value="{{ pkg_dict.ILRI_actymapzoom }}" >
-                <input type="hidden" id="ILRI_actyboundbox" name="ILRI_actyboundbox" value="{{ pkg_dict.ILRI_actyboundbox }}" >
+            <input type="hidden" id="ILRI_actymapextent" name="ILRI_actymapextent" value="{{ pkg_dict.ILRI_actymapextent }}" >
+            <input type="hidden" id="ILRI_actymapzoom" name="ILRI_actymapzoom" value="{{ pkg_dict.ILRI_actymapzoom }}" >
+            <input type="hidden" id="ILRI_actyboundbox" name="ILRI_actyboundbox" value="{{ pkg_dict.ILRI_actyboundbox }}" >
 
-                <b>Spatial area covered</b>
-                <div id="studyMap"></div>
+            <b>Spatial area covered</b>
+            <div id="studyMap"></div>
 
             {% endif %}
 
@@ -307,122 +314,122 @@
                 <tbody>
                 {% block package_additional_info %}
 
-                    {% if pkg_dict.ILRI_prjtitle %}
-                        <tr>
-                            <th scope="row" class="dataset-label">{{ _("Project title") }}</th>
-                            <td class="dataset-details">{{ pkg_dict.ILRI_prjtitle }}</td>
-                        </tr>
-                    {% endif %}
+                {% if pkg_dict.ILRI_prjtitle %}
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Project title") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_prjtitle }}</td>
+                </tr>
+                {% endif %}
 
-                    {% if pkg_dict.ILRI_prjabstract %}
-                        <tr>
-                            <th scope="row" class="dataset-label">{{ _("Project abstract") }}</th>
-                            <td class="dataset-details">{{ pkg_dict.ILRI_prjabstract }}</td>
-                        </tr>
-                    {% endif %}
+                {% if pkg_dict.ILRI_prjabstract %}
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Project abstract") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_prjabstract }}</td>
+                </tr>
+                {% endif %}
 
-                    {% if pkg_dict.ILRI_crpandprogram %}
-                        <tr>
-                            <th scope="row" class="dataset-label">{{ _("CRPs and Programs") }}</th>
-                            {% set crps = h.ILRIMetadata_tagsToList(pkg_dict.ILRI_crpandprogram,"+") %}
-                            <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=crps %} </td>
-                        </tr>
-                    {% endif %}
+                {% if pkg_dict.ILRI_crpandprogram %}
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("CRPs and Programs") }}</th>
+                    {% set crps = h.ILRIMetadata_tagsToList(pkg_dict.ILRI_crpandprogram,"+") %}
+                    <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=crps %} </td>
+                </tr>
+                {% endif %}
 
-                    {% if pkg_dict.ILRI_prjwebsite %}
-                        <tr>
-                            <th scope="row" class="dataset-label">{{ _("Project website") }}</th>
-                            <td class="dataset-details">{{ h.link_to(pkg_dict.ILRI_prjwebsite, pkg_dict.ILRI_prjwebsite, rel='foaf:homepage', target='_blank') }}</td>
-                        </tr>
-                    {% endif %}
+                {% if pkg_dict.ILRI_prjwebsite %}
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Project website") }}</th>
+                    <td class="dataset-details">{{ h.link_to(pkg_dict.ILRI_prjwebsite, pkg_dict.ILRI_prjwebsite, rel='foaf:homepage', target='_blank') }}</td>
+                </tr>
+                {% endif %}
 
-                    {% if pkg_dict.ILRI_prjgrant %}
-                        <tr>
-                            <th scope="row" class="dataset-label">{{ _("Grant code") }}</th>
-                            <td class="dataset-details">{{ pkg_dict.ILRI_prjgrant }}</td>
-                        </tr>
-                    {% endif %}
+                {% if pkg_dict.ILRI_prjgrant %}
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Grant code") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_prjgrant }}</td>
+                </tr>
+                {% endif %}
 
-                    {% if pkg_dict.ILRI_prjdonor %}
-                        <tr>
-                            <th scope="row" class="dataset-label">{{ _("Donor") }}</th>
-                            <td class="dataset-details">{{ pkg_dict.ILRI_prjdonor }}</td>
-                        </tr>
-                    {% endif %}
+                {% if pkg_dict.ILRI_prjdonor %}
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Donor") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_prjdonor }}</td>
+                </tr>
+                {% endif %}
 
-                    {% if pkg_dict.ILRI_prjpartners %}
-                        <tr>
-                            <th scope="row" class="dataset-label">{{ _("Partners") }}</th>
-                            <td class="dataset-details">{{ pkg_dict.ILRI_prjpartners }}</td>
-                        </tr>
-                    {% endif %}
+                {% if pkg_dict.ILRI_prjpartners %}
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Partners") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_prjpartners }}</td>
+                </tr>
+                {% endif %}
 
-                    {% if pkg_dict.ILRI_prjsdate %}
-                        <tr>
-                            <th scope="row" class="dataset-label">{{ _("Start date") }}</th>
-                            <td class="dataset-details">{{ pkg_dict.ILRI_prjsdate }}</td>
-                        </tr>
-                    {% endif %}
+                {% if pkg_dict.ILRI_prjsdate %}
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Start date") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_prjsdate }}</td>
+                </tr>
+                {% endif %}
 
-                    {% if pkg_dict.ILRI_prjedate %}
-                        <tr>
-                            <th scope="row" class="dataset-label">{{ _("End date") }}</th>
-                            <td class="dataset-details">{{ pkg_dict.ILRI_prjedate }}</td>
-                        </tr>
-                    {% endif %}
+                {% if pkg_dict.ILRI_prjedate %}
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("End date") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_prjedate }}</td>
+                </tr>
+                {% endif %}
 
-                    {% if pkg_dict.ILRI_prjpi %}
-                        <tr>
-                            <th scope="row" class="dataset-label">{{ _("Principal investigator") }}</th>
-                            <td class="dataset-details">{{ pkg_dict.ILRI_prjpi }}</td>
-                        </tr>
-                    {% endif %}
+                {% if pkg_dict.ILRI_prjpi %}
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Principal investigator") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_prjpi }}</td>
+                </tr>
+                {% endif %}
 
-                    {% if pkg_dict.ILRI_prjstaff %}
-                        <tr>
-                            <th scope="row" class="dataset-label">{{ _("Other staff involved") }}</th>
-                            <td class="dataset-details">{{ pkg_dict.ILRI_prjstaff }}</td>
-                        </tr>
-                    {% endif %}
-
-
-                    {% if pkg_dict.ILRI_prjregions %}
-                        <tr>
-                            <th scope="row" class="dataset-label">{{ _("Regions") }}</th>
-                            {% set regions = h.ILRIMetadata_tagsToList(pkg_dict.ILRI_prjregions,",") %}
-                            <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=regions, vocab="ILRI_vocregions" %} </td>
-                        </tr>
-                    {% endif %}
+                {% if pkg_dict.ILRI_prjstaff %}
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Other staff involved") }}</th>
+                    <td class="dataset-details">{{ pkg_dict.ILRI_prjstaff }}</td>
+                </tr>
+                {% endif %}
 
 
-
-                    {% if pkg_dict.ILRI_prjcountries %}
-                        <tr>
-                            <th scope="row" class="dataset-label">{{ _("Countries") }}</th>
-                            {% set countries = h.ILRIMetadata_tagsToList(pkg_dict.ILRI_prjcountries,"+") %}
-                            <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=countries, vocab="ILRI_voccountries" %} </td>
-                        </tr>
-                    {% endif %}
-
-
-                    {% if pkg_dict.ILRI_prjspecies %}
-                        <tr>
-                            <th scope="row" class="dataset-label">{{ _("Species") }}</th>
-                            {% set species = h.ILRIMetadata_tagsToList(pkg_dict.ILRI_prjspecies,",") %}
-                            <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=species, vocab="ILRI_vocspecies" %} </td>
-                        </tr>
-                    {% endif %}
+                {% if pkg_dict.ILRI_prjregions %}
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Regions") }}</th>
+                    {% set regions = h.ILRIMetadata_tagsToList(pkg_dict.ILRI_prjregions,",") %}
+                    <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=regions, vocab="ILRI_vocregions" %} </td>
+                </tr>
+                {% endif %}
 
 
-                    {% block extras scoped %}
-                        {% for extra in h.sorted_extras(pkg_dict.extras) %}
-                            {% set key, value = extra %}
-                            <tr rel="dc:relation" resource="_:extra{{ i }}">
-                                <th scope="row" class="dataset-label" property="rdfs:label">{{ _(key) }}</th>
-                                <td class="dataset-details" property="rdf:value">{{ value }}</td>
-                            </tr>
-                        {% endfor %}
-                    {% endblock %}
+
+                {% if pkg_dict.ILRI_prjcountries %}
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Countries") }}</th>
+                    {% set countries = h.ILRIMetadata_tagsToList(pkg_dict.ILRI_prjcountries,"+") %}
+                    <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=countries, vocab="ILRI_voccountries" %} </td>
+                </tr>
+                {% endif %}
+
+
+                {% if pkg_dict.ILRI_prjspecies %}
+                <tr>
+                    <th scope="row" class="dataset-label">{{ _("Species") }}</th>
+                    {% set species = h.ILRIMetadata_tagsToList(pkg_dict.ILRI_prjspecies,",") %}
+                    <td class="dataset-details"> {% snippet "package/snippets/ilri-tags.html", tags=species, vocab="ILRI_vocspecies" %} </td>
+                </tr>
+                {% endif %}
+
+
+                {% block extras scoped %}
+                {% for extra in h.sorted_extras(pkg_dict.extras) %}
+                {% set key, value = extra %}
+                <tr rel="dc:relation" resource="_:extra{{ i }}">
+                    <th scope="row" class="dataset-label" property="rdfs:label">{{ _(key) }}</th>
+                    <td class="dataset-details" property="rdf:value">{{ value }}</td>
+                </tr>
+                {% endfor %}
+                {% endblock %}
 
                 {% endblock %}
                 </tbody>
