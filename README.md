@@ -1,5 +1,4 @@
-ckanext-Dataportal
-=============
+ckanext-dataportal
+==================
 
-CKAN Extensions to customize http://data.ilri.org/portal
-
+CKAN extensions to customize the [ILRI Data Portal](http://data.ilri.org/portal).
