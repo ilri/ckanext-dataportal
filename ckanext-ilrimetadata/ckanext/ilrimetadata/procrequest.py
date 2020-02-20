@@ -52,7 +52,7 @@ def sendTokenRequestMail(body,targetName,targetEmail,targetName2,targetEmail2):
         smtp_user = config.get('smtp.user')
         smtp_password = config.get('smtp.password')
 
-        server = smtplib.SMTP(smtp_server,587)
+        server = smtplib.SMTP(smtp_server)
         server.ehlo()
         server.starttls()
         server.ehlo()
