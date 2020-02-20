@@ -19,34 +19,35 @@
        </p>
          <ul>
            <li>
-             List of datasets.
+             List of datasets:
+             <p><a href="{{ c.site_url }}/portal/api/3/action/package_list" target="_blank" rel="noopener">{{ c.site_url }}/portal/api/3/action/package_list</a>
+             </p>
              <p>
-             <a href="{{ c.site_url }}/portal/api/3/action/package_list" target="_blank" rel="noopener">{{ c.site_url }}/portal/api/3/action/package_list</a>.
                The result of this call is a list dataset names that can be used in other API calls.
-             </p>           
+             </p>
            </li>
            <li>
-             Details about a dataset
+             Details about a dataset:
              <p>
-               <a href="{{ c.site_url }}/portal/api/3/action/package_show?id=implite-nyando" target="_blank" rel="noopener">{{ c.site_url }}/portal/api/3/action/package_show?id=MyDatasetName</a>. Change the ID to any dataset name
-             </p>    
+               <a href="{{ c.site_url }}/portal/api/3/action/package_show?id=implite-nyando" target="_blank" rel="noopener">{{ c.site_url }}/portal/api/3/action/package_show?id=MyDatasetName</a>
+             </p>
+             <p>
+               Change the ID to any dataset name.
+             </p>
            </li>
            <li>
-             List of <a href="http://aims.fao.org/standards/agrovoc/about" target="_blank" rel="noopener">AGROVOC</a> Tags
+             List of <a href="http://aims.fao.org/standards/agrovoc/about" target="_blank" rel="noopener">AGROVOC</a> tags:
              <p>
-               <a href="{{ c.site_url }}/portal/api/3/action/tag_list" target="_blank" rel="noopener">{{ c.site_url }}/portal/api/3/action/tag_list</a>.
-             </p>    
+               <a href="{{ c.site_url }}/portal/api/3/action/tag_list" target="_blank" rel="noopener">{{ c.site_url }}/portal/api/3/action/tag_list</a>
+             </p>
            </li>
            <li>
-             Dataset Metadata in DDI XML Format
+             Dataset metadata in DDI XML format:
              <p>
-               <a href="{{ c.site_url }}/portal/dataset/implite-nyando/metadataddi" target="_blank" rel="noopener">{{ c.site_url }}/portal/dataset/MyDatasetName/metadataddi</a>.
+               <a href="{{ c.site_url }}/portal/dataset/implite-nyando/metadataddi" target="_blank" rel="noopener">{{ c.site_url }}/portal/dataset/MyDatasetName/metadataddi</a>
              </p>
            </li>
          </ul>
-       <p>
-       
-       </p>
       {% endblock %}
     </div>
   </article>
