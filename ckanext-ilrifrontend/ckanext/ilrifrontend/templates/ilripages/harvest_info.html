@@ -12,35 +12,35 @@
       {% block about %}
        <h3>ILRI's Datasets Portal API</h3>
        <p>ILRI's Datasets Portal can provide access to third party systems 
-       using an <a href="https://en.wikipedia.org/wiki/Application_programming_interface" target="_blank">API</a>. 
-       The result of an API call is in <a href="https://en.wikipedia.org/wiki/JSON" target="_blank">JSON</a> format 
+       using an <a href="https://en.wikipedia.org/wiki/Application_programming_interface" target="_blank" rel="noopener">API</a>.
+       The result of an API call is in <a href="https://en.wikipedia.org/wiki/JSON" target="_blank" rel="noopener">JSON</a> format
        that can be easily read by computer programs. Below are examples of how to get different kinds of data. 
-       More information on the API can be found in <a href="https://docs.ckan.org/en/latest/api/index.html" target="_blank">CKAN's API documentation</a>.
+       More information on the API can be found in <a href="https://docs.ckan.org/en/latest/api/index.html" target="_blank" rel="noopener">CKAN's API documentation</a>.
        </p>
          <ul>
            <li>
              List of datasets.
              <p>
-               <a href="{{host}}/portal/api/3/action/package_list" target="_blank">{{host}}/portal/api/3/action/package_list </a>.
+               <a href="{{host}}/portal/api/3/action/package_list" target="_blank" rel="noopener">{{host}}/portal/api/3/action/package_list </a>.
                The result of this call is a list dataset names that can be used in other API calls.
              </p>           
            </li>
            <li>
              Details about a dataset
              <p>
-               <a href="{{host}}/portal/api/3/action/package_show?id=implite-nyando" target="_blank">{{host}}/portal/api/3/action/package_show?id=MyDatasetName</a>. Change the ID to any dataset name
+               <a href="{{host}}/portal/api/3/action/package_show?id=implite-nyando" target="_blank" rel="noopener">{{host}}/portal/api/3/action/package_show?id=MyDatasetName</a>. Change the ID to any dataset name
              </p>    
            </li>
            <li>
-             List of <a href="http://aims.fao.org/standards/agrovoc/about" target="_blank">Agrovoc</a> Tags
+             List of <a href="http://aims.fao.org/standards/agrovoc/about" target="_blank" rel="noopener">Agrovoc</a> Tags
              <p>
-               <a href="{{host}}/portal/api/3/action/tag_list" target="_blank">{{host}}/portal/api/3/action/tag_list</a>.           
+               <a href="{{host}}/portal/api/3/action/tag_list" target="_blank" rel="noopener">{{host}}/portal/api/3/action/tag_list</a>.
              </p>    
            </li>
            <li>
              Dataset Metadata in DDI XML Format
              <p>
-               <a href="{{host}}/portal/dataset/implite-nyando/metadataddi" target="_blank">{{host}}/portal/dataset/MyDatasetName/metadataddi</a>.
+               <a href="{{host}}/portal/dataset/implite-nyando/metadataddi" target="_blank" rel="noopener">{{host}}/portal/dataset/MyDatasetName/metadataddi</a>.
              </p>
            </li>
          </ul>
