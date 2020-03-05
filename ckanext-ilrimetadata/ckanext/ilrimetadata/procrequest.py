@@ -36,7 +36,7 @@ def sendTokenRequestMail(body,targetName,targetEmail,targetName2,targetEmail2):
     #targetEmail = "cquiros@qlands.com"
     #targetEmail2 = "c.f.quiros@cgiar.org"
     mail_from = config.get('smtp.mail_from')
-    body = add_msg_niceties(targetName, body, "ILRI Datasets Portal", "http://data.ilri.org/portal",targetName2)
+    body = add_msg_niceties(targetName, body, "ILRI Datasets Portal", "https://data.ilri.org/portal",targetName2)
     msg = MIMEText(body.encode('utf-8'), 'plain', 'utf-8')
     ssubject = "New token request for confidential data"
     subject = Header(ssubject.encode('utf-8'), 'utf-8')
@@ -271,7 +271,7 @@ def processRequestToken(requestID,ipAddress,data,datasetID,resourceID):
             message = message + "Hear from: " + data["field_hearfrom"] + "\n"
             message = message + "Other datasets: " + data["field_otherdatasets"] + "\n\n"
 
-            message = message + "The Contact Person should check the consent provided by the research participants and liaise with the ILRI Legal / IP department (Muthoni Mucheru / Linda Opati) and their Program Manager to produce a Non-Disclosure Agreement (NDA, http://data.ilri.org/portal/nda) in order to release the confidential data, if appropriate.\n\nAfter completion of the NDA please ensure that Harrison Njamba of RMG (h.njamba@cgiar.org) is informed to provide a user token for confidential access\n"
+            message = message + "The Contact Person should check the consent provided by the research participants and liaise with the ILRI Legal / IP department (Muthoni Mucheru / Linda Opati) and their Program Manager to produce a Non-Disclosure Agreement (NDA, https://data.ilri.org/portal/nda) in order to release the confidential data, if appropriate.\n\nAfter completion of the NDA please ensure that Harrison Njamba of RMG (h.njamba@cgiar.org) is informed to provide a user token for confidential access\n"
 
             if contactemail != "" and contactemail2 != "":
                 sendTokenRequestMail(message,contact,contactemail,contact2,contactemail2)

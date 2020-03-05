@@ -1,13 +1,13 @@
 import urllib, json, urllib2
 import pprint
-url = "http://data.ilri.org/portal/api/3/action/package_list"
+url = "https://data.ilri.org/portal/api/3/action/package_list"
 #url = "http://127.0.0.1:5000/api/3/action/package_list"
 response = urllib.urlopen(url)
 data = json.loads(response.read())
 for dataset in data["result"]:
     print dataset
     try:
-        url = "http://data.ilri.org/portal/api/3/action/package_show?id="+dataset
+        url = "https://data.ilri.org/portal/api/3/action/package_show?id="+dataset
         #url = "http://127.0.0.1:5000/api/3/action/package_show?id=" + dataset
         response = urllib.urlopen(url)
         content = json.loads(response.read())
@@ -15,7 +15,7 @@ for dataset in data["result"]:
         currentData["ILRI_actyproduct"] = ["Non-spatial"]
 
 
-        request = urllib2.Request('http://data.ilri.org/portal/api/action/package_update')
+        request = urllib2.Request('https://data.ilri.org/portal/api/action/package_update')
         #request = urllib2.Request('http://127.0.0.1:5000/api/action/package_update')
 
         authorization = ''

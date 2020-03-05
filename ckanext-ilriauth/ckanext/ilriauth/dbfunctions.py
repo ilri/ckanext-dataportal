@@ -490,9 +490,9 @@ def sendTokenRequestMail(body,targetName,targetEmail):
     #targetEmail = "cquiros@qlands.com"
     #targetEmail2 = "c.f.quiros@cgiar.org"
     mail_from = config.get('smtp.mail_from')
-    body = add_msg_niceties(targetName, body, "ILRI Datasets Portal", "http://data.ilri.org/portal")
+    body = add_msg_niceties(targetName, body, "ILRI Datasets Portal", "https://data.ilri.org/portal")
     msg = MIMEText(body.encode('utf-8'), 'plain', 'utf-8')
-    ssubject = "Your application for confidential information at http://data.ilri.org/portal"
+    ssubject = "Your application for confidential information at https://data.ilri.org/portal"
     subject = Header(ssubject.encode('utf-8'), 'utf-8')
     msg['Subject'] = subject
     msg['From'] = _("%s <%s>") % ("CKAN Portal", mail_from)
@@ -528,7 +528,7 @@ def sendTokenByEmail(tokenID):
             user_email = tokenInfo.user_email
             user_name = tokenInfo.user_name
             closeSession(dbSession)
-            message = "Your application for confidential information at http://data.ilri.org/portal has been approved \n\n";
+            message = "Your application for confidential information at https://data.ilri.org/portal has been approved \n\n";
             message = message + "Use the token: " + str(tokenID) + " to access the data\n\n"
             message = message + "With regards\n"
             message = message + "ILRI Research Methods group"

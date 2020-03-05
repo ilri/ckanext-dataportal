@@ -8,9 +8,9 @@ def findall(v,resource = False,dataset=""):
         for k1 in v:
             if k1 == "url":
                 if resource:
-                    v[k1] = "http://data.ilri.org/portal/dataset/" + dataset + "/resource/" + v["id"]
+                    v[k1] = "https://data.ilri.org/portal/dataset/" + dataset + "/resource/" + v["id"]
             if k1 == "resources":
-                v["url"] = "http://data.ilri.org/portal/dataset/" + v["name"]
+                v["url"] = "https://data.ilri.org/portal/dataset/" + v["name"]
                 findall(v[k1],True,v["name"])
             else:
                 findall(v[k1], resource,dataset)
