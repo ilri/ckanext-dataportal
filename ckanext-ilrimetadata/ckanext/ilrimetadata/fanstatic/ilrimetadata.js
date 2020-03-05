@@ -248,7 +248,7 @@ function generateCitation()
     }
 
     var citation = pi + others + " (" + year.toString() + "). " + title + ". " + owner;
-    citation = citation + ". Available at http://data.ilir.org/dataset/" + name + ", retrieved on (add date here)";
+    citation = citation + ". Available at http://data.ilri.org/dataset/" + name + ", retrieved on (add date here)";
     //alert(citation)
     document.getElementById("ILRI_actycitation").value = citation;
 }
