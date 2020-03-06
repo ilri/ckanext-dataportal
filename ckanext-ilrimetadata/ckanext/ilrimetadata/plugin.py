@@ -16,7 +16,7 @@ from .dbmodels import resourcestatsModel
 FeaturedGroups = []
 
 #This function generates counts of datasets, resources and downloads by group
-def addFesturedCount(downloadData,group,groupInfo):
+def addFeaturedCount(downloadData,group,groupInfo):
     groupData = {}
     total = 0
     for dasatet in groupInfo["packages"]:
@@ -66,7 +66,7 @@ def getFeaturedGroups(max = 1):
             #Get the details of each group
             group_info = toolkit.get_action('group_show')({}, {'id': group})
             #Count the features of the group
-            addFesturedCount(resources,group,group_info)
+            addFeaturedCount(resources,group,group_info)
 
         #Order the FeaturedGroups by total
         FeaturedGroups.sort(key=lambda x: x["total"],reverse=True)
