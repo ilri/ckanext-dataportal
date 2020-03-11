@@ -36,7 +36,7 @@ def sendTokenRequestMail(body,targetName,targetEmail,targetName2,targetEmail2):
     #targetEmail = "cquiros@qlands.com"
     #targetEmail2 = "c.f.quiros@cgiar.org"
     mail_from = config.get('smtp.mail_from')
-    body = add_msg_niceties(targetName, body, "ILRI Datasets Portal", "https://data.ilri.org/portal",targetName2)
+    body = add_msg_niceties(targetName, body, "ILRI Datasets Portal", "https://data.ilri.org/portal/",targetName2)
     msg = MIMEText(body.encode('utf-8'), 'plain', 'utf-8')
     ssubject = "New token request for confidential data"
     subject = Header(ssubject.encode('utf-8'), 'utf-8')

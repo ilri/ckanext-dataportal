@@ -17,7 +17,7 @@ def sendMail(body,targetName,targetEmail,targetName2,targetEmail2,dataset):
     #targetEmail = "cquiros@qlands.com"
     #targetEmail2 = "c.f.quiros@cgiar.org"
     mail_from = 'ilrirmgdportal@cgiar.org'
-    body = add_msg_niceties(targetName, body, "ILRI Datasets Portal", "https://data.ilri.org/portal")
+    body = add_msg_niceties(targetName, body, "ILRI Datasets Portal", "https://data.ilri.org/portal/")
     msg = MIMEText(body.encode('utf-8'), 'plain', 'utf-8')
     ssubject = "The dataset " + '"' + dataset + '"' + " will be made available in next two weeks"
     subject = Header(ssubject.encode('utf-8'), 'utf-8')
