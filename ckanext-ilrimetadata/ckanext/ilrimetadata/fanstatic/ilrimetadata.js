@@ -589,9 +589,9 @@ $(function()
     if (document.getElementById("studyMap"))
     {
 
-        //Loads the base map from osm.org
-        L.tileLayer('http://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-            attribution: '&copy; <a href="http://osm.org/copyright">OpenStreetMap</a> contributors'
+        //Loads the base map from openstreetmap.org
+        L.tileLayer('https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png', {
+            attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
         }).addTo(activityMap);
 
 
