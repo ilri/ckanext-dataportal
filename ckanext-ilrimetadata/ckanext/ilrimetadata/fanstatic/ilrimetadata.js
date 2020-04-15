@@ -366,7 +366,7 @@ $('.dataset-resource-form').submit(function() {
 });
 
 // This function load a GetData request after page load so we can tell the user that we are processing its request and might take time or redirect to error
-// User by request_info.html
+// Used by request_info.html
 $('#GetData').ready(function() {
 
     if (document.getElementById("GetData"))
