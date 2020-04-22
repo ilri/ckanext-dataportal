@@ -106,7 +106,6 @@ def getDataFile(requestID,response,database,table,format,confidential):
     if confidential == "true":
         args.append("-T")
     result = call(args)
-    print args
 
     #If MySQLToFile returned 0 = OK
     if result == 0:

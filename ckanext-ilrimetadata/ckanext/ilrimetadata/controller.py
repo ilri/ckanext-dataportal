@@ -63,7 +63,6 @@ def getDataRequest(request,database,table,format):
                     #For Python 2.6.X
                     tMinutes = (now-reqTime).days * 1440 + (now-reqTime).seconds / 60
 
-                print tMinutes
                 if tMinutes <= 5:
                     return getDataFile(requestID,toolkit.response,database,table,format,confidential)
                 else:
