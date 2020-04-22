@@ -116,16 +116,16 @@ def processUser(requestID,ipAddress,datasetID,resourceID,user,password,format):
                 for row in dbSession.query(usergroupModel).filter_by(user_id = user).all():
                     #Check if the group has access to the resource
                     result =  dbSession.query(groupresourceModel).filter_by(group_id = row.group_id).filter_by(resource_id = resourceID).first()
-                    if result == None:
+                    if result is None:
                         #Check if the group has access to the dataset of the resource
                         result =  dbSession.query(groupdatasetModel).filter_by(group_id = row.group_id).filter_by(dataset_id = datasetID).first()
-                        if result != None:
+                        if result is not None:
                             groupAccess = True
                             break
                     else:
                         groupAccess = True
                         break
-                if groupAccess == True:
+                if groupAccess is True:
                     #If the user is valid then we add the request to the Book
                     try:
                         newGuestBookRecord = resourcestatsModel(str(requestID),datetime.datetime.now(),ipAddress,resourceID,format,None,user,"","","","","","","")

@@ -225,7 +225,7 @@ class ILRIMetadataRequestInfoController(toolkit.BaseController):
 
 
                 result, error_summary = processRequestToken(uuid.uuid4(),toolkit.request.remote_addr,data,package_dict["id"],resource_id)
-                if result == True:
+                if result is True:
                     vars = {'package': package_dict,  'resource': resource_dict, 'contentType': "tokenrequestsent",'confidential': "true", 'format': formdata["field_resourceFormat"], 'error_summary': error_summary, 'data': data }
                     return toolkit.render('ilripages/request_info.html',extra_vars=vars)
                 else:
@@ -248,7 +248,7 @@ class ILRIMetadataRequestInfoController(toolkit.BaseController):
 
                 requestID = uuid.uuid4()
                 result, error_summary = processGuest(requestID,toolkit.request.remote_addr,resource_id,data,formdata["field_resourceFormat"])
-                if result == True:
+                if result is True:
                     if resource_dict['format'].lower() != 'getdata':
                         #Get the resource if its not getDATA just return the file
                         return getCKANFile(toolkit.response,resource_dict)

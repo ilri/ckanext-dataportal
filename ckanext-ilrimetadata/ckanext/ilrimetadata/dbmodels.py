@@ -75,11 +75,11 @@ class resourcestatsModel(Base):
         self.request_ip = request_ip
         self.resource_id = resource_id
         self.resource_format = resource_format
-        if user_id == None:
+        if user_id is None:
             self.token_id = token_id
-        if token_id == None:
+        if token_id is None:
             self.user_id = user_id
-        if token_id == None and user_id == None:
+        if token_id is None and user_id is None:
             self.request_name = request_name
             self.request_email = request_email
             self.request_org = request_org
