@@ -1,4 +1,4 @@
-from xml.etree.ElementTree import Element, ElementTree as ET, tostring
+from xml.etree.ElementTree import Element, tostring
 import json
 
 

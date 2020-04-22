@@ -1,5 +1,5 @@
 import ckan.plugins.toolkit as toolkit
-import json,pprint
+import json
 from ckan.controllers.api import ApiController as CKANApiController
 
 # Recursively goes through the JSON patching url
