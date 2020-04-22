@@ -2,6 +2,7 @@ import ckan.lib.uploader as uploader
 import ckan.lib.base as base
 from ckan.common import _
 import ckan.lib.helpers as h
+import logging
 import mimetypes
 import os
 from subprocess import call
@@ -105,7 +106,16 @@ def getDataFile(requestID,response,database,table,format,confidential):
 
     if confidential == "true":
         args.append("-T")
-    result = call(args)
+
+    try:
+        result = call(args)
+    except OSError:
+        logging.error("MySQLToFile not found")
+        # Python subprocess.call doesn't seem to return anything if the process
+        # exits with non-zero code. Here if mysqltofile is not installed there
+        # is nothing printed otherwise so we just except on OSError not found
+        # and then set result to a non-zero integer manually.
+        result = 1
 
     #If MySQLToFile returned 0 = OK
     if result == 0:
@@ -117,6 +127,16 @@ def getDataFile(requestID,response,database,table,format,confidential):
         zipargs.append(getDataDir + "/" + requestID + ".zip")
         zipargs.append(getDataDir + "/" + requestID)
         result = call(zipargs)
+
+        try:
+            result = call(args)
+        except OSError:
+            logging.error("zip not found")
+            # Python subprocess.call doesn't seem to return anything if the process
+            # exits with non-zero code. Here if mysqltofile is not installed there
+            # is nothing printed otherwise so we just except on OSError not found
+            # and then set result to a non-zero integer manually.
+            result = 1
 
         #If Linux Zip returned 0 = OK then return the file as a response
         if result == 0:
@@ -135,9 +155,9 @@ def getDataFile(requestID,response,database,table,format,confidential):
             return response
 
         else:
-            abort(404, _('GetDATA Error running linux ZIP. Your request was: ' + requestID + ". Contact RMG at ILRI"))
+            abort(503, _('GetDATA Error running linux ZIP. Your request was: ' + requestID + ". Contact RMG at ILRI"))
     else:
-        abort(404, _('GetDATA Error running MySQLToFile. Your request was: ' + requestID + ". Contact RMG at ILRI"))
+        abort(503, _('GetDATA Error running MySQLToFile. Your request was: ' + requestID + ". Contact RMG at ILRI"))
 
 
 

@@ -71,7 +71,10 @@ def getDataRequest(request,database,table,format):
                 abort(404, 'You do not have access to this resource')
 
         except Exception,e:
-            abort(404, 'You do not have access to this resource.' + str(e))
+            # An exception here likely means an issue with mysqltofile or zip in
+            # responsefile.py, not necessarily that the the user doesn't have
+            # access (all errors in controller.py are 404 which is misleading).
+            abort(503, 'Internal server error. ' + str(e))
     else:
         abort(404, 'You do not have access to this resource')
 
