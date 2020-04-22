@@ -2,266 +2,261 @@ from xml.etree.ElementTree import Element, tostring
 import json
 
 
-#This fuction add each resource to the DDI XML
-def getFileDscr(resource,url):
+# This fuction add each resource to the DDI XML
+def getFileDscr(resource, url):
     fileTxt = Element("fileTxt")
 
     fileTxt.attrib["URI"] = url + "/resource/" + resource["id"] + "/request"
 
     node = Element("fileName")
     node.text = resource["name"]
-    fileTxt.append(node);
+    fileTxt.append(node)
 
     node = Element("fileCont")
     node.text = resource["resource_description"]
-    fileTxt.append(node);
+    fileTxt.append(node)
 
     node = Element("fileType")
     if resource["format"] == "getdata":
         node.text = "GetData Service: Multiple formats available"
     else:
-        node.text = resource["format"];
-    fileTxt.append(node);
+        node.text = resource["format"]
+    fileTxt.append(node)
 
     return fileTxt
+
 
 def arraytoSring(data):
     res = ""
     for value in data:
         res = res + value + ","
 
-    res = res[:len(res)-1]
+    res = res[: len(res) - 1]
 
-    return res;
+    return res
 
-#Creates a DDI 2.5 XML
-def createDDIXML(pkginfo,url):
+
+# Creates a DDI 2.5 XML
+def createDDIXML(pkginfo, url):
 
     codeBook = Element("codeBook")
     docDscr = Element("docDscr")
     stdyDscr = Element("stdyDscr")
     fileDscr = Element("fileDscr")
 
-
     codeBook.append(docDscr)
     codeBook.append(stdyDscr)
     codeBook.append(fileDscr)
 
-    codeBook.attrib["schemaLocation"] = "http://www.ddialliance.org/Specification/DDI-Codebook/2.5/XMLSchema/codebook.xsd"
+    codeBook.attrib[
+        "schemaLocation"
+    ] = "http://www.ddialliance.org/Specification/DDI-Codebook/2.5/XMLSchema/codebook.xsd"
     codeBook.attrib["version"] = "2.5"
 
-    #*******************************************Project Metadata******************************************************
+    # *******************************************Project Metadata******************************************************
 
     node = Element("citation")
-    docDscr.append(node);
+    docDscr.append(node)
 
-    #Citatation from Study
-    #Subjects
+    # Citatation from Study
+    # Subjects
     node2 = Element("biblCit")
     node.append(node2)
-    node2.text = pkginfo['ILRI_actycitation']
+    node2.text = pkginfo["ILRI_actycitation"]
 
-    #Subjects
+    # Subjects
     node2 = Element("notes")
     node.append(node2)
     node2.attrib["subject"] = "Citation acknowledgments"
-    node2.text = pkginfo['ILRI_actycitationacknowledge']
+    node2.text = pkginfo["ILRI_actycitationacknowledge"]
 
-    #Subjects
+    # Subjects
     node2 = Element("notes")
     node.append(node2)
     node2.attrib["subject"] = "Thematic area"
-    node2.text = arraytoSring(pkginfo['ILRI_prjsubjects'])
+    node2.text = arraytoSring(pkginfo["ILRI_prjsubjects"])
 
-    #Project Start Date
+    # Project Start Date
     node2 = Element("notes")
     node.append(node2)
     node2.attrib["subject"] = "Project start date"
-    node2.text = pkginfo['ILRI_prjsdate']
+    node2.text = pkginfo["ILRI_prjsdate"]
 
-    #Project End Date
+    # Project End Date
     node2 = Element("notes")
     node.append(node2)
     node2.attrib["subject"] = "Project end date"
-    node2.text = pkginfo['ILRI_prjedate']
+    node2.text = pkginfo["ILRI_prjedate"]
 
-    #Regions covered
+    # Regions covered
     node2 = Element("notes")
     node.append(node2)
     node2.attrib["subject"] = "Regions covered by project"
-    node2.text = pkginfo['ILRI_prjregions']
+    node2.text = pkginfo["ILRI_prjregions"]
 
-    #Countries covered
+    # Countries covered
     node2 = Element("notes")
     node.append(node2)
     node2.attrib["subject"] = "Countries covered by project"
-    node2.text = pkginfo['ILRI_prjcountries'].replace("+",",")
+    node2.text = pkginfo["ILRI_prjcountries"].replace("+", ",")
 
-    #Species
+    # Species
     node2 = Element("notes")
     node.append(node2)
     node2.attrib["subject"] = "Species"
-    node2.text = pkginfo['ILRI_prjspecies']
+    node2.text = pkginfo["ILRI_prjspecies"]
 
-    #Website
+    # Website
     node2 = Element("holdings")
     node.append(node2)
-    node2.attrib["URI"] = pkginfo['ILRI_prjwebsite']
+    node2.attrib["URI"] = pkginfo["ILRI_prjwebsite"]
 
     node2 = Element("prodStmt")
     node.append(node2)
 
     groups = ""
-    for grp in pkginfo['groups']:
-        groups = groups + grp['description'] + ","
+    for grp in pkginfo["groups"]:
+        groups = groups + grp["description"] + ","
 
-    groups = groups[:len(groups)-1]
+    groups = groups[: len(groups) - 1]
 
-    #CRP and programs
+    # CRP and programs
     node3 = Element("producer")
     node2.append(node3)
     node3.text = groups
 
-    #Grant code
+    # Grant code
     node3 = Element("grantNo")
     node2.append(node3)
-    node3.text = pkginfo['ILRI_prjgrant']
+    node3.text = pkginfo["ILRI_prjgrant"]
 
-    #Donor
+    # Donor
     node3 = Element("fundAg")
     node2.append(node3)
-    node3.text = pkginfo['ILRI_prjdonor']
+    node3.text = pkginfo["ILRI_prjdonor"]
 
     node2 = Element("rspStmt")
     node.append(node2)
 
-    #PI
+    # PI
     node3 = Element("authEnty")
     node2.append(node3)
-    node3.text = pkginfo['ILRI_prjpi']
+    node3.text = pkginfo["ILRI_prjpi"]
 
-    #Other staff
+    # Other staff
     node3 = Element("othld")
     node2.append(node3)
-    node3.text = pkginfo['ILRI_prjstaff']
+    node3.text = pkginfo["ILRI_prjstaff"]
 
-    #Partners
+    # Partners
     node3 = Element("othld")
     node2.append(node3)
-    node3.text = pkginfo['ILRI_prjpartners']
+    node3.text = pkginfo["ILRI_prjpartners"]
 
     node2 = Element("titlStmt")
     node.append(node2)
 
-    #Project Title
+    # Project Title
     node3 = Element("titl")
     node2.append(node3)
-    node3.text = pkginfo['ILRI_prjtitle']
+    node3.text = pkginfo["ILRI_prjtitle"]
 
-    #Abstract
+    # Abstract
     node3 = Element("parTitl")
     node2.append(node3)
-    node3.text = pkginfo['ILRI_prjabstract']
+    node3.text = pkginfo["ILRI_prjabstract"]
 
     node3 = Element("IDNo")
     node2.append(node3)
     node3.attrib["agency"] = "URL"
-    node3.text = url.replace("/metadataddi","")
+    node3.text = url.replace("/metadataddi", "")
 
-
-    #***************************************** Study Metadata ********************************************************
+    # ***************************************** Study Metadata ********************************************************
 
     node = Element("citation")
-    stdyDscr.append(node);
+    stdyDscr.append(node)
 
-
-
-    #Species
+    # Species
     node2 = Element("notes")
     node2.attrib["subject"] = "Species"
-    node2.text = arraytoSring(pkginfo['ILRI_actyspecies'])
+    node2.text = arraytoSring(pkginfo["ILRI_actyspecies"])
     node.append(node2)
 
-
-    #CopyRight
+    # CopyRight
     node2 = Element("prodStmt")
     node.append(node2)
 
     node3 = Element("copyright")
     node2.append(node3)
-    node3.text = pkginfo['license_title']
+    node3.text = pkginfo["license_title"]
 
-
-    #Data Owner
+    # Data Owner
     node2 = Element("distStmt")
     node.append(node2)
 
     node3 = Element("distrbtr")
     node2.append(node3)
     try:
-        node3.text = pkginfo['ILRI_actyipownership']
+        node3.text = pkginfo["ILRI_actyipownership"]
     except:
         node3.text = ""
 
-
-
-    #Title
+    # Title
     node2 = Element("titlStmt")
     node.append(node2)
 
     node3 = Element("titl")
     node2.append(node3)
-    node3.text = pkginfo['title']
+    node3.text = pkginfo["title"]
 
-    #Main researcher
+    # Main researcher
     node2 = Element("rspStmt")
     node.append(node2)
 
     node3 = Element("authenty")
     node2.append(node3)
-    node3.text = pkginfo['ILRI_actypi']
+    node3.text = pkginfo["ILRI_actypi"]
 
     node3 = Element("othld")
     node2.append(node3)
-    node3.text = pkginfo['ILRI_actystaff']
+    node3.text = pkginfo["ILRI_actystaff"]
     node3.attrib["role"] = "Other staff involved"
 
     node3 = Element("othld")
     node2.append(node3)
-    node3.text = pkginfo['ILRI_actypartners']
+    node3.text = pkginfo["ILRI_actypartners"]
     node3.attrib["role"] = "Partners"
 
-
-    #Abstract
+    # Abstract
     node = Element("stdyInfo")
-    stdyDscr.append(node);
+    stdyDscr.append(node)
 
     node2 = Element("abstract")
     node.append(node2)
-    node2.text = pkginfo['notes']
+    node2.text = pkginfo["notes"]
 
-    #Regions and countries and national level
+    # Regions and countries and national level
     node = Element("stdyInfo")
-    stdyDscr.append(node);
+    stdyDscr.append(node)
 
     node2 = Element("sumDscr")
     node.append(node2)
 
-    #Collection data
+    # Collection data
     node3 = Element("collDate")
     node2.append(node3)
-    node3.text = pkginfo['ILRI_actydatecollected']
+    node3.text = pkginfo["ILRI_actydatecollected"]
 
-    #Regions
+    # Regions
     node3 = Element("geogCover")
     node2.append(node3)
-    node3.text = arraytoSring(pkginfo['ILRI_actyregions'])
+    node3.text = arraytoSring(pkginfo["ILRI_actyregions"])
 
     node4 = Element("concept")
     node3.append(node4)
     node4.text = "Regions covered"
 
-    #Regions
+    # Regions
     node3 = Element("geogCover")
     node2.append(node3)
 
@@ -269,37 +264,37 @@ def createDDIXML(pkginfo,url):
     node3.append(node4)
     node4.text = "Countries covered"
 
-    #National level
+    # National level
     node3 = Element("geogCover")
     node2.append(node3)
-    node3.text = pkginfo['ILRI_actynatlevel']
+    node3.text = pkginfo["ILRI_actynatlevel"]
 
     node4 = Element("concept")
     node3.append(node4)
     node4.text = "National level areas covered"
 
-    #Bouding box
+    # Bouding box
 
     node3 = Element("geoBndBox")
     node2.append(node3)
 
     try:
-        jbox = json.loads(pkginfo['ILRI_actymapextent'])
+        jbox = json.loads(pkginfo["ILRI_actymapextent"])
         node4 = Element("westBL")
         node3.append(node4)
-        node4.text = str(jbox['southWestLong'])
+        node4.text = str(jbox["southWestLong"])
 
         node4 = Element("eastBL")
         node3.append(node4)
-        node4.text = str(jbox['northEastLong'])
+        node4.text = str(jbox["northEastLong"])
 
         node4 = Element("southBL")
         node3.append(node4)
-        node4.text = str(jbox['southWestLat'])
+        node4.text = str(jbox["southWestLat"])
 
         node4 = Element("northBL")
         node3.append(node4)
-        node4.text = str(jbox['northEastLat'])
+        node4.text = str(jbox["northEastLat"])
     except:
         node4 = Element("westBL")
         node3.append(node4)
@@ -317,28 +312,29 @@ def createDDIXML(pkginfo,url):
         node3.append(node4)
         node4.text = ""
 
-    #Data accessibility
+    # Data accessibility
     node = Element("dataAccs")
-    stdyDscr.append(node);
+    stdyDscr.append(node)
 
-    #Availability date
+    # Availability date
     node2 = Element("setAvail")
     node.append(node2)
 
     node3 = Element("avlStatus")
     node2.append(node3)
-    node3.text = pkginfo['ILRI_actydatavailable']
+    node3.text = pkginfo["ILRI_actydatavailable"]
 
-    #Usage conditions
+    # Usage conditions
     node2 = Element("useStmt")
     node.append(node2)
-
 
     node3 = Element("specPerm")
     node2.append(node3)
     try:
-        if pkginfo['ILRI_actyrelconfdata'] == "on":
-            node3.text = "Usage onf confidential data could be granted with a signed NDA"
+        if pkginfo["ILRI_actyrelconfdata"] == "on":
+            node3.text = (
+                "Usage onf confidential data could be granted with a signed NDA"
+            )
         else:
             node3.text = "Confidential data is not accessible"
     except:
@@ -346,10 +342,10 @@ def createDDIXML(pkginfo,url):
 
     node3 = Element("contact")
     node2.append(node3)
-    node3.text = pkginfo['ILRI_actycontactperson']
+    node3.text = pkginfo["ILRI_actycontactperson"]
 
-    if pkginfo['resources']:
-        for resource in pkginfo['resources']:
-            fileDscr.append(getFileDscr(resource,url.replace("/metadataddi","")))
+    if pkginfo["resources"]:
+        for resource in pkginfo["resources"]:
+            fileDscr.append(getFileDscr(resource, url.replace("/metadataddi", "")))
 
-    return tostring(codeBook, encoding='utf8')
+    return tostring(codeBook, encoding="utf8")
