@@ -118,7 +118,7 @@ def getUserPassword(userID):
     res = "!!NOTFOUND"
     dbSession = getSession()
     user = dbSession.query(userModel).filter(userModel.user_id == userID).first()
-    if not user is None:
+    if user is not None:
         res = user.user_password
     closeSession(dbSession)
     return res
