@@ -4,7 +4,7 @@ from ckan.controllers.api import ApiController as CKANApiController
 
 # Recursively goes through the JSON patching url
 def findall(v,resource = False,dataset=""):
-    if type(v) == type({}):
+    if isinstance(v, dict):
         for k1 in v:
             if k1 == "url":
                 if resource:
@@ -14,7 +14,7 @@ def findall(v,resource = False,dataset=""):
                 findall(v[k1],True,v["name"])
             else:
                 findall(v[k1], resource,dataset)
-    if type(v) == type([]):
+    if isinstance(v, list):
         for x in v:
             findall(x,resource,dataset)
 
