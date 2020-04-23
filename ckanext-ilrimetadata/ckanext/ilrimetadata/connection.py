@@ -27,7 +27,7 @@ def getSession():
         + "@"
         + mysqlHost
         + "/"
-        + mysqlSchema
+        + mysqlSchema,
         pool_size=20,
         max_overflow=0,
         pool_recycle=2000,
