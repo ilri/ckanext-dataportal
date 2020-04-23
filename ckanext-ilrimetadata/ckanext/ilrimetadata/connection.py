@@ -14,15 +14,20 @@ def getSession():
     Activate this setup using ``config.include('wportal.models')``.
 
     """
+    mysqlUser = config['ilriextensions.mysql.user']
+    mysqlPassword = config['ilriextensions.mysql.password']
+    mysqlHost = config['ilriextensions.mysql.host']
+    mysqlSchema = config['ilriextensions.mysql.schema']
+
     engine = create_engine(
         "mysql+mysqlconnector://"
-        + config["ilriextensions.mysql.user"]
+        + mysqlUser
         + ":"
-        + config["ilriextensions.mysql.password"]
+        + mysqlPassword
         + "@"
-        + config["ilriextensions.mysql.host"]
+        + mysqlHost
         + "/"
-        + config["ilriextensions.mysql.schema"],
+        + mysqlSchema
         pool_size=20,
         max_overflow=0,
         pool_recycle=2000,

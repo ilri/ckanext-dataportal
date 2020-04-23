@@ -16,7 +16,12 @@ def getSession():
     Activate this setup using ``config.include('wportal.models')``.
 
     """
-    engine = create_engine("mysql+mysqlconnector://" + config['ilriextensions.mysql.user'] + ":" + config['ilriextensions.mysql.password'] + "@" + config['ilriextensions.mysql.host'] + "/" + config['ilriextensions.mysql.schema'],
+    mysqlUser = config['ilriextensions.mysql.user']
+    mysqlPassword = config['ilriextensions.mysql.password']
+    mysqlHost = config['ilriextensions.mysql.host']
+    mysqlSchema = config['ilriextensions.mysql.schema']
+
+    engine = create_engine("mysql+mysqlconnector://" + mysqlUser + ":" + mysqlPassword + "@" + mysqlHost + "/" + mysqlSchema,
                            pool_size=20, max_overflow=0, pool_recycle=2000)
     DBSession = scoped_session(sessionmaker())
     DBSession.configure(bind=engine)
