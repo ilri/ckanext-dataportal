@@ -19,9 +19,10 @@ def getSession():
     mysqlUser = config['ilriextensions.mysql.user']
     mysqlPassword = config['ilriextensions.mysql.password']
     mysqlHost = config['ilriextensions.mysql.host']
+    mysqlPort = config['ilriextensions.mysql.port']
     mysqlSchema = config['ilriextensions.mysql.schema']
 
-    engine = create_engine("mysql+mysqlconnector://" + mysqlUser + ":" + mysqlPassword + "@" + mysqlHost + "/" + mysqlSchema,
+    engine = create_engine("mysql+mysqlconnector://" + mysqlUser + ":" + mysqlPassword + "@" + mysqlHost + ":" + mysqlPort+ "/" + mysqlSchema,
                            pool_size=20, max_overflow=0, pool_recycle=2000)
     DBSession = scoped_session(sessionmaker())
     DBSession.configure(bind=engine)

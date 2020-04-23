@@ -17,6 +17,7 @@ def getSession():
     mysqlUser = config['ilriextensions.mysql.user']
     mysqlPassword = config['ilriextensions.mysql.password']
     mysqlHost = config['ilriextensions.mysql.host']
+    mysqlPort = config['ilriextensions.mysql.port']
     mysqlSchema = config['ilriextensions.mysql.schema']
 
     engine = create_engine(
@@ -26,6 +27,8 @@ def getSession():
         + mysqlPassword
         + "@"
         + mysqlHost
+        + ":"
+        + mysqlPort
         + "/"
         + mysqlSchema,
         pool_size=20,
