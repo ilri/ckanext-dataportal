@@ -1,0 +1,132 @@
+diff --git a/ckan/controllers/home.py b/ckan/controllers/home.py
+index 2a4388860..75e58831d 100644
+--- a/ckan/controllers/home.py
++++ b/ckan/controllers/home.py
+@@ -43,9 +43,16 @@ class HomeController(base.BaseController):
+             # package search
+             context = {'model': model, 'session': model.Session,
+                        'user': c.user, 'auth_user_obj': c.userobj}
++
++            facets = h.facets();
++            facets.append("vocab_ILRI_vocregions")
++            facets.append("vocab_ILRI_voccountries")
++            facets.append("vocab_ILRI_vocspecies")
++            facets.append("vocab_ILRI_vocsubjects")
++            facets.append("vocab_ILRI_vocproduct")
+             data_dict = {
+                 'q': '*:*',
+-                'facet.field': h.facets(),
++                'facet.field': facets,
+                 'rows': 4,
+                 'start': 0,
+                 'sort': 'views_recent desc',
+@@ -63,6 +70,11 @@ class HomeController(base.BaseController):
+                 'tags': _('Tags'),
+                 'res_format': _('Formats'),
+                 'license': _('Licenses'),
++                'vocab_ILRI_vocregions': _('Regions'),
++                'vocab_ILRI_voccountries': _('Countries'),
++                'vocab_ILRI_vocspecies': _('Species'),
++                'vocab_ILRI_vocsubjects': _('Subjects'),
++                'vocab_ILRI_vocproduct': _('Products'),
+             }
+ 
+         except search.SearchError:
+diff --git a/ckan/lib/activity_streams.py b/ckan/lib/activity_streams.py
+index 481e7a696..2cde7140f 100644
+--- a/ckan/lib/activity_streams.py
++++ b/ckan/lib/activity_streams.py
+@@ -226,31 +226,28 @@ def activity_list_to_html(context, activity_stream, extra_vars):
+                 if new_activity_type in activity_stream_string_functions:
+                     activity_type = new_activity_type
+ 
+-        if not activity_type in activity_stream_string_functions:
+-            raise NotImplementedError("No activity renderer for activity "
+-                "type '%s'" % activity_type)
+-
+-        if activity_type in activity_stream_string_icons:
+-            activity_icon = activity_stream_string_icons[activity_type]
+-        else:
+-            activity_icon = activity_stream_string_icons['undefined']
+-
+-        activity_msg = activity_stream_string_functions[activity_type](context,
+-                activity)
+-
+-        # Get the data needed to render the message.
+-        matches = re.findall('\{([^}]*)\}', activity_msg)
+-        data = {}
+-        for match in matches:
+-            snippet = activity_snippet_functions[match](activity, detail)
+-            data[str(match)] = snippet
+-
+-        activity_list.append({'msg': activity_msg,
+-                              'type': activity_type.replace(' ', '-').lower(),
+-                              'icon': activity_icon,
+-                              'data': data,
+-                              'timestamp': activity['timestamp'],
+-                              'is_new': activity.get('is_new', False)})
++        if activity_type in activity_stream_string_functions:
++            if activity_type in activity_stream_string_icons:
++                activity_icon = activity_stream_string_icons[activity_type]
++            else:
++                activity_icon = activity_stream_string_icons['undefined']
++
++            activity_msg = activity_stream_string_functions[activity_type](context,
++                    activity)
++
++            # Get the data needed to render the message.
++            matches = re.findall('\{([^}]*)\}', activity_msg)
++            data = {}
++            for match in matches:
++                snippet = activity_snippet_functions[match](activity, detail)
++                data[str(match)] = snippet
++
++            activity_list.append({'msg': activity_msg,
++                                  'type': activity_type.replace(' ', '-').lower(),
++                                  'icon': activity_icon,
++                                  'data': data,
++                                  'timestamp': activity['timestamp'],
++                                  'is_new': activity.get('is_new', False)})
+     extra_vars['activities'] = activity_list
+     return literal(base.render('activity_streams/activity_stream_items.html',
+         extra_vars=extra_vars))
+diff --git a/ckan/lib/helpers.py b/ckan/lib/helpers.py
+index fed0fa596..e1aae04e3 100644
+--- a/ckan/lib/helpers.py
++++ b/ckan/lib/helpers.py
+@@ -725,20 +725,21 @@ def _make_menu_item(menu_item, title, **kw):
+     This function is called by wrapper functions.
+     '''
+     _menu_items = config['routes.named_routes']
+-    if menu_item not in _menu_items:
+-        raise Exception('menu item `%s` cannot be found' % menu_item)
+-    item = copy.copy(_menu_items[menu_item])
+-    item.update(kw)
+-    active = _link_active(item)
+-    needed = item.pop('needed')
+-    for need in needed:
+-        if need not in kw:
+-            raise Exception('menu item `%s` need parameter `%s`'
+-                            % (menu_item, need))
+-    link = _link_to(title, menu_item, suppress_active_class=True, **item)
+-    if active:
+-        return literal('<li class="active">') + link + literal('</li>')
+-    return literal('<li>') + link + literal('</li>')
++    if menu_item in _menu_items:
++        item = copy.copy(_menu_items[menu_item])
++        item.update(kw)
++        active = _link_active(item)
++        needed = item.pop('needed')
++        for need in needed:
++            if need not in kw:
++                raise Exception('menu item `%s` need parameter `%s`'
++                                % (menu_item, need))
++        link = _link_to(title, menu_item, suppress_active_class=True, **item)
++        if active:
++            return literal('<li class="active">') + link + literal('</li>')
++        return literal('<li>') + link + literal('</li>')
++    else:
++        return literal('')
+ 
+ 
+ @core_helper
